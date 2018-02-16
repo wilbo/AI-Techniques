@@ -1,0 +1,21 @@
+{
+  "name": "ai-techniques",
+  "version": "0.1.0",
+  "description": "A game environment that demo's some AI-techniques",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel src/index.html",
+    "watch": "parcel watch src/index.html"
+  },
+  "author": "Wilbert Schepenaar",
+  "license": "ISC",
+  "dependencies": {
+    "parcel-bundler": "^1.5.1",
+    "svg.js": "^2.6.4",
+    "typescript": "^2.7.2"
+  },
+  "devDependencies": {
+    "tslint": "^5.9.1"
+  }
+}
