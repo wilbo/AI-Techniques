@@ -19,9 +19,7 @@ abstract class Entity {
 	public abstract update(delta: number): void
 
 	public render(context: SVG.Doc): void {
-		context
-			.rect(10, 10)
-			.attr({ x: this.position.x, y: this.position.y })
+		context.polyline([0, 0, 30, 10, 0, 20]).x(this.position.x).y(this.position.y)
 	}
 }
 
