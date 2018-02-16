@@ -6,7 +6,7 @@ import Vector2D from '../utils/Vector2D'
 abstract class Entity {
 	private _id: number
 
-	public constructor(public world: World, public position: Vector2D) {
+	public constructor(public world: World, public position: Vector2D = new Vector2D()) {
 		// Add this new entity to entity list
 		this._id = EntityList.instance.nextId
 		EntityList.instance.add(this)
@@ -14,14 +14,6 @@ abstract class Entity {
 
 	public get id(): number {
 		return this._id
-	}
-
-	public get scale(): number {
-		return 1
-	}
-
-	public get boundingRadius(): number {
-		return 1
 	}
 
 	public abstract update(delta: number): void

@@ -1,3 +1,4 @@
+import * as SVG from 'svg.js'
 import Entity from './Entity'
 import Vector2D from '../utils/Vector2D'
 import World from '../game/World'
@@ -11,12 +12,7 @@ class MovingEntity extends Entity {
 	protected _maxForce: number // maximum force this entity can produce to power itself (think rockets and thrust)
 	protected _maxTurnRate: number // maximum rate (radians per second) at which this vehicle can rotate
 
-	constructor(
-		world: World,
-		position: Vector2D,
-	) {
-		super(world, position || new Vector2D(0, 0))
-	}
+	constructor(world: World, position: Vector2D = new Vector2D()) { super(world, position) }
 
 	public get velocity(): Vector2D { return this._velocity }
 	public get heading(): Vector2D { return this._heading }
@@ -26,12 +22,13 @@ class MovingEntity extends Entity {
 	public get maxForce(): number { return this._maxForce }
 	public get maxTurnRate(): number { return this._maxTurnRate }
 
-	public update(elapsedTime: number): void {
+	public update(delta: number): void {
 		throw new Error('Method not implemented.')
 	}
 
-	public render(): void {
-		throw new Error('Method not implemented.')
+	public render(context: SVG.Doc): void {
+		// throw new Error('Method not implemented.')
+		super.render(context)
 	}
 }
 

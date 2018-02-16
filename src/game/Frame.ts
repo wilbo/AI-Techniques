@@ -7,7 +7,7 @@ class Frame {
 	private _lastFrameTimeMs = 0
 	private _maxFPS = 60
 	private _delta = 0
-	private _timestep = 1000 / 60
+	private _timestep = 1000 / this._maxFPS
 
 	constructor(private _world: World, private _context: SVG.Doc) { }
 
@@ -19,6 +19,9 @@ class Frame {
 	public stop(): void {
 		this._running = false
 	}
+
+	// Source:
+	// https://isaacsukin.com/news/2015/01/detailed-explanation-javascript-game-loops-and-timing
 
 	private loop = (timestamp: number) => {
 		// Throttle the frame rate.
