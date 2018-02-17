@@ -1,32 +1,39 @@
-import * as SVG from 'svg.js'
 import World from './World'
 
 class Frame {
 	private _running = false
-	private _limit = 300
 	private _lastFrameTimeMs = 0
 	private _maxFPS = 60
 	private _delta = 0
 	private _timestep = 1000 / this._maxFPS
+	private _inactiveTime = 0
+	private _stopTime = 0
 
-	constructor(private _world: World, private _context: SVG.Doc) { }
+	constructor(private _world: World) { }
 
 	public start(): void {
 		this._running = true
-		this.loop(0)
+		this._inactiveTime += (performance.now() - this._stopTime)
+		requestAnimationFrame(this.loop)
 	}
 
 	public stop(): void {
 		this._running = false
+		this._stopTime = performance.now()
 	}
 
 	// Source:
 	// https://isaacsukin.com/news/2015/01/detailed-explanation-javascript-game-loops-and-timing
 
 	private loop = (timestamp: number) => {
-		// Throttle the frame rate.
+		if (!this._running) { return }
+
+		// resume where we were left in time
+		timestamp -= this._inactiveTime
+
+		// throttle the frame rate.
 		if (timestamp < this._lastFrameTimeMs + (1000 / this._maxFPS)) {
-			window.requestAnimationFrame(this.loop)
+			requestAnimationFrame(this.loop)
 			return
 		}
 
@@ -44,8 +51,8 @@ class Frame {
 			}
 		}
 
-		this._world.render(this._context)
-		window.requestAnimationFrame(this.loop)
+		this._world.render()
+		requestAnimationFrame(this.loop)
 	}
 
 	private panic(): void {

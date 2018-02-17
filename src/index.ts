@@ -5,11 +5,22 @@ import Vehicle from './entity/Vehicle'
 import Vector2D from './utils/Vector2D'
 
 const element = document.getElementById('main')
-
 const context = SVG(element)
 const world = new World(element.clientHeight, element.clientWidth, context)
 const frame = new Frame(world)
-
 const v = new Vehicle(world, new Vector2D(world.width / 2, world.height / 2))
 
-frame.start()
+const button = document.getElementById('start-stop')
+let start = true
+button.addEventListener('click', toggleFrame)
+function toggleFrame(evt: Event) {
+	if (start) {
+		frame.start()
+		evt.srcElement.innerHTML = 'Stop'
+	} else {
+		frame.stop()
+		evt.srcElement.innerHTML = 'Start'
+	}
+
+	start = !start
+}
