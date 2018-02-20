@@ -5,12 +5,8 @@ class World {
 	constructor(
 		public height: number,
 		public width: number,
-		private _context: SVG.Doc,
-	) {
-		window.onresize = () => {
-			this.render()
-		}
-	}
+		private _context: SVG.G,
+	) { }
 
 	public update(delta: number): void {
 		for (const entity of EntityList.instance.list) {

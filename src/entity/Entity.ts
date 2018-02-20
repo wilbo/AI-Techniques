@@ -18,8 +18,8 @@ abstract class Entity {
 
 	public abstract update(delta: number): void
 
-	public render(context: SVG.Doc): void {
-		context.polyline([0, 0, 30, 10, 0, 20]).x(this.position.x).y(this.position.y)
+	public render(context: SVG.G): void {
+		context.circle(20).center(0, 0)
 	}
 }
 

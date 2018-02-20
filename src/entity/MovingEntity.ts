@@ -26,9 +26,8 @@ class MovingEntity extends Entity {
 		throw new Error('Method not implemented.')
 	}
 
-	public render(context: SVG.Doc): void {
-		// throw new Error('Method not implemented.')
-		super.render(context)
+	public render(context: SVG.G): void {
+		context.polyline([0, 0, 30, 10, 0, 20]).x(this.position.x).y(this.position.y).center(0, 0)
 	}
 }
 
