@@ -15,7 +15,7 @@ context.translate(element.clientWidth / 2, element.clientHeight / 2) // center t
 //
 const world = new World(element.clientHeight, element.clientWidth, context)
 const frame = new Frame(world)
-const v = new Vehicle(world, new Vector2D(-400, 0))
+const v = new Vehicle(world)
 
 //
 const button = document.getElementById('start-stop')

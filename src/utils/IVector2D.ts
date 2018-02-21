@@ -64,31 +64,6 @@ interface IVector2D {
 		* returns the vector that is the reverse of this vector
 		*/
 	reverse(): Vector2D
-
-	/**
-		* Adds a vector to the current vector
-		*/
-	add(vector: Vector2D): Vector2D
-
-	/**
-		* Subtracts a vector to the current vector
-		*/
-	subtract(vector: Vector2D): Vector2D
-
-	/**
-		* Multiplies a vector to the current vector
-		*/
-	multiply(value: number): Vector2D
-
-	/**
-		* Divides a vector to the current vector
-		*/
-	divide(value: number): Vector2D
-
-	/**
-		* Check's wether the vector is equal to the current vector
-		*/
-	equals(vector: Vector2D): boolean
 }
 
 export default IVector2D

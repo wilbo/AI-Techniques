@@ -1,10 +1,64 @@
 import IVector2D from './IVector2D'
 
 class Vector2D implements IVector2D {
+
+	/*
+	* Static methods & operators
+	*/
+
+	public static add(vector1: Vector2D, vector2: Vector2D): Vector2D {
+		return new Vector2D(vector1.x + vector2.x, vector1.y + vector2.y)
+	}
+
+	public static addValue(vector: Vector2D, value: number): Vector2D {
+		return new Vector2D(vector.x + value, vector.y + value)
+	}
+
+	public static subtract(vector1: Vector2D, vector2: Vector2D): Vector2D {
+		return new Vector2D(vector1.x - vector2.x, vector1.y - vector2.y)
+	}
+
+	public static subtractValue(vector: Vector2D, value: number): Vector2D {
+		return new Vector2D(vector.x - value, vector.y - value)
+	}
+
+	public static multiply(vector: Vector2D, value: number): Vector2D {
+		return new Vector2D(vector.x * value, vector.y * value)
+	}
+
+	public static divide(vector: Vector2D, value: number): Vector2D {
+		return new Vector2D(vector.x / value, vector.y / value)
+	}
+
+	public static equals(vector1: Vector2D, vector2: Vector2D): boolean {
+		return vector1.x === vector2.x && vector1.y === vector2.y
+	}
+
+	public static vNormalize(vector: Vector2D): Vector2D {
+		const length = vector.length()
+		if (length > Number.EPSILON) {
+			return Vector2D.divide(vector, length)
+		}
+
+		return vector
+	}
+
+	public static vTruncate(vector: Vector2D, max: number): Vector2D {
+		if (vector.length() > max) {
+			return Vector2D.multiply(Vector2D.vNormalize(vector), max)
+		}
+
+		return vector
+	}
+
 	constructor(
 		public x: number = 0,
 		public y: number = 0,
 	) { }
+
+	/*
+	* Member methods
+	*/
 
 	public zero(): void {
 		this.x = 0
@@ -54,14 +108,10 @@ class Vector2D implements IVector2D {
 	public truncate(max: number): Vector2D {
 		if (this.length() > max) {
 			this.normalize()
-			this.multiply(max)
-		}
-
+			this.x *= max
+			this.y *= max
+		}		
 		return this
-	}
-
-	public reverse(): Vector2D {
-		return new Vector2D(-this.x, -this.y)
 	}
 
 	public normalize(): Vector2D {
@@ -71,48 +121,8 @@ class Vector2D implements IVector2D {
 		return this
 	}
 
-	/**
-		* Operators
-		*/
-
-	public add(vector: Vector2D): Vector2D {
-		this.x += vector.x
-		this.y += vector.y
-		return this
-	}
-
-	public addValue(value: number): Vector2D {
-		this.x += value
-		this.y += value
-		return this
-	}
-
-	public subtract(vector: Vector2D): Vector2D {
-		this.x -= vector.x
-		this.y -= vector.y
-		return this
-	}
-
-	public subtractValue(value: number): Vector2D {
-		this.x -= value
-		this.y -= value
-		return this
-	}
-
-	public multiply(value: number): Vector2D {
-		this.x *= value
-		this.y *= value
-		return this
-	}
-
-	public divide(value: number): Vector2D {
-		this.x *= value
-		this.y *= value
-		return this
-	}
-
-	public equals(vector: Vector2D): boolean {
-		return vector.x === this.x && vector.y === this.y
+	public reverse(): Vector2D {
+		return new Vector2D(-this.x, -this.y)
 	}
 }
 
