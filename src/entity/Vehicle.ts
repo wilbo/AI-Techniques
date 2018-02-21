@@ -37,9 +37,14 @@ class Vehicle extends MovingEntity {
 		// 	m_vSide = m_vHeading.Perp();
 		// }
 		if (this.velocity.lengthSq() > 0.00000001) {
-			this.heading = Vector2D.vNormalize(this.velocity)
-			this.side = this.heading.perp()
+			this.heading = Vector2D.add(this.position, Vector2D.vNormalize(this.velocity))
+			this.side = Vector2D.vPerp(this.heading)
 		}
+	}
+
+	public render(context: SVG.G): void {
+		context.circle(10).translate(-5, -5).move(this.position.x, this.position.y)
+		context.circle(10).translate(-5, -5).move(this.heading.x, this.heading.y).fill({ color: 'red' })
 	}
 }
 

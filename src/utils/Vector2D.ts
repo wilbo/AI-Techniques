@@ -51,6 +51,14 @@ class Vector2D implements IVector2D {
 		return vector
 	}
 
+	public static vPerp(vector: Vector2D): Vector2D {
+		return new Vector2D(-vector.y, vector.x)
+	}
+
+	public static vReverse(vector: Vector2D): Vector2D {
+		return new Vector2D(-vector.x, -vector.y)
+	}
+
 	constructor(
 		public x: number = 0,
 		public y: number = 0,
@@ -89,10 +97,6 @@ class Vector2D implements IVector2D {
 		return 1
 	}
 
-	public perp(): Vector2D {
-		return new Vector2D(-this.y, this.x)
-	}
-
 	public distance(vector: Vector2D): number {
 		const ySeparation = vector.y - this.y
 		const xSeparation = vector.x - this.x
@@ -119,10 +123,6 @@ class Vector2D implements IVector2D {
 		this.x /= length
 		this.y /= length
 		return this
-	}
-
-	public reverse(): Vector2D {
-		return new Vector2D(-this.x, -this.y)
 	}
 }
 
