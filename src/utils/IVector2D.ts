@@ -25,7 +25,7 @@ interface IVector2D {
 	lengthSq(): number
 
 	/**
-		* Normalizes the vector
+		* Normalizes the vector if it matches a certain condition
 		*/
 	normalize(): Vector2D
 

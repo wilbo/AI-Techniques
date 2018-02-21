@@ -19,7 +19,7 @@ abstract class Entity {
 	public abstract update(delta: number): void
 
 	public render(context: SVG.G): void {
-		context.circle(20).center(0, 0)
+		context.circle(20).translate(-10, -10)
 	}
 }
 
