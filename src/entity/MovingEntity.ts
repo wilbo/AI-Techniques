@@ -1,7 +1,7 @@
-import * as SVG from 'svg.js'
 import Entity from './Entity'
 import Vector2D from '../utils/Vector2D'
 import World from '../game/World'
+import Context from '../context/Context';
 
 class MovingEntity extends Entity {
 	public velocity: Vector2D = new Vector2D()			//
@@ -15,15 +15,12 @@ class MovingEntity extends Entity {
 	constructor(world: World, position: Vector2D = new Vector2D()) { super(world, position) }
 
 	public update(delta: number): void {
-		throw new Error('Method not implemented.')
+	
 	}
 
-	public render(context: SVG.G): void {
-		context
-			.polyline([0, 0, 30, 10, 0, 20])
-			.translate(-15, -5)
-			.move(Math.round(this.position.x), Math.round(this.position.y))
-	}
+	// public render(context: Context): void {
+
+	// }
 }
 
 export default MovingEntity

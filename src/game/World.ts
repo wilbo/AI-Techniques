@@ -1,15 +1,19 @@
-import * as SVG from 'svg.js'
 import EntityList from '../entity/EntityList'
 import Entity from '../entity/Entity'
+import Context from '../context/Context';
+import Vector2D from '../utils/Vector2D';
 
 class World {
+	public height: number
+	public width: number
 	public fps: number = 0
 
 	constructor(
-		public height: number,
-		public width: number,
-		private _context: SVG.G,
-	) { }
+		private _context: Context,
+	) {
+		this.width = _context.width
+		this.height = _context.height
+	}
 
 	public update(delta: number): void {
 		for (const entity of EntityList.instance.list) {
@@ -36,7 +40,7 @@ class World {
 	}
 
 	private drawFps(): void {
-		this._context.text(this.fps.toFixed(2) + ' fps').move(-(this.width / 2) + 10, this.height / 2 - 28)
+		this._context.drawText(this.fps.toFixed(2) + ' fps', new Vector2D(-(this.width / 2) + 10, this.height / 2 - 10))
 	}
 }
 

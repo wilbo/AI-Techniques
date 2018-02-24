@@ -13,8 +13,7 @@ class SteeringBehaviors {
 		// return (DesiredVelocity - m_pVehicle->Velocity());
 
 		const normalized = Vector2D.vNormalize(Vector2D.subtract(targetPos, this._vehicle.position))
-		const multiplied = Vector2D.multiply(normalized, this._vehicle.maxSpeed)
-		return Vector2D.subtract(multiplied, this._vehicle.velocity)
+		return Vector2D.subtract(Vector2D.multiply(normalized, this._vehicle.maxSpeed), this._vehicle.velocity)
 	}
 }
 

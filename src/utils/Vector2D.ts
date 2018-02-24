@@ -34,6 +34,15 @@ class Vector2D implements IVector2D {
 		return vector1.x === vector2.x && vector1.y === vector2.y
 	}
 
+	public static equalsRounded(vector1: Vector2D, vector2: Vector2D, roundingFactor: number = 12): boolean {
+		const vector = Vector2D.vAbs(Vector2D.subtract(vector1, vector2))
+		if (vector.x < roundingFactor && vector.y < roundingFactor) {
+			return true
+		}
+
+		return false
+	}
+
 	public static vNormalize(vector: Vector2D): Vector2D {
 		const length = vector.length()
 		if (length > Number.EPSILON) {
@@ -51,6 +60,10 @@ class Vector2D implements IVector2D {
 		return vector
 	}
 
+	public static vRound(vector: Vector2D): Vector2D {
+		return new Vector2D(Math.round(vector.x), Math.round(vector.y))
+	}
+
 	public static vPerp(vector: Vector2D): Vector2D {
 		return new Vector2D(-vector.y, vector.x)
 	}
@@ -58,6 +71,12 @@ class Vector2D implements IVector2D {
 	public static vReverse(vector: Vector2D): Vector2D {
 		return new Vector2D(-vector.x, -vector.y)
 	}
+
+	public static vAbs(vector: Vector2D): Vector2D {
+		return new Vector2D(Math.abs(vector.x), Math.abs(vector.y))
+	}
+
+
 
 	constructor(
 		public x: number = 0,
@@ -95,6 +114,14 @@ class Vector2D implements IVector2D {
 		}
 
 		return 1
+	}
+
+	public perp(): Vector2D {
+		return new Vector2D(-this.y, this.x)
+	}
+
+	public reverse(): Vector2D {
+		return new Vector2D(-this.x, -this.y)
 	}
 
 	public distance(vector: Vector2D): number {

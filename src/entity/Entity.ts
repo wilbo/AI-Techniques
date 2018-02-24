@@ -1,7 +1,7 @@
-import * as SVG from 'svg.js'
 import World from '../game/World'
 import EntityList from '../entity/EntityList'
 import Vector2D from '../utils/Vector2D'
+import Context from '../context/Context';
 
 abstract class Entity {
 	private _id: number
@@ -18,8 +18,8 @@ abstract class Entity {
 
 	public abstract update(delta: number): void
 
-	public render(context: SVG.G): void {
-		context.circle(20).translate(-10, -10)
+	public render(context: Context): void {
+		context.drawEntity(this.position, 6)
 	}
 }
 
