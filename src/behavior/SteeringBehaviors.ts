@@ -3,16 +3,19 @@ import Vehicle from '../entity/Vehicle'
 
 class SteeringBehaviors {
 
-	constructor(private _vehicle: Vehicle) {
-
-	}
+	constructor(private _vehicle: Vehicle) { }
 
 	public seek(targetPos: Vector2D): Vector2D {
-		// c++
-		// Vector2D DesiredVelocity = Vec2DNormalize(TargetPos - m_pVehicle->Pos()) * m_pVehicle->MaxSpeed();
-		// return (DesiredVelocity - m_pVehicle->Velocity());
+		const normalized = Vector2D.normalize(Vector2D.subtract(targetPos, this._vehicle.position))
+		return Vector2D.subtract(Vector2D.multiply(normalized, this._vehicle.maxSpeed), this._vehicle.velocity)
+	}
 
-		const normalized = Vector2D.vNormalize(Vector2D.subtract(targetPos, this._vehicle.position))
+	public flee(targetPos: Vector2D, panicDistance: number = 0): Vector2D  {
+		if (panicDistance && Vector2D.distanceSq(this._vehicle.position, targetPos) > (panicDistance * panicDistance)) {
+			return new Vector2D(0, 0)
+		}
+
+		const normalized = Vector2D.normalize(Vector2D.subtract(this._vehicle.position, targetPos))
 		return Vector2D.subtract(Vector2D.multiply(normalized, this._vehicle.maxSpeed), this._vehicle.velocity)
 	}
 }

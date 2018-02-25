@@ -1,17 +1,6 @@
-import IVector2D from './IVector2D'
-
-class Vector2D implements IVector2D {
-
-	/*
-	* Static methods & operators
-	*/
-
+class Vector2D {
 	public static add(vector1: Vector2D, vector2: Vector2D): Vector2D {
 		return new Vector2D(vector1.x + vector2.x, vector1.y + vector2.y)
-	}
-
-	public static addValue(vector: Vector2D, value: number): Vector2D {
-		return new Vector2D(vector.x + value, vector.y + value)
 	}
 
 	public static subtract(vector1: Vector2D, vector2: Vector2D): Vector2D {
@@ -35,7 +24,7 @@ class Vector2D implements IVector2D {
 	}
 
 	public static equalsRounded(vector1: Vector2D, vector2: Vector2D, roundingFactor: number = 12): boolean {
-		const vector = Vector2D.vAbs(Vector2D.subtract(vector1, vector2))
+		const vector = Vector2D.abs(Vector2D.subtract(vector1, vector2))
 		if (vector.x < roundingFactor && vector.y < roundingFactor) {
 			return true
 		}
@@ -43,8 +32,11 @@ class Vector2D implements IVector2D {
 		return false
 	}
 
-	public static vNormalize(vector: Vector2D): Vector2D {
-		const length = vector.length()
+	/**
+		* Normalizes the vector if it matches a certain condition
+		*/
+	public static normalize(vector: Vector2D): Vector2D {
+		const length = vector.length
 		if (length > Number.EPSILON) {
 			return Vector2D.divide(vector, length)
 		}
@@ -52,104 +44,114 @@ class Vector2D implements IVector2D {
 		return vector
 	}
 
-	public static vTruncate(vector: Vector2D, max: number): Vector2D {
-		if (vector.length() > max) {
-			return Vector2D.multiply(Vector2D.vNormalize(vector), max)
+	/**
+		* Adjusts x and y so that the length of the vector does not exceed max
+		*/
+	public static truncate(vector: Vector2D, max: number): Vector2D {
+		if (vector.length > max) {
+			return Vector2D.multiply(Vector2D.normalize(vector), max)
 		}
 
 		return vector
 	}
 
-	public static vRound(vector: Vector2D): Vector2D {
-		return new Vector2D(Math.round(vector.x), Math.round(vector.y))
-	}
-
-	public static vPerp(vector: Vector2D): Vector2D {
+	/**
+		* The vector that is perpendicular to this one
+		*/
+	public static perp(vector: Vector2D): Vector2D {
 		return new Vector2D(-vector.y, vector.x)
 	}
 
-	public static vReverse(vector: Vector2D): Vector2D {
+	/**
+		* returns the vector that is the reverse of this vector
+		*/
+	public static reverse(vector: Vector2D): Vector2D {
 		return new Vector2D(-vector.x, -vector.y)
 	}
 
-	public static vAbs(vector: Vector2D): Vector2D {
+	public static abs(vector: Vector2D): Vector2D {
 		return new Vector2D(Math.abs(vector.x), Math.abs(vector.y))
 	}
 
-
-
-	constructor(
-		public x: number = 0,
-		public y: number = 0,
-	) { }
-
-	/*
-	* Member methods
-	*/
-
-	public zero(): void {
-		this.x = 0
-		this.y = 0
+	/**
+		* The dot product of v1 and v2
+		*/
+	public static dot(vector1: Vector2D, vector2: Vector2D): number {
+		return (vector1.x * vector2.x) + (vector1.y * vector2.y)
 	}
 
-	public isZero(): boolean {
-		return this.x === 0 && this.y === 0
+	/**
+		* The distance between this and the vector
+		*/
+	public static distance(vector1: Vector2D, vector2: Vector2D): number {
+		const ySeparation = vector2.y - vector1.y
+		const xSeparation = vector2.x - vector1.x
+		return Math.sqrt((ySeparation * ySeparation) + (xSeparation * xSeparation))
 	}
 
-	public length(): number {
-		return Math.sqrt((this.x * this.x) + (this.y * this.y))
+	/**
+		* The distance between this and the vector squared
+		*/
+	public static distanceSq(vector1: Vector2D, vector2: Vector2D): number {
+		const ySeparation = vector2.y - vector1.y
+		const xSeparation = vector2.x - vector1.x
+		return (ySeparation * ySeparation) + (xSeparation * xSeparation)
 	}
 
-	public lengthSq(): number {
-		return (this.x * this.x) + (this.y * this.y)
-	}
-
-	public dot(vector: Vector2D): number {
-		return (this.x * vector.x) + (this.y * vector.y)
-	}
-
-	public sign(vector: Vector2D): number {
-		if (this.y * vector.y > this.x * vector.y) {
+	/**
+		* Returns positive if v2 is clockwise of this vector, negative if counterclockwise
+		* (assuming the Y axis is pointing down, X axis to right like a Window app)
+		*/
+	public static sign(vector1: Vector2D, vector2: Vector2D): number {
+		if (vector1.y * vector2.y > vector1.x * vector2.y) {
 			return -1
 		}
 
 		return 1
 	}
 
-	public perp(): Vector2D {
-		return new Vector2D(-this.y, this.x)
+	public static angle(vector1: Vector2D): number {
+		const origin = new Vector2D(0, -1)
+		const radian = Math.acos(Vector2D.dot(vector1, origin) / (vector1.length * origin.length))
+		return Vector2D.sign(vector1, origin) === 1 ? ((Math.PI * 2) - radian) : radian
 	}
 
-	public reverse(): Vector2D {
-		return new Vector2D(-this.x, -this.y)
+	constructor(public x: number = 0, public y: number = 0) { }
+
+	/**
+		* Check wether both x and y are zero
+		*/
+	public zero(): void {
+		this.x = 0
+		this.y = 0
 	}
 
-	public distance(vector: Vector2D): number {
-		const ySeparation = vector.y - this.y
-		const xSeparation = vector.x - this.x
-		return Math.sqrt((ySeparation * ySeparation) + (xSeparation * xSeparation))
+	/**
+		* Set x and y both to zero
+		*/
+	public get isZero(): boolean {
+		return this.x === 0 && this.y === 0
 	}
 
-	public distanceSq(vector: Vector2D): number {
-		const ySeparation = vector.y - this.y
-		const xSeparation = vector.x - this.x
-		return (ySeparation * ySeparation) + (xSeparation * xSeparation)
+	/**
+		* The length / magnitude of the vector
+		*/
+	public get length(): number {
+		return Math.sqrt((this.x * this.x) + (this.y * this.y))
 	}
 
-	public truncate(max: number): Vector2D {
-		if (this.length() > max) {
-			this.normalize()
-			this.x *= max
-			this.y *= max
-		}		
-		return this
+	/**
+		* The squared length of the vector
+		*/
+	public get lengthSq(): number {
+		return (this.x * this.x) + (this.y * this.y)
 	}
 
-	public normalize(): Vector2D {
-		const length = this.length()
-		this.x /= length
-		this.y /= length
-		return this
+	/**
+		* Return the vector with rounded values
+		*/
+	public get rounded(): Vector2D {
+		return new Vector2D(Math.round(this.x), Math.round(this.y))
 	}
 }
 
