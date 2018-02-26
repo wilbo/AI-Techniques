@@ -17,24 +17,15 @@ class Vehicle extends MovingEntity {
 	}
 
 	public update(delta: number): void {
-		if (Vector2D.equalsRounded(this._target, this.position)) {
-			this._target = this.randomVector()
-		}
+		// if (Vector2D.equalsRounded(this._target, this.position)) {
+		// 	this._target = this.randomVector()
+		// }
 
-		// calculate the combined force from each steering behavior in the vehicle’s list
-		const steeringForce = this._steering.flee(this._target)
-
-		// Acceleration = Force/Mass
-		const acceleration = Vector2D.divide(steeringForce, this.mass)
-
-		// update velocity
-		this.velocity = Vector2D.add(this.velocity, Vector2D.multiply(acceleration, delta))
-
-		// make sure vehicle does not exceed maximum velocity
-		this.velocity = Vector2D.truncate(this.velocity, this.maxSpeed)
-
-		// update the position
-		this.position = Vector2D.add(this.position, Vector2D.multiply(this.velocity, delta))
+		const steeringForce = this._steering.arrive(this._target) // calculate the combined force from each steering behavior in the vehicle’s list		
+		const acceleration = Vector2D.divide(steeringForce, this.mass) // acceleration = force / mass
+		this.velocity = Vector2D.add(this.velocity, Vector2D.multiply(acceleration, delta)) // update velocity
+		this.velocity = Vector2D.truncate(this.velocity, this.maxSpeed) // make sure vehicle does not exceed maximum velocity
+		this.position = Vector2D.add(this.position, Vector2D.multiply(this.velocity, delta)) // update the position
 
 		// update the heading if the vehicle has a velocity greater than a very small value
 		if (this.velocity.lengthSq > 0.00000001) {
