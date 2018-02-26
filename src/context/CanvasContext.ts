@@ -14,7 +14,7 @@ class CanvasContext implements Context {
 		canvas.height = height
 		canvas.width = width
 		_element.appendChild(canvas)
-		this._context = canvas.getContext('2d')
+		this._context = canvas.getContext('2d') as CanvasRenderingContext2D
 		this.reset()
 	}
 	

@@ -14,7 +14,7 @@ class Game extends React.Component {
 		if (this.element != null) {
 			this.world = new World(new CanvasContext(this.element))
 			this.frame = new Frame(this.world)
-			new Vehicle(this.world)
+			const h = new Vehicle(this.world)
 		}
 	}
 
