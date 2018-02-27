@@ -102,8 +102,8 @@ class Vector2D {
 		* Returns positive if v2 is clockwise of this vector, negative if counterclockwise
 		* (assuming the Y axis is pointing down, X axis to right like a Window app)
 		*/
-	public static sign(vector1: Vector2D, vector2: Vector2D): number {
-		if (vector1.y * vector2.y > vector1.x * vector2.y) {
+	public static sign(vector1: Vector2D, vector2: Vector2D): number {		
+		if (vector1.y * vector2.x > vector1.x * vector2.y) {
 			return -1
 		}
 
