@@ -29,7 +29,7 @@ class Vehicle extends MovingEntity {
 
 	public render(context: Context): void {
 		super.render(context)
-		// context.drawEntity(this._target, 6, 'orange')	
+		context.drawEntity(this._target, 4, 'orange')	
 	}
 }
 
