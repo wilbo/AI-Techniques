@@ -1,7 +1,7 @@
 import Entity from './Entity'
 
 class EntityList {
-	private static _instance: EntityList = null
+	private static _instance: EntityList
 	private _list: Entity[] = []
 
 	private constructor() {
@@ -9,7 +9,7 @@ class EntityList {
 	}
 
 	public static get instance(): EntityList {
-		if (this._instance == null) {
+		if (this._instance == null || typeof this._instance == 'undefined') {
 			this._instance = new EntityList()
 		}
 

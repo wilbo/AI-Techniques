@@ -1,15 +1,39 @@
 import Vector2D from '../utils/Vector2D'
 import World from '../game/World'
-import MovingEntity from './MovingEntity'
 import SteeringBehaviors from '../behavior/SteeringBehaviors'
 import Context from '../context/Context'
+import VehicleType from '../utils/VehicleType'
+import Entity from './Entity'
+import IMovingEntity from './IMovingEntity'
 
-class Vehicle extends MovingEntity {
+class Vehicle extends Entity implements IMovingEntity {
 	private _steering = new SteeringBehaviors(this)
 	private _target = Vector2D.random(this.world.width, this.world.height)
 
-	constructor(public world: World, public position: Vector2D = new Vector2D()) { super(world, position) }
+	constructor(
+		public world: World, 
+		public position: Vector2D = new Vector2D(),
+		public velocity: Vector2D = new Vector2D(),
+		public heading: Vector2D = new Vector2D(),
+		public side: Vector2D = new Vector2D(),
+		public mass: number = 0.5,
+		public maxSpeed: number = 300,
+		public maxForce: number = 1,
+		public maxTurnRate: number = 6
+	) { super(world, position) }
 
+	public get speed(): number {
+		return this.velocity.length
+	}
+
+	public get speedSq(): number {
+		return this.velocity.lengthSq
+	}
+
+	public get atMaxSpeed(): boolean {
+		return this.maxSpeed * this.maxSpeed >= this.velocity.lengthSq
+	}
+	
 	public update(delta: number): void {
 		if (Vector2D.equalsRounded(this._target, this.position)) {
 			this._target = Vector2D.random(this.world.width, this.world.height)
@@ -27,9 +51,8 @@ class Vehicle extends MovingEntity {
 		}
 	}
 
-	public render(context: Context): void {
-		super.render(context)
-		context.drawEntity(this._target, 4, 'orange')	
+	public render(context: Context) {
+		context.drawVehicle(this.position, Vector2D.angle(this.heading), VehicleType.Yellow3)
 	}
 }
 

@@ -1,10 +1,11 @@
-import Context from './Context';
-import Vector2D from '../utils/Vector2D';
+import Context from './Context'
+import Vector2D from '../utils/Vector2D'
+import ImageLoader from '../utils/ImageLoader'
+import VehicleType from '../utils/VehicleType'
 
 class CanvasContext implements Context {
 	private _context: CanvasRenderingContext2D
-	private r = 0
-	
+
 	constructor(
 		private _element: HTMLElement,
 		public width: number = 1000,
@@ -31,26 +32,20 @@ class CanvasContext implements Context {
 	}
 
 	public drawEntity(position: Vector2D, size: number, color: string = 'black'): void {
+		this._context.fillStyle = color
 		this._context.beginPath()
 		this._context.arc(Math.round(position.x), Math.round(position.y), size, 0, 2 * Math.PI)
-		this._context.fillStyle = color
 		this._context.fill()
 		this.reset()
 	}
 
-	public drawVehicle(position: Vector2D, size: number = 8, angle: number = 0): void {	
+	public drawVehicle(position: Vector2D, angle: number = 0, vehicleType: VehicleType): void {			
+		const image = ImageLoader.vehicle(vehicleType)
 		this._context.translate(position.x, position.y)
 		this._context.rotate(angle)
-		this._context.beginPath()
-		this._context.moveTo(size, (size * 1.25))
-    this._context.lineTo(-size + size, -(size * 3.5) + (size * 1.25))
-		this._context.lineTo(-(size * 2) + size, (size * 1.25))
-		this._context.lineTo(-size + size, -(size * 0.25) + (size * 1.25))
+		this._context.drawImage(image, -(image.width / 2), -(image.height / 2)) // center the image origin
 		this._context.fill()
 		this.reset()
-		
-		// vehicle origin
-		// this.drawEntity(position, 4, 'red')		
 	}
 
 	public drawText(text: string, position: Vector2D = new Vector2D()) : void {

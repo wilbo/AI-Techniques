@@ -17,10 +17,7 @@ abstract class Entity {
 	}
 
 	public abstract update(delta: number): void
-
-	public render(context: Context): void {
-		context.drawEntity(this.position, 6)
-	}
+	public abstract render(context: Context): void
 }
 
 export default Entity
