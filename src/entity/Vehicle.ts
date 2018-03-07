@@ -1,10 +1,9 @@
 import Vector2D from '../utils/Vector2D'
 import World from '../game/World'
 import SteeringBehaviors from '../behavior/SteeringBehaviors'
-import Context from '../context/Context'
-import VehicleType from '../utils/VehicleType'
 import Entity from './Entity'
 import IMovingEntity from './IMovingEntity'
+import Context from '../context/Context'
 
 class Vehicle extends Entity implements IMovingEntity {
 	private _steering = new SteeringBehaviors(this)
@@ -19,7 +18,7 @@ class Vehicle extends Entity implements IMovingEntity {
 		public mass: number = 0.5,
 		public maxSpeed: number = 300,
 		public maxForce: number = 1,
-		public maxTurnRate: number = 6
+		public maxTurnRate: number = .05
 	) { super(world, position) }
 
 	public get speed(): number {
@@ -35,11 +34,11 @@ class Vehicle extends Entity implements IMovingEntity {
 	}
 	
 	public update(delta: number): void {
-		if (Vector2D.equalsRounded(this._target, this.position)) {
+		if (Vector2D.equalsRounded(this._target, this.position, 2)) {
 			this._target = Vector2D.random(this.world.width, this.world.height)
 		}
 
-		const steeringForce = this._steering.seek(this._target) // calculate the combined force from each steering behavior in the vehicle’s list		
+		const steeringForce = this._steering.arrive(this._target) // calculate the combined force from each steering behavior in the vehicle’s list	
 		const acceleration = Vector2D.divide(steeringForce, this.mass) // acceleration = force / mass
 		this.velocity = Vector2D.add(this.velocity, Vector2D.multiply(acceleration, delta)) // update velocity
 		this.velocity = Vector2D.truncate(this.velocity, this.maxSpeed) // make sure vehicle does not exceed maximum velocity
@@ -52,7 +51,13 @@ class Vehicle extends Entity implements IMovingEntity {
 	}
 
 	public render(context: Context) {
-		context.drawVehicle(this.position, Vector2D.angle(this.heading), VehicleType.Yellow3)
+		context.drawEntity(this._target, 3, 'red')
+		context.drawVehicle(this.position, Vector2D.angle(this.heading))
+
+		// context.drawEntity(this._steering.wanderTargetLocal, this._steering.wanderRadius, 'red')
+		// context.drawEntity(this._steering.wanderTarget, 3, 'blue')
+		context.drawEntity(Vector2D.add(this.position, new Vector2D(30, 0)), 3, 'blue')
+
 	}
 }
 

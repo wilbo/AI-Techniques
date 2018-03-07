@@ -3,7 +3,16 @@ import Vehicle from '../entity/Vehicle'
 import DecelerationLevel from './DecelerationLevel'
 
 class SteeringBehaviors {
-	constructor(private _vehicle: Vehicle) { }
+	public wanderRadius: number = 20
+	public wanderDistance: number = 50
+	public wanderJitter: number = 2
+	public wanderTarget: Vector2D
+	public wanderTargetLocal: Vector2D
+
+	constructor(private _vehicle: Vehicle) {
+		const theta = Math.random() * (Math.PI * 2);
+		this.wanderTarget = new Vector2D(this.wanderRadius * Math.cos(theta), this.wanderRadius * Math.sin(theta));
+	}
 
 	/**
 	 * A vector seeking a target position 
@@ -73,6 +82,33 @@ class SteeringBehaviors {
 		const lookAheadTime = (toPursuer.length / (this._vehicle.maxSpeed + pursuer.speed))
 		return this.flee(Vector2D.add(pursuer.position, Vector2D.multiply(pursuer.velocity, lookAheadTime)))
 	}
+
+	
+
+	/**
+	 * 
+	 */
+	public wander(): Vector2D {
+		// add a small random vector to the target’s position ()
+		const randomVector = new Vector2D(this.randomClamped() * this.wanderJitter, this.randomClamped() * this.wanderJitter)
+		this.wanderTarget = Vector2D.add(this.wanderTarget, randomVector) // add a small random displacement
+		this.wanderTarget = Vector2D.multiply(Vector2D.normalize(this.wanderTarget), this.wanderRadius) // reproject the target back onto the wander circle
+
+		this.wanderTargetLocal = Vector2D.add(this.wanderTarget, new Vector2D(this.wanderDistance, 0)) // move the target into a position wanderDistance in front of the agent
+
+
+		// const targetWorld = PointToWorldSpace(targetLocal, m_pVehicle->Heading(), m_pVehicle->Side(), m_pVehicle->Pos()); // project the target into world space 
+
+		console.log(this.wanderTargetLocal)
+		//and steer toward it
+		// return targetWorld - m_pVehicle->Pos();
+		return this.wanderTargetLocal
+	}
+	
+	// returns a value between -1 and 1
+	private randomClamped(): number {
+		return Math.random() * 2 - 1;
+	} 
 }
 
 export default SteeringBehaviors

@@ -2,8 +2,10 @@ import * as React from 'react'
 import Frame from '../game/Frame'
 import World from '../game/World'
 import Vehicle from '../entity/Vehicle'
-import CanvasContext from '../context/CanvasContext'
 import Controls from './Controls'
+import Context from '../context/Context';
+import Matrix2D from '../utils/Matrix2D';
+import Vector2D from '../utils/Vector2D';
 
 class Game extends React.Component {
 	private element: HTMLElement
@@ -12,9 +14,18 @@ class Game extends React.Component {
 	
 	componentDidMount() {
 		if (this.element != null) {
-			this.world = new World(new CanvasContext(this.element))
-			this.frame = new Frame(this.world)
-			const h = new Vehicle(this.world)
+			// this.world = new World()
+			// this.frame = new Frame(this.world)
+			// const h = new Vehicle(this.world)
+
+			const c = new Context(this.element)
+			const vectors = [
+				new Vector2D(0, 0),
+				new Vector2D(2, 0),
+				new Vector2D(0, 1)
+			]
+
+			c.drawShape(vectors)
 		}
 	}
 

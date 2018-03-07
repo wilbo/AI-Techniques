@@ -122,7 +122,11 @@ class Vector2D {
 		return new Vector2D(randX, randY)
 	}
 
-	constructor(public x: number = 0, public y: number = 0) { }
+	constructor(
+		public x: number = 0, 
+		public y: number = 0,
+		public w: number = 1
+	) { }
 
 	/**
 		* Check wether both x and y are zero
