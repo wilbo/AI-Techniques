@@ -1,7 +1,7 @@
-import World from '../game/World'
-import EntityList from '../entity/EntityList'
-import Vector2D from '../utils/Vector2D'
-import Context from '../context/Context'
+import World from '../../game/World'
+import Vector2D from '../../utils/Vector2D'
+import EntityList from './EntityList'
+import Context from '../../context/Context'
 
 abstract class Entity {
 	private _id: number

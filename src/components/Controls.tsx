@@ -1,24 +1,24 @@
 import * as React from 'react'
 import Frame from '../game/Frame'
 
-interface ControlsProps {
+interface IControlsProps {
 	frame: () => Frame
 }
 
-interface ControlsState {
+interface IControlsState {
 	text: string
 }
 
-class Controls extends React.Component<ControlsProps, ControlsState> {
-	initialState: ControlsState = { text: 'Start' }
-	element: HTMLElement
-	
-	constructor(props: ControlsProps) {
+class Controls extends React.Component<IControlsProps, IControlsState> {
+	private _initialState: IControlsState = { text: 'Start' }
+	private _element: HTMLElement
+
+	constructor(props: IControlsProps) {
 		super(props)
-		this.state = this.initialState
+		this.state = this._initialState
 	}
 
-	private handleOnClick = () => {
+	public handleOnClick = () => {
 		if (this.state.text === 'Start') {
 			this.props.frame().start()
 			this.setState({ text: 'Pause' })
@@ -28,17 +28,17 @@ class Controls extends React.Component<ControlsProps, ControlsState> {
 		}
 	}
 
-  public render(): JSX.Element {
+	public render(): JSX.Element {
 		const style: React.CSSProperties = {
-			marginTop: 10
+			marginTop: 10,
 		}
 
-    return (
-      <div>
+	 return (
+			<div>
 				<button style={style} onClick={this.handleOnClick}>{this.state.text}</button>
 			</div>
-    )
-  }
+		)
+	}
 }
 
 export default Controls

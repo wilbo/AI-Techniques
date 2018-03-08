@@ -53,7 +53,7 @@ enum VehicleType {
 	Yellow2 = Yellow2PNG,
 	Yellow3 = Yellow3PNG,
 	Yellow4 = Yellow4PNG,
-	Yellow5 = Yellow5PNG
+	Yellow5 = Yellow5PNG,
 }
 
 export default VehicleType

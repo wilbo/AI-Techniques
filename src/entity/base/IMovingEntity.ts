@@ -1,8 +1,6 @@
 
 import Entity from './Entity'
-import Vector2D from '../utils/Vector2D'
-import World from '../game/World'
-import Context from '../context/Context'
+import Vector2D from '../../utils/Vector2D'
 
 interface IMovingEntity {
 	velocity: Vector2D //

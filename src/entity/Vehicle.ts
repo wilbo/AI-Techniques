@@ -1,9 +1,9 @@
-import Vector2D from '../utils/Vector2D'
+import IMovingEntity from './base/IMovingEntity'
+import Entity from './base/Entity'
 import World from '../game/World'
-import SteeringBehaviors from '../behavior/SteeringBehaviors'
-import Entity from './Entity'
-import IMovingEntity from './IMovingEntity'
+import Vector2D from '../utils/Vector2D'
 import Context from '../context/Context'
+import SteeringBehaviors from '../behavior/SteeringBehaviors'
 
 class Vehicle extends Entity implements IMovingEntity {
 	private _steering = new SteeringBehaviors(this)
@@ -11,7 +11,7 @@ class Vehicle extends Entity implements IMovingEntity {
 	private _steeringForce: Vector2D
 
 	constructor(
-		public world: World, 
+		public world: World,
 		public position: Vector2D = new Vector2D(),
 		public velocity: Vector2D = new Vector2D(),
 		public heading: Vector2D = new Vector2D(),
@@ -19,7 +19,7 @@ class Vehicle extends Entity implements IMovingEntity {
 		public mass: number = 0.5,
 		public maxSpeed: number = 300,
 		public maxForce: number = 1,
-		public maxTurnRate: number = .05
+		public maxTurnRate: number = 0.05,
 	) { super(world, position) }
 
 	public get speed(): number {
@@ -33,7 +33,7 @@ class Vehicle extends Entity implements IMovingEntity {
 	public get atMaxSpeed(): boolean {
 		return this.maxSpeed * this.maxSpeed >= this.velocity.lengthSq
 	}
-	
+
 	public update(delta: number): void {
 		// if (Vector2D.equalsRounded(this._target, this.position, 2)) {
 		// 	this._target = Vector2D.random(this.world.context.width, this.world.context.height)
@@ -46,8 +46,9 @@ class Vehicle extends Entity implements IMovingEntity {
 		this.position = Vector2D.add(this.position, Vector2D.multiply(this.velocity, delta)) // update the position
 
 		if (this.velocity.lengthSq > 0.00000001) {
-			this.heading = Vector2D.normalize(this.velocity) // update the heading if the vehicle has a velocity greater than a very small value
-			this.side = Vector2D.perp(this.heading)			
+			// update the heading if the vehicle has a velocity greater than a very small value
+			this.heading = Vector2D.normalize(this.velocity)
+			this.side = Vector2D.perp(this.heading)
 		}
 	}
 

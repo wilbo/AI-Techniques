@@ -1,6 +1,6 @@
 class Utils {
 	/**
-	 * Returns a random float between -1 and 1 
+	 * Returns a random float between -1 and 1
 	 */
 	public static randomClamped(): number {
 		return Math.random() - Math.random()

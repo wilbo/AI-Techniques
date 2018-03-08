@@ -8,7 +8,6 @@ class Frame {
 	private _timestep = 1000 / this._maxFPS
 	private _inactiveTime = 0
 	private _stopTime = 0
-
 	private _fps = 60
 	private _framesThisSecond = 0
 	private _lastFpsUpdate = 0

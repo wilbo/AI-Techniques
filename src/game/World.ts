@@ -1,5 +1,6 @@
-import EntityList from '../entity/EntityList'
-import Entity from '../entity/Entity'
+
+import EntityList from '../entity/base/EntityList'
+import Entity from '../entity/base/Entity'
 import Context from '../context/Context'
 import Vector2D from '../utils/Vector2D'
 
@@ -33,7 +34,8 @@ class World {
 	}
 
 	private drawFps(): void {
-		this.context.drawText(this.fps.toFixed(2) + ' fps', new Vector2D(-(this.context.width / 2) + 10, this.context.height / 2 - 10))
+		// tslint:disable-next-line:max-line-length
+		this.context.drawText(this.fps.toFixed(2) + ' fps', new Vector2D(-(this.context.width * 0.5) + 10, this.context.height * 0.5 - 10))
 	}
 }
 

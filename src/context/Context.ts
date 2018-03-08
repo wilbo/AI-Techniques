@@ -1,17 +1,18 @@
 import Vector2D from '../utils/Vector2D'
 import VehicleType from './helpers/VehicleType'
 import ImageLoader from './helpers/ImageLoader'
+
 import * as Road from '../assets/racing-pack/road/road_asphalt22.png'
 
 class Context  {
 	constructor(
 		public ctx: CanvasRenderingContext2D,
 		public width: number,
-		public height: number
+		public height: number,
 	) {
 		this.defaults()
 	}
-	
+
 	public clear(): void {
 		this.ctx.clearRect(-(this.width * 0.5), -(this.height * 0.5), this.width, this.height)
 	}
@@ -37,15 +38,15 @@ class Context  {
 		this.ctx.rotate(rotation)
 		this.ctx.drawImage(image, -(image.width * 0.5), -(image.height * 0.5)) // center the image origin
 		this.defaults()
-		
 	}
 
-	public drawText(text: string, position: Vector2D = new Vector2D()) : void {
+	public drawText(text: string, position: Vector2D = new Vector2D()): void {
 		this.ctx.fillText(text, Math.round(position.x), Math.round(position.y), 200)
 		this.defaults()
 	}
 
-	public drawShape(vectors: Vector2D[]): void {
+	public drawShape(vectors: Vector2D[], position: Vector2D = new Vector2D()): void {
+		this.ctx.translate(position.x, position.y)
 		this.ctx.beginPath()
 		this.ctx.moveTo(vectors[0].x, vectors[0].y)
 		for (let i = 1; i < vectors.length; i++) {
@@ -55,7 +56,5 @@ class Context  {
 		this.defaults()
 	}
 }
-
-
 
 export default Context

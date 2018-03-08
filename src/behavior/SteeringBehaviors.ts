@@ -18,7 +18,7 @@ class SteeringBehaviors {
 	}
 
 	/**
-	 * A vector seeking a target position 
+	 * A vector seeking a target position
 	 * @param targetPos the position to move to
 	 */
 	public seek(targetPos: Vector2D): Vector2D {
@@ -27,7 +27,7 @@ class SteeringBehaviors {
 	}
 
 	/**
-	 * A Vector fleeing a target position 
+	 * A Vector fleeing a target position
 	 * @param targetPos the position to flee away from
 	 * @param panicDistance The distance from the targetPos when to flee
 	 */
@@ -46,13 +46,14 @@ class SteeringBehaviors {
 	 * @param deceleration The level of deceleration
 	 */
 	public arrive(targetPos: Vector2D, deceleration = DecelerationLevel.normal): Vector2D {
-		const ToTarget = Vector2D.subtract(targetPos, this._vehicle.position) // calculate the distance to the target position
-		const dist = ToTarget.length
+		const toTarget = Vector2D.subtract(targetPos, this._vehicle.position) // calculate the distance to the target position
+		const dist = toTarget.length
 
 		if (dist > 0) {
-			let speed = dist / (deceleration * 0.5) // the speed required to reach the target given the desired deceleration, '0.5' is tweaker.
+			// the speed required to reach the target given the desired deceleration, '0.5' is tweaker.
+			let speed = dist / (deceleration * 0.5)
 			speed = Math.min(speed, this._vehicle.maxSpeed) // make sure the velocity does not exceed the max
-			const desiredVelocity = Vector2D.multiply(ToTarget, speed / dist)
+			const desiredVelocity = Vector2D.multiply(toTarget, speed / dist)
 			return Vector2D.subtract(desiredVelocity, this._vehicle.velocity)
 		}
 
@@ -91,13 +92,14 @@ class SteeringBehaviors {
 	 */
 	public wander(): Vector2D {
 		const random = new Vector2D(Utils.randomClamped() * this._wanderJitter, Utils.randomClamped() * this._wanderJitter)
-		this.wanderTarget = Vector2D.normalize(Vector2D.add(this.wanderTarget, random)) // add a small random vector to the target's position
-		this.wanderTarget = Vector2D.multiply(this.wanderTarget, this._wanderRadius) // increase the length to the same as the wander circle radius
-
+		// add a small random vector to the target's position
+		this.wanderTarget = Vector2D.normalize(Vector2D.add(this.wanderTarget, random))
+		// increase the length to the same as the wander circle radius
+		this.wanderTarget = Vector2D.multiply(this.wanderTarget, this._wanderRadius)
 		// move the target into a position WanderDist in front of the agent
 		return Vector2D.add(this.wanderTarget, new Vector2D(this._wanderDistance, 0))
 	}
-	
+
 }
 
 export default SteeringBehaviors
