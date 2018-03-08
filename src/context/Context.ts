@@ -20,6 +20,7 @@ class Context  {
 	public defaults(): void {
 		this.ctx.setTransform(1, 0, 0, 1, this.width * 0.5, this.height * 0.5)
 		this.ctx.fillStyle = 'black'
+		this.ctx.strokeStyle = 'black'
 		this.ctx.font = '16px Arial'
 	}
 
@@ -37,6 +38,21 @@ class Context  {
 		this.ctx.translate(position.x, position.y)
 		this.ctx.rotate(rotation)
 		this.ctx.drawImage(image, -(image.width * 0.5), -(image.height * 0.5)) // center the image origin
+		this.defaults()
+	}
+
+	public drawObstacle(position: Vector2D, size: number): void {
+		this.ctx.translate(position.x, position.y)
+
+		this.ctx.fillStyle = 'white'
+		this.ctx.beginPath()
+		this.ctx.arc(0, 0, size, 0, 2 * Math.PI)
+		this.ctx.fill()
+
+		this.ctx.strokeStyle = 'black'
+		this.ctx.beginPath()
+		this.ctx.arc(0, 0, size, 0, 2 * Math.PI)
+		this.ctx.stroke()
 		this.defaults()
 	}
 
