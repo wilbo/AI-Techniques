@@ -110,10 +110,14 @@ class Vector2D {
 		return 1
 	}
 
-	public static angle(vector1: Vector2D): number {
-		const origin = new Vector2D(0, -1)
-		const radian = Math.acos(Vector2D.dot(vector1, origin) / (vector1.length * origin.length))
-		return Vector2D.sign(vector1, origin) === 1 ? ((Math.PI * 2) - radian) : radian
+	/**
+	 * Returns the angle between origin and the given vector in radians
+	 * @param vector
+	 */
+	public static angle(target: Vector2D): number {
+		const origin = Vector2D.normalize(new Vector2D(0, -1))
+		const angle = Math.acos(Vector2D.dot(Vector2D.normalize(target), origin))
+		return Vector2D.sign(target, origin) === 1 ? ((Math.PI * 2) - angle) : angle
 	}
 
 	public static random(maxX: number, maxY: number): Vector2D {
@@ -124,8 +128,7 @@ class Vector2D {
 
 	constructor(
 		public x: number = 0, 
-		public y: number = 0,
-		public w: number = 1
+		public y: number = 0
 	) { }
 
 	/**

@@ -7,7 +7,7 @@ import Context from '../context/Context'
 
 class Vehicle extends Entity implements IMovingEntity {
 	private _steering = new SteeringBehaviors(this)
-	private _target = Vector2D.random(this.world.width, this.world.height)
+	private _target = Vector2D.random(this.world.context.width, this.world.context.height)
 
 	constructor(
 		public world: World, 
@@ -35,7 +35,7 @@ class Vehicle extends Entity implements IMovingEntity {
 	
 	public update(delta: number): void {
 		if (Vector2D.equalsRounded(this._target, this.position, 2)) {
-			this._target = Vector2D.random(this.world.width, this.world.height)
+			this._target = Vector2D.random(this.world.context.width, this.world.context.height)
 		}
 
 		const steeringForce = this._steering.arrive(this._target) // calculate the combined force from each steering behavior in the vehicle’s list	
@@ -52,12 +52,7 @@ class Vehicle extends Entity implements IMovingEntity {
 
 	public render(context: Context) {
 		context.drawEntity(this._target, 3, 'red')
-		context.drawVehicle(this.position, Vector2D.angle(this.heading))
-
-		// context.drawEntity(this._steering.wanderTargetLocal, this._steering.wanderRadius, 'red')
-		// context.drawEntity(this._steering.wanderTarget, 3, 'blue')
-		context.drawEntity(Vector2D.add(this.position, new Vector2D(30, 0)), 3, 'blue')
-
+		context.drawVehicle(this.position, Vector2D.angle(this.heading))		
 	}
 }
 

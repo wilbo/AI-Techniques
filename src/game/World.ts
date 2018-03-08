@@ -4,16 +4,9 @@ import Context from '../context/Context';
 import Vector2D from '../utils/Vector2D';
 
 class World {
-	public height: number
-	public width: number
 	public fps: number = 0
 
-	constructor(
-		private _context: Context,
-	) {
-		this.width = _context.width
-		this.height = _context.height
-	}
+	constructor(public context: Context) { }
 
 	public update(delta: number): void {
 		for (const entity of EntityList.instance.list) {
@@ -22,10 +15,10 @@ class World {
 	}
 
 	public render(): void {
-		this._context.clear()
+		this.context.clear()
 		for (const entity of EntityList.instance.list) {
-			entity.render(this._context)
-			this.wrapAround(entity, this.width * 0.5, this.height * 0.5)
+			entity.render(this.context)
+			this.wrapAround(entity, this.context.width * 0.5, this.context.height * 0.5)
 		}
 
 		this.drawFps()
@@ -40,7 +33,7 @@ class World {
 	}
 
 	private drawFps(): void {
-		this._context.drawText(this.fps.toFixed(2) + ' fps', new Vector2D(-(this.width / 2) + 10, this.height / 2 - 10))
+		this.context.drawText(this.fps.toFixed(2) + ' fps', new Vector2D(-(this.context.width / 2) + 10, this.context.height / 2 - 10))
 	}
 }
 

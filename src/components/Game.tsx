@@ -3,9 +3,8 @@ import Frame from '../game/Frame'
 import World from '../game/World'
 import Vehicle from '../entity/Vehicle'
 import Controls from './Controls'
-import Context from '../context/Context';
-import Matrix2D from '../utils/Matrix2D';
-import Vector2D from '../utils/Vector2D';
+import Context from '../context/Context'
+import Vector2D from '../utils/Vector2D'
 
 class Game extends React.Component {
 	private element: HTMLElement
@@ -14,18 +13,16 @@ class Game extends React.Component {
 	
 	componentDidMount() {
 		if (this.element != null) {
-			// this.world = new World()
-			// this.frame = new Frame(this.world)
-			// const h = new Vehicle(this.world)
 
-			const c = new Context(this.element)
-			const vectors = [
-				new Vector2D(0, 0),
-				new Vector2D(2, 0),
-				new Vector2D(0, 1)
-			]
-
-			c.drawShape(vectors)
+			const canvas = document.createElement('canvas')
+			canvas.width = 1000
+			canvas.height = 600
+			this.element.appendChild(canvas)
+			const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+			const context = new Context(ctx, canvas.width, canvas.height)
+			this.world = new World(context)
+			this.frame = new Frame(this.world)
+			new Vehicle(this.world)
 		}
 	}
 
