@@ -1,17 +1,20 @@
 import Vector2D from '../utils/Vector2D'
 import Vehicle from '../entity/Vehicle'
 import DecelerationLevel from './DecelerationLevel'
+import Utils from '../utils/utils'
 
 class SteeringBehaviors {
-	public wanderRadius: number = 20
-	public wanderDistance: number = 50
-	public wanderJitter: number = 2
 	public wanderTarget: Vector2D
-	public wanderTargetLocal: Vector2D
+
+	private readonly _wanderRadius: number = 80 // the radius of the constraining circle for the wander behavior
+	private readonly _wanderDistance: number = 40 // distance the wander circle is projected in front of the agent
+	private readonly _wanderJitter: number = 40 // the maximum amount of displacement along the circle each frame
 
 	constructor(private _vehicle: Vehicle) {
-		const theta = Math.random() * (Math.PI * 2);
-		this.wanderTarget = new Vector2D(this.wanderRadius * Math.cos(theta), this.wanderRadius * Math.sin(theta));
+
+		// create a vector to a target position on the wander circle
+		const theta = Math.random() * (Math.PI * 2)
+		this.wanderTarget = new Vector2D(this._wanderRadius * Math.cos(theta), this._wanderRadius * Math.sin(theta))
 	}
 
 	/**
@@ -83,32 +86,18 @@ class SteeringBehaviors {
 		return this.flee(Vector2D.add(pursuer.position, Vector2D.multiply(pursuer.velocity, lookAheadTime)))
 	}
 
-	
-
 	/**
-	 * 
+	 * A vector wandering in random directions
 	 */
 	public wander(): Vector2D {
-		// add a small random vector to the target’s position ()
-		const randomVector = new Vector2D(this.randomClamped() * this.wanderJitter, this.randomClamped() * this.wanderJitter)
-		this.wanderTarget = Vector2D.add(this.wanderTarget, randomVector) // add a small random displacement
-		this.wanderTarget = Vector2D.multiply(Vector2D.normalize(this.wanderTarget), this.wanderRadius) // reproject the target back onto the wander circle
+		const random = new Vector2D(Utils.randomClamped() * this._wanderJitter, Utils.randomClamped() * this._wanderJitter)
+		this.wanderTarget = Vector2D.normalize(Vector2D.add(this.wanderTarget, random)) // add a small random vector to the target's position
+		this.wanderTarget = Vector2D.multiply(this.wanderTarget, this._wanderRadius) // increase the length to the same as the wander circle radius
 
-		this.wanderTargetLocal = Vector2D.add(this.wanderTarget, new Vector2D(this.wanderDistance, 0)) // move the target into a position wanderDistance in front of the agent
-
-
-		// const targetWorld = PointToWorldSpace(targetLocal, m_pVehicle->Heading(), m_pVehicle->Side(), m_pVehicle->Pos()); // project the target into world space 
-
-		console.log(this.wanderTargetLocal)
-		//and steer toward it
-		// return targetWorld - m_pVehicle->Pos();
-		return this.wanderTargetLocal
+		// move the target into a position WanderDist in front of the agent
+		return Vector2D.add(this.wanderTarget, new Vector2D(this._wanderDistance, 0))
 	}
 	
-	// returns a value between -1 and 1
-	private randomClamped(): number {
-		return Math.random() * 2 - 1;
-	} 
 }
 
 export default SteeringBehaviors

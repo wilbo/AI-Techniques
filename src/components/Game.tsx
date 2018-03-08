@@ -10,34 +10,39 @@ class Game extends React.Component {
 	private element: HTMLElement
 	private world: World
 	private frame: Frame
-	
-	componentDidMount() {
-		if (this.element != null) {
 
+	public componentDidMount() {
+		if (this.element != null) {
+			// adding a canvas element
 			const canvas = document.createElement('canvas')
 			canvas.width = 1000
 			canvas.height = 600
 			this.element.appendChild(canvas)
+
+			// creating context
 			const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+
+			// creating game, loop and entities
 			const context = new Context(ctx, canvas.width, canvas.height)
 			this.world = new World(context)
 			this.frame = new Frame(this.world)
-			new Vehicle(this.world)
+			const v = new Vehicle(this.world)
 		}
 	}
 
-  public render(): JSX.Element {
+ public render(): JSX.Element {
 		const style: React.CSSProperties = {
-			overflow: 'hidden'
+			overflow: 'hidden',
 		}
 
-    return (
+	 return (
 			<>
-				<div ref={r => (r) && (this.element = r)} style={style}></div>
+				<div ref={(r) => (r) && (this.element = r)} style={style} />
+	 			{/* tslint:disable-next-line:jsx-no-lambda */}
 				<Controls frame={() => this.frame} />
 			</>
-    )
-  }
+		)
+	}
 }
 
 export default Game

@@ -8,6 +8,7 @@ import Context from '../context/Context'
 class Vehicle extends Entity implements IMovingEntity {
 	private _steering = new SteeringBehaviors(this)
 	private _target = Vector2D.random(this.world.context.width, this.world.context.height)
+	private _steeringForce: Vector2D
 
 	constructor(
 		public world: World, 
@@ -34,12 +35,12 @@ class Vehicle extends Entity implements IMovingEntity {
 	}
 	
 	public update(delta: number): void {
-		if (Vector2D.equalsRounded(this._target, this.position, 2)) {
-			this._target = Vector2D.random(this.world.context.width, this.world.context.height)
-		}
+		// if (Vector2D.equalsRounded(this._target, this.position, 2)) {
+		// 	this._target = Vector2D.random(this.world.context.width, this.world.context.height)
+		// }
 
-		const steeringForce = this._steering.arrive(this._target) // calculate the combined force from each steering behavior in the vehicle’s list	
-		const acceleration = Vector2D.divide(steeringForce, this.mass) // acceleration = force / mass
+		this._steeringForce = this._steering.wander()
+		const acceleration = Vector2D.divide(this._steeringForce, this.mass) // acceleration = force / mass
 		this.velocity = Vector2D.add(this.velocity, Vector2D.multiply(acceleration, delta)) // update velocity
 		this.velocity = Vector2D.truncate(this.velocity, this.maxSpeed) // make sure vehicle does not exceed maximum velocity
 		this.position = Vector2D.add(this.position, Vector2D.multiply(this.velocity, delta)) // update the position
@@ -51,8 +52,8 @@ class Vehicle extends Entity implements IMovingEntity {
 	}
 
 	public render(context: Context) {
-		context.drawEntity(this._target, 3, 'red')
-		context.drawVehicle(this.position, Vector2D.angle(this.heading))		
+		// context.drawEntity(this._steering.wanderTarget, 3, 'red')
+		context.drawVehicle(this.position, Vector2D.angle(this.heading))
 	}
 }
 

@@ -14,8 +14,7 @@
 				}
 			],
 			"variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"],
-			"no-console": [false],
-			"max-line-length": 180
+			"no-console": [false]
 		},
     "rulesDirectory": []
 }

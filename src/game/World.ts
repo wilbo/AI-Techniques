@@ -1,7 +1,7 @@
 import EntityList from '../entity/EntityList'
 import Entity from '../entity/Entity'
-import Context from '../context/Context';
-import Vector2D from '../utils/Vector2D';
+import Context from '../context/Context'
+import Vector2D from '../utils/Vector2D'
 
 class World {
 	public fps: number = 0
