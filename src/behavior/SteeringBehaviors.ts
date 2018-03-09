@@ -2,6 +2,8 @@ import Vector2D from '../utils/Vector2D'
 import Vehicle from '../entity/Vehicle'
 import DecelerationLevel from './DecelerationLevel'
 import Utils from '../utils/utils'
+import Entity from '../entity/base/Entity'
+import Obstacle from '../entity/Obstacle'
 
 class SteeringBehaviors {
 	public wanderTarget: Vector2D
@@ -9,6 +11,8 @@ class SteeringBehaviors {
 	private readonly _wanderRadius: number = 80 // the radius of the constraining circle for the wander behavior
 	private readonly _wanderDistance: number = 40 // distance the wander circle is projected in front of the agent
 	private readonly _wanderJitter: number = 40 // the maximum amount of displacement along the circle each frame
+
+	private readonly _distanceFromBoundary = 30 // for hiding spot
 
 	constructor(private _vehicle: Vehicle) {
 
@@ -31,7 +35,7 @@ class SteeringBehaviors {
 	 * @param targetPos the position to flee away from
 	 * @param panicDistance The distance from the targetPos when to flee
 	 */
-	public flee(targetPos: Vector2D, panicDistance = 0): Vector2D  {
+	public flee(targetPos: Vector2D, panicDistance = 0): Vector2D {
 		if (panicDistance && Vector2D.distanceSq(this._vehicle.position, targetPos) > (panicDistance * panicDistance)) {
 			return new Vector2D(0, 0)
 		}
@@ -100,6 +104,46 @@ class SteeringBehaviors {
 		return Vector2D.add(this.wanderTarget, new Vector2D(this._wanderDistance, 0))
 	}
 
+	/**
+	 * Hide from a target behind an obstacle
+	 * @param target the vehicle that is about to hide
+	 * @param obstacles The obstacles to choose from
+	 */
+	public hide(target: Vehicle, obstacles: Obstacle[]) {
+		let distToClosest = Number.MAX_VALUE
+		let bestHidingSpot = new Vector2D()
+
+		for (const obstacle of obstacles) {
+			const hidingSpot = this.getHidingPosition(obstacle.position, obstacle.radius, target.position)
+			const distance = Vector2D.distanceSq(hidingSpot, this._vehicle.position)
+
+			if (distance < distToClosest) {
+				distToClosest = distance
+				bestHidingSpot = hidingSpot
+			}
+		}
+
+		if (distToClosest === Number.MAX_VALUE) {
+			return this.evade(target)
+		}
+
+		return this.arrive(bestHidingSpot, DecelerationLevel.fast)
+	}
+
+	/**
+	 * Returns a hiding position based on a target and obstacle
+	 * @param obstaclePosition The position of the obstacle
+	 * @param obstacleRadius The radius of the obstacle
+	 * @param targetPosition the position of the target to hide from
+	 */
+	private getHidingPosition(obstaclePosition: Vector2D, obstacleRadius: number, targetPosition: Vector2D): Vector2D {
+		// calculate how far away the agent is to be from the chosen obstacle’s bounding radius
+		const distAway = obstacleRadius + this._distanceFromBoundary
+		// calculate the heading toward the object from the target
+		const toOb = Vector2D.normalize(Vector2D.subtract(obstaclePosition, targetPosition))
+		// scale it to size and add to the obstacle's position to get the hiding spot.
+		return Vector2D.add(Vector2D.multiply(toOb, distAway), obstaclePosition)
+	}
 }
 
 export default SteeringBehaviors

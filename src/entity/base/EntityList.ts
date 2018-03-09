@@ -1,4 +1,7 @@
 import Entity from './Entity'
+import Obstacle from '../Obstacle'
+import Vehicle from '../Vehicle'
+import EntityType from './EntityType'
 
 class EntityList {
 	private static _instance: EntityList
@@ -9,7 +12,7 @@ class EntityList {
 	}
 
 	public static get instance(): EntityList {
-		if (this._instance == null || typeof this._instance == 'undefined') {
+		if (typeof this._instance === 'undefined') {
 			this._instance = new EntityList()
 		}
 
@@ -26,6 +29,14 @@ class EntityList {
 
 	public get list(): Entity[] {
 		return this._list
+	}
+
+	public get obstacles(): Obstacle[] {
+		return this._list.filter((e) => e.type === EntityType.Obstacle) as Obstacle[]
+	}
+
+	public get vehicles(): Vehicle[] {
+		return this._list.filter((e) => e.type === EntityType.Vehicle) as Vehicle[]
 	}
 }
 

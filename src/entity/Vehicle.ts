@@ -4,6 +4,7 @@ import World from '../game/World'
 import Vector2D from '../utils/Vector2D'
 import Context from '../context/Context'
 import SteeringBehaviors from '../behavior/SteeringBehaviors'
+import EntityType from './base/EntityType'
 
 class Vehicle extends Entity implements IMovingEntity {
 	private _steering = new SteeringBehaviors(this)
@@ -12,15 +13,15 @@ class Vehicle extends Entity implements IMovingEntity {
 
 	constructor(
 		public world: World,
-		public position: Vector2D = new Vector2D(),
-		public velocity: Vector2D = new Vector2D(),
-		public heading: Vector2D = new Vector2D(),
-		public side: Vector2D = new Vector2D(),
-		public mass: number = 0.5,
-		public maxSpeed: number = 300,
-		public maxForce: number = 1,
-		public maxTurnRate: number = 0.05,
-	) { super(world, position) }
+		public position = new Vector2D(),
+		public velocity = new Vector2D(),
+		public heading= new Vector2D(),
+		public side = new Vector2D(),
+		public mass = 0.5,
+		public maxSpeed = 300,
+		public maxForce = 1,
+		public maxTurnRate = 0.05,
+	) { super(world, EntityType.Vehicle, 10, position) }
 
 	public get speed(): number {
 		return this.velocity.length

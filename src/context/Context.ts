@@ -24,11 +24,11 @@ class Context  {
 		this.ctx.font = '16px Arial'
 	}
 
-	public drawEntity(position: Vector2D, size: number, color: string = 'black'): void {
+	public drawEntity(position: Vector2D, radius: number, color: string = 'black'): void {
 		this.ctx.translate(position.x, position.y)
 		this.ctx.fillStyle = color
 		this.ctx.beginPath()
-		this.ctx.arc(0, 0, size, 0, 2 * Math.PI)
+		this.ctx.arc(0, 0, radius, 0, 2 * Math.PI)
 		this.ctx.fill()
 		this.defaults()
 	}
@@ -41,17 +41,17 @@ class Context  {
 		this.defaults()
 	}
 
-	public drawObstacle(position: Vector2D, size: number): void {
+	public drawObstacle(position: Vector2D, radius: number): void {
 		this.ctx.translate(position.x, position.y)
 
 		this.ctx.fillStyle = 'white'
 		this.ctx.beginPath()
-		this.ctx.arc(0, 0, size, 0, 2 * Math.PI)
+		this.ctx.arc(0, 0, radius, 0, 2 * Math.PI)
 		this.ctx.fill()
 
 		this.ctx.strokeStyle = 'black'
 		this.ctx.beginPath()
-		this.ctx.arc(0, 0, size, 0, 2 * Math.PI)
+		this.ctx.arc(0, 0, radius, 0, 2 * Math.PI)
 		this.ctx.stroke()
 		this.defaults()
 	}
