@@ -3,13 +3,16 @@ import VehicleType from './helpers/VehicleType'
 import ImageLoader from './helpers/ImageLoader'
 
 import * as Road from '../assets/racing-pack/road/road_asphalt22.png'
+import Matrix2D from '../utils/Matrix2D'
 
 class Context  {
 	constructor(
 		public ctx: CanvasRenderingContext2D,
 		public width: number,
 		public height: number,
+		private _view: Matrix2D = Matrix2D.view(width, height)
 	) {
+		this._view = Matrix2D.view(width, height)
 		this.defaults()
 	}
 
@@ -18,7 +21,8 @@ class Context  {
 	}
 
 	public defaults(): void {
-		this.ctx.setTransform(1, 0, 0, 1, this.width * 0.5, this.height * 0.5)
+		const { m11, m12, m21, m22, m13, m23 } = this._view
+		this.ctx.setTransform(m11, m12, m21, m22, m13, m23)
 		this.ctx.fillStyle = 'black'
 		this.ctx.strokeStyle = 'black'
 		this.ctx.font = '16px Arial'
@@ -57,6 +61,7 @@ class Context  {
 	}
 
 	public drawText(text: string, position: Vector2D = new Vector2D()): void {
+		this.ctx.scale(1, -1)
 		this.ctx.fillText(text, Math.round(position.x), Math.round(position.y), 200)
 		this.defaults()
 	}

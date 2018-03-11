@@ -6,6 +6,7 @@ import Controls from './Controls'
 import Context from '../context/Context'
 import Vector2D from '../utils/Vector2D'
 import Obstacle from '../entity/Obstacle'
+import Matrix2D from '../utils/Matrix2D'
 
 class Game extends React.Component {
 	private element: HTMLElement
@@ -27,7 +28,6 @@ class Game extends React.Component {
 			const context = new Context(ctx, canvas.width, canvas.height)
 			this.world = new World(context)
 			this.frame = new Frame(this.world)
-			const v = new Vehicle(this.world)
 
 			const obstacle1 = new Obstacle(this.world)
 			const obstacle2 = new Obstacle(this.world)
@@ -35,6 +35,7 @@ class Game extends React.Component {
 			const obstacle4 = new Obstacle(this.world)
 			const obstacle5 = new Obstacle(this.world)
 			const obstacle6 = new Obstacle(this.world)
+			const v = new Vehicle(this.world)
 		}
 	}
 

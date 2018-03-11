@@ -4,6 +4,7 @@ import DecelerationLevel from './DecelerationLevel'
 import Utils from '../utils/utils'
 import Entity from '../entity/base/Entity'
 import Obstacle from '../entity/Obstacle'
+import EntityList from '../entity/base/EntityList';
 
 class SteeringBehaviors {
 	public wanderTarget: Vector2D
@@ -102,6 +103,47 @@ class SteeringBehaviors {
 		this.wanderTarget = Vector2D.multiply(this.wanderTarget, this._wanderRadius)
 		// move the target into a position WanderDist in front of the agent
 		return Vector2D.add(this.wanderTarget, new Vector2D(this._wanderDistance, 0))
+	}
+
+	// tslint:disable-next-line:member-ordering
+	private readonly _minDetectionBoxLength: number = 30
+
+	/**
+	 *
+	 */
+	public obstacleAvoidance(): Vector2D {
+		let cib: Entity | null = null // the closest intersecting obstacle (cib)
+		let cibDistance = Number.MAX_VALUE // distance of cib
+		let cibLocal: Vector2D // local coordinates of cib
+		const steeringForce = new Vector2D()
+
+		// the detection box length is proportional to the agent's velocity
+		const boxLength = this._minDetectionBoxLength + (this._vehicle.speed / this._vehicle.maxSpeed) * this._minDetectionBoxLength
+		this._vehicle.tagNeighbors(boxLength) // tag all obstacles within range
+
+		const output: Vector2D[] = []
+		for (const obstacle of EntityList.instance.obstacles) {
+			if (obstacle.isTagged) {
+				cibLocal = Vector2D.subtract(obstacle.position, this._vehicle.position)
+				const localDistance = Vector2D.distanceSq(cibLocal, this._vehicle.position)
+
+				if (localDistance < cibDistance) {
+					cibDistance = localDistance
+					cib = obstacle
+				}
+			}
+		}
+
+		if (cib != null) {
+			const multiplier = .2 + (boxLength - cib.position.x) / boxLength
+			// calculate the lateral force
+			steeringForce.y = (cib.boundingRadius - cib.position.y) * multiplier
+			// apply a braking force proportional to the obstacles distance from the vehicle.
+			steeringForce.x = (cib.boundingRadius - cib.position.x) * 0.2 // braking weight
+			return steeringForce
+		}
+
+		return this.wander()
 	}
 
 	/**

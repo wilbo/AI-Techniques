@@ -5,6 +5,7 @@ import Vector2D from '../utils/Vector2D'
 import Context from '../context/Context'
 import SteeringBehaviors from '../behavior/SteeringBehaviors'
 import EntityType from './base/EntityType'
+import Matrix2D from '../utils/Matrix2D'
 
 class Vehicle extends Entity implements IMovingEntity {
 	private _steering = new SteeringBehaviors(this)
@@ -40,6 +41,7 @@ class Vehicle extends Entity implements IMovingEntity {
 		// 	this._target = Vector2D.random(this.world.context.width, this.world.context.height)
 		// }
 
+		// this._steeringForce = this._steering.obstacleAvoidance()
 		this._steeringForce = this._steering.wander()
 		const acceleration = Vector2D.divide(this._steeringForce, this.mass) // acceleration = force / mass
 		this.velocity = Vector2D.add(this.velocity, Vector2D.multiply(acceleration, delta)) // update velocity
@@ -56,7 +58,14 @@ class Vehicle extends Entity implements IMovingEntity {
 	public render(context: Context) {
 		// context.drawEntity(this._steering.wanderTarget, 3, 'red')
 		context.drawVehicle(this.position, Vector2D.angle(this.heading))
+		context.drawEntity(Matrix2D.pointToWorldSpace(new Vector2D(50, 0), this.heading, this.side, this.position), 3, 'red')
+
+		// for (const sf of this._steering.obstacleAvoidance(EntityList.in	stance.obstacles)) {
+		// 	context.drawEntity(sf, 3, 'red')
+		// }
 	}
+
+
 }
 
 export default Vehicle
