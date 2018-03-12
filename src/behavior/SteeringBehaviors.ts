@@ -8,6 +8,7 @@ import EntityList from '../entity/base/EntityList'
 import Matrix2D from '../utils/Matrix2D'
 
 class SteeringBehaviors {
+
 	// wander
 	public wanderTarget = new Vector2D()
 	private readonly _wanderRadius: number = 120 // the radius of the constraining circle for the wander behavior
@@ -15,7 +16,7 @@ class SteeringBehaviors {
 	private readonly _wanderJitter: number = 60 // the maximum amount of displacement along the circle each frame
 
 	// hide
-	private readonly _distanceFromBoundary = 30 
+	private readonly _distanceFromBoundary = 30
 
 	// obstacle avoidance
 	private readonly _minDetectionBoxLength: number = 50
@@ -115,7 +116,7 @@ class SteeringBehaviors {
 	}
 
 	/**
-	 *
+	 * Avoid obstacles that are close to the vehicle
 	 */
 	public obstacleAvoidance(): Vector2D {
 		let cib: Obstacle | null = null // the closest intersecting obstacle (cib)

@@ -35,12 +35,7 @@ class Game extends React.Component {
 			const obstacle4 = new Obstacle(this.world)
 			const obstacle5 = new Obstacle(this.world)
 			const obstacle6 = new Obstacle(this.world)
-			new Vehicle(this.world)
-			new Vehicle(this.world)
-			new Vehicle(this.world)
-			new Vehicle(this.world)
-			new Vehicle(this.world)
-			new Vehicle(this.world)
+			const v = new Vehicle(this.world)
 		}
 	}
 

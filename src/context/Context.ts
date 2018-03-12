@@ -1,16 +1,16 @@
 import Vector2D from '../utils/Vector2D'
 import VehicleType from './helpers/VehicleType'
 import ImageLoader from './helpers/ImageLoader'
+import Matrix2D from '../utils/Matrix2D'
 
 import * as Road from '../assets/racing-pack/road/road_asphalt22.png'
-import Matrix2D from '../utils/Matrix2D'
 
 class Context  {
 	constructor(
 		public ctx: CanvasRenderingContext2D,
 		public width: number,
 		public height: number,
-		private _view: Matrix2D = Matrix2D.view(width, height)
+		private _view: Matrix2D = Matrix2D.view(width, height),
 	) {
 		this._view = Matrix2D.view(width, height)
 		this.defaults()

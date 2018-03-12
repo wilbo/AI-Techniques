@@ -9,9 +9,7 @@ import Matrix2D from '../utils/Matrix2D'
 
 class Vehicle extends Entity implements IMovingEntity {
 	private _steering = new SteeringBehaviors(this)
-	private _target = Vector2D.random(this.world.context.width, this.world.context.height)
-	private _steeringForce: Vector2D
-	private _f: Vector2D
+	private _angle: number
 
 	constructor(
 		public world: World,
@@ -38,29 +36,22 @@ class Vehicle extends Entity implements IMovingEntity {
 	}
 
 	public update(delta: number): void {
-		if (Vector2D.equalsRounded(this._target, this.position)) {
-			this._target = Vector2D.random(this.world.context.width, this.world.context.height)
-		}
-
-		this._steeringForce = this._steering.obstacleAvoidance()
-		// this._steeringForce = this._steering.seek(this._target)
-		// this._steeringForce = this._steering.wander()
-		const acceleration = Vector2D.divide(this._steeringForce, this.mass) // acceleration = force / mass
+		const steeringForce = this._steering.wander()
+		const acceleration = Vector2D.divide(steeringForce, this.mass) // acceleration = force / mass
 		this.velocity = Vector2D.add(this.velocity, Vector2D.multiply(acceleration, delta)) // update velocity
 		this.velocity = Vector2D.truncate(this.velocity, this.maxSpeed) // make sure vehicle does not exceed maximum velocity
 		this.position = Vector2D.add(this.position, Vector2D.multiply(this.velocity, delta)) // update the position
 
 		if (this.velocity.lengthSq > 0.00000001) {
-			// update the heading if the vehicle has a velocity greater than a very small value
 			this.heading = Vector2D.normalize(this.velocity)
 			this.side = Vector2D.perp(this.heading)
 		}
 
-		// this._f = this._steering.obstacleAvoidance()
+		this._angle = Vector2D.angle(this.heading)
 	}
 
 	public render(context: Context) {
-		context.drawVehicle(this.position, Vector2D.angle(this.heading))
+		context.drawVehicle(this.position, this._angle)
 	}
 }
 

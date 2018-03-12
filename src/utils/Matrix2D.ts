@@ -9,7 +9,7 @@ class Matrix2D {
 	}
 
 	public static pointToWorldSpace(point: Vector2D, heading: Vector2D, side: Vector2D, position: Vector2D): Vector2D {
-		if (heading.x === 0) { return point }
+		if (heading.isZero) { return point }
 		const transformation = new Matrix2D()
 		transformation.translate(position) // calling translation first won't break things !!!
 		transformation.rotate(heading, side)
@@ -17,7 +17,7 @@ class Matrix2D {
 	}
 
 	public static pointToLocalSpace(point: Vector2D, heading: Vector2D, side: Vector2D, position: Vector2D): Vector2D {
-		if (heading.x === 0) { return point }
+		if (heading.isZero) { return point }
 		const tx = -(Vector2D.dot(position, heading))
 		const ty = -(Vector2D.dot(position, side))
 		const transformation = new Matrix2D(
