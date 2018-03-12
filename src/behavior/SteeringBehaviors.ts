@@ -4,16 +4,21 @@ import DecelerationLevel from './DecelerationLevel'
 import Utils from '../utils/utils'
 import Entity from '../entity/base/Entity'
 import Obstacle from '../entity/Obstacle'
-import EntityList from '../entity/base/EntityList';
+import EntityList from '../entity/base/EntityList'
+import Matrix2D from '../utils/Matrix2D'
 
 class SteeringBehaviors {
-	public wanderTarget: Vector2D
+	// wander
+	public wanderTarget = new Vector2D()
+	private readonly _wanderRadius: number = 120 // the radius of the constraining circle for the wander behavior
+	private readonly _wanderDistance: number = 120 // distance the wander circle is projected in front of the agent
+	private readonly _wanderJitter: number = 60 // the maximum amount of displacement along the circle each frame
 
-	private readonly _wanderRadius: number = 80 // the radius of the constraining circle for the wander behavior
-	private readonly _wanderDistance: number = 40 // distance the wander circle is projected in front of the agent
-	private readonly _wanderJitter: number = 40 // the maximum amount of displacement along the circle each frame
+	// hide
+	private readonly _distanceFromBoundary = 30 
 
-	private readonly _distanceFromBoundary = 30 // for hiding spot
+	// obstacle avoidance
+	private readonly _minDetectionBoxLength: number = 50
 
 	constructor(private _vehicle: Vehicle) {
 
@@ -102,20 +107,20 @@ class SteeringBehaviors {
 		// increase the length to the same as the wander circle radius
 		this.wanderTarget = Vector2D.multiply(this.wanderTarget, this._wanderRadius)
 		// move the target into a position WanderDist in front of the agent
-		return Vector2D.add(this.wanderTarget, new Vector2D(this._wanderDistance, 0))
+		let target = Vector2D.add(this.wanderTarget, new Vector2D(this._wanderDistance, 0))
+		// project the target into world space
+		target = Matrix2D.pointToWorldSpace(target, this._vehicle.heading, this._vehicle.side,  this._vehicle.position)
+		// steer towards it
+		return Vector2D.subtract(target, this._vehicle.position)
 	}
-
-	// tslint:disable-next-line:member-ordering
-	private readonly _minDetectionBoxLength: number = 30
 
 	/**
 	 *
 	 */
 	public obstacleAvoidance(): Vector2D {
-		let cib: Entity | null = null // the closest intersecting obstacle (cib)
+		let cib: Obstacle | null = null // the closest intersecting obstacle (cib)
 		let cibDistance = Number.MAX_VALUE // distance of cib
-		let cibLocal: Vector2D // local coordinates of cib
-		const steeringForce = new Vector2D()
+		let cibLocal = new Vector2D() // local coordinates of cib
 
 		// the detection box length is proportional to the agent's velocity
 		const boxLength = this._minDetectionBoxLength + (this._vehicle.speed / this._vehicle.maxSpeed) * this._minDetectionBoxLength
@@ -124,26 +129,39 @@ class SteeringBehaviors {
 		const output: Vector2D[] = []
 		for (const obstacle of EntityList.instance.obstacles) {
 			if (obstacle.isTagged) {
-				cibLocal = Vector2D.subtract(obstacle.position, this._vehicle.position)
-				const localDistance = Vector2D.distanceSq(cibLocal, this._vehicle.position)
+				const localPos = Matrix2D.pointToLocalSpace(obstacle.position, this._vehicle.heading, this._vehicle.side, this._vehicle.position)
 
-				if (localDistance < cibDistance) {
-					cibDistance = localDistance
-					cib = obstacle
+				if (localPos.x >= 0) {
+					const expandedRadius = obstacle.boundingRadius + this._vehicle.boundingRadius
+
+					if (Math.abs(localPos.y) < expandedRadius) { // vehicle is too close
+						const sqrtPart = Math.sqrt(expandedRadius * expandedRadius - localPos.x * localPos.y)
+						let ip = localPos.x - sqrtPart
+
+						if (ip <= 0) {
+							ip = localPos.x + sqrtPart
+						}
+
+						if (ip < cibDistance) {
+							cibDistance = ip
+							cib = obstacle
+							cibLocal = localPos
+						}
+					}
 				}
 			}
 		}
 
+		let steeringForce = new Vector2D()
+
 		if (cib != null) {
-			const multiplier = .2 + (boxLength - cib.position.x) / boxLength
-			// calculate the lateral force
-			steeringForce.y = (cib.boundingRadius - cib.position.y) * multiplier
-			// apply a braking force proportional to the obstacles distance from the vehicle.
-			steeringForce.x = (cib.boundingRadius - cib.position.x) * 0.2 // braking weight
-			return steeringForce
+			const multiplier = ((boxLength - cibLocal.x) / boxLength) + 8 // extra
+			steeringForce.y = (cib.boundingRadius - cibLocal.y) * multiplier
+			steeringForce.x = (cib.boundingRadius -  cibLocal.x) * 8 // braking weight
+			steeringForce = Matrix2D.vectorToWorldSpace(steeringForce, this._vehicle.heading, this._vehicle.side)
 		}
 
-		return this.wander()
+		return steeringForce
 	}
 
 	/**

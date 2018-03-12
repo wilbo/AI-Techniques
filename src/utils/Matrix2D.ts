@@ -9,10 +9,29 @@ class Matrix2D {
 	}
 
 	public static pointToWorldSpace(point: Vector2D, heading: Vector2D, side: Vector2D, position: Vector2D): Vector2D {
+		if (heading.x === 0) { return point }
 		const transformation = new Matrix2D()
-		transformation.translate(position) // call translation first won't break things !!!
+		transformation.translate(position) // calling translation first won't break things !!!
 		transformation.rotate(heading, side)
 		return transformation.transformVector2D(point)
+	}
+
+	public static pointToLocalSpace(point: Vector2D, heading: Vector2D, side: Vector2D, position: Vector2D): Vector2D {
+		if (heading.x === 0) { return point }
+		const tx = -(Vector2D.dot(position, heading))
+		const ty = -(Vector2D.dot(position, side))
+		const transformation = new Matrix2D(
+			heading.x, side.x, tx,
+			heading.y, side.y, ty,
+		)
+
+		return transformation.transformVector2D(point)
+	}
+
+	public static vectorToWorldSpace(vector: Vector2D, heading: Vector2D, side: Vector2D): Vector2D {
+			const transformation = new Matrix2D()
+			transformation.rotate(heading, side)
+			return transformation.transformVector2D(vector)
 	}
 
 	constructor(

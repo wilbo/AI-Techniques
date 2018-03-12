@@ -11,18 +11,19 @@ class Vehicle extends Entity implements IMovingEntity {
 	private _steering = new SteeringBehaviors(this)
 	private _target = Vector2D.random(this.world.context.width, this.world.context.height)
 	private _steeringForce: Vector2D
+	private _f: Vector2D
 
 	constructor(
 		public world: World,
 		public position = new Vector2D(),
 		public velocity = new Vector2D(),
-		public heading= new Vector2D(),
+		public heading = new Vector2D(),
 		public side = new Vector2D(),
 		public mass = 0.5,
 		public maxSpeed = 300,
 		public maxForce = 1,
 		public maxTurnRate = 0.05,
-	) { super(world, EntityType.Vehicle, 10, position) }
+	) { super(world, EntityType.Vehicle, 25, position) }
 
 	public get speed(): number {
 		return this.velocity.length
@@ -37,12 +38,13 @@ class Vehicle extends Entity implements IMovingEntity {
 	}
 
 	public update(delta: number): void {
-		// if (Vector2D.equalsRounded(this._target, this.position, 2)) {
-		// 	this._target = Vector2D.random(this.world.context.width, this.world.context.height)
-		// }
+		if (Vector2D.equalsRounded(this._target, this.position)) {
+			this._target = Vector2D.random(this.world.context.width, this.world.context.height)
+		}
 
-		// this._steeringForce = this._steering.obstacleAvoidance()
-		this._steeringForce = this._steering.wander()
+		this._steeringForce = this._steering.obstacleAvoidance()
+		// this._steeringForce = this._steering.seek(this._target)
+		// this._steeringForce = this._steering.wander()
 		const acceleration = Vector2D.divide(this._steeringForce, this.mass) // acceleration = force / mass
 		this.velocity = Vector2D.add(this.velocity, Vector2D.multiply(acceleration, delta)) // update velocity
 		this.velocity = Vector2D.truncate(this.velocity, this.maxSpeed) // make sure vehicle does not exceed maximum velocity
@@ -53,19 +55,13 @@ class Vehicle extends Entity implements IMovingEntity {
 			this.heading = Vector2D.normalize(this.velocity)
 			this.side = Vector2D.perp(this.heading)
 		}
+
+		// this._f = this._steering.obstacleAvoidance()
 	}
 
 	public render(context: Context) {
-		// context.drawEntity(this._steering.wanderTarget, 3, 'red')
 		context.drawVehicle(this.position, Vector2D.angle(this.heading))
-		context.drawEntity(Matrix2D.pointToWorldSpace(new Vector2D(50, 0), this.heading, this.side, this.position), 3, 'red')
-
-		// for (const sf of this._steering.obstacleAvoidance(EntityList.in	stance.obstacles)) {
-		// 	context.drawEntity(sf, 3, 'red')
-		// }
 	}
-
-
 }
 
 export default Vehicle
