@@ -12,7 +12,7 @@ class Matrix2D {
 		if (heading.isZero) { return point }
 		const transformation = new Matrix2D()
 		transformation.translate(position) // calling translation first won't break things !!!
-		transformation.rotate(heading, side)
+		transformation.rotateVector2D(heading, side)
 		return transformation.transformVector2D(point)
 	}
 
@@ -30,8 +30,14 @@ class Matrix2D {
 
 	public static vectorToWorldSpace(vector: Vector2D, heading: Vector2D, side: Vector2D): Vector2D {
 			const transformation = new Matrix2D()
-			transformation.rotate(heading, side)
+			transformation.rotateVector2D(heading, side)
 			return transformation.transformVector2D(vector)
+	}
+
+	public static vec2DRotateAroundOrigin(vector: Vector2D, angle: number): Vector2D {
+		const transformation = new Matrix2D()
+		transformation.rotateAngle(angle)
+		return transformation.transformVector2D(vector)
 	}
 
 	constructor(
@@ -61,7 +67,7 @@ class Matrix2D {
 	/**
 	 * Create a rotation matrix from a 2D vector
 	 */
-	public rotate(heading: Vector2D, side: Vector2D): void {
+	public rotateVector2D(heading: Vector2D, side: Vector2D): void {
 		const matrix = new Matrix2D()
 		matrix.m11 = heading.x
 		matrix.m12 = heading.y
@@ -71,9 +77,23 @@ class Matrix2D {
 	}
 
 	/**
+	 * Create a rotation matrix from an angle
+	 */
+	public rotateAngle(angle: number): void {
+		const sin = Math.sin(angle)
+		const cos = Math.cos(angle)
+		const matrix = new Matrix2D(
+			cos, sin, 0,
+			-sin, cos, 0,
+		)
+
+		this.multiply(matrix)
+	}
+
+	/**
 	 * Create a translation matrix from a 2D vector
 	 */
-	public translate(vector: Vector2D) {
+	public translate(vector: Vector2D): void {
 		const matrix = new Matrix2D()
 		matrix.m13 = vector.x
 		matrix.m23 = vector.y

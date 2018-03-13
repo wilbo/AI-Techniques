@@ -1,6 +1,8 @@
 enum EntityType {
 	Vehicle,
-	Obstacle,
+	ObstacleRound,
+	ObstacleRect,
+	Wall,
 }
 
 export default EntityType

@@ -81,6 +81,15 @@ class Context  {
 		fill ? this.ctx.fill() : this.ctx.stroke()
 		this.defaults()
 	}
+
+	public drawWall(from: Vector2D, to: Vector2D, color: string = 'black'): void {
+		this.ctx.strokeStyle = color
+		this.ctx.beginPath()
+		this.ctx.moveTo(from.x, from.y)
+		this.ctx.lineTo(to.x, to.y)
+		this.ctx.stroke()
+		this.defaults()
+	}
 }
 
 export default Context

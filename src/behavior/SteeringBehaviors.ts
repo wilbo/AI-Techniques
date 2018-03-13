@@ -6,6 +6,7 @@ import Entity from '../entity/base/Entity'
 import ObstacleRound from '../entity/ObstacleRound'
 import EntityList from '../entity/base/EntityList'
 import Matrix2D from '../utils/Matrix2D'
+import Wall from '../entity/Wall'
 
 class SteeringBehaviors {
 	public seekOn = false
@@ -15,9 +16,11 @@ class SteeringBehaviors {
 	public evadeOn = false
 	public wanderOn = false
 	public obstacleAvoidanceOn = false
+	public wallAvoidanceOn = false
 	public hideOn = false
 	public targetAgent: Vehicle
-	public panicDistance: number = 160
+	public targetPosition: Vector2D
+	public panicDistance = 160
 
 	private _combinedSteeringForce = new Vector2D()
 
@@ -27,15 +30,19 @@ class SteeringBehaviors {
 
 	// wander
 	private _wanderTarget = new Vector2D()
-	private readonly _wanderRadius: number = 120 // the radius of the constraining circle for the wander behavior
-	private readonly _wanderDistance: number = 120 // distance the wander circle is projected in front of the agent
-	private readonly _wanderJitter: number = 60 // the maximum amount of displacement along the circle each frame
+	private readonly _wanderRadius = 120 // the radius of the constraining circle for the wander behavior
+	private readonly _wanderDistance = 120 // distance the wander circle is projected in front of the agent
+	private readonly _wanderJitter = 60 // the maximum amount of displacement along the circle each frame
 
 	// hide
 	private readonly _distanceFromBoundary = 30
 
 	// obstacle avoidance
-	private readonly _minDetectionBoxLength: number = 50
+	private readonly _minDetectionBoxLength = 50
+
+	// wall avoidance
+	private _feelers: Vector2D[] = []
+	private _feelerLength = 100
 
 	constructor(private _vehicle: Vehicle) {
 		// wander, create a vector to a target position on the wander circle
@@ -180,6 +187,46 @@ class SteeringBehaviors {
 		return steeringForce
 	}
 
+	//
+	public wallAvoidance(): Vector2D {
+		this.createFeelers()
+
+		const distToThisIP = 0.0
+		const point = new Vector2D()
+
+		let distToClosestIP = Number.MAX_VALUE
+		let closestWall: Wall | null = null
+		let steeringForce = new Vector2D()
+		let closestPoint = new Vector2D()
+
+		for (const feeler of this._feelers) {
+			for (const wall of EntityList.instance.walls) {
+				if (Utils.lineIntersection(
+					this._vehicle.position,
+					feeler,
+					wall.from,
+					wall.to,
+					distToThisIP,
+					point,
+				)) {
+					if (distToThisIP < distToClosestIP) {
+						distToClosestIP = distToThisIP
+						closestWall = wall
+						closestPoint = point
+					}
+				}
+			}
+
+			if (closestWall != null) {
+				const overShoot = Vector2D.subtract(feeler, closestPoint)
+				steeringForce = Vector2D.multiply(closestWall.normalized, overShoot.length * 100)
+				console.log(steeringForce)
+			}
+		}
+
+		return steeringForce
+	}
+
 	/**
 	 * Hide from a target behind an obstacle
 	 * @param target the vehicle that is about to hide
@@ -214,6 +261,11 @@ class SteeringBehaviors {
 
 		let force = new Vector2D()
 
+		if (this.wallAvoidanceOn) {
+			force = this.wallAvoidance()
+			if (!this.accumulateForce(force)) { return this._combinedSteeringForce }
+		}
+
 		if (this.obstacleAvoidanceOn) {
 			force = this.obstacleAvoidance()
 			if (!this.accumulateForce(force)) { return this._combinedSteeringForce }
@@ -226,17 +278,20 @@ class SteeringBehaviors {
 		}
 
 		if (this.fleeOn) {
-			force = this.flee(new Vector2D())
+			if (typeof this.targetPosition === 'undefined') { throw new Error('No targetPosition defined') }
+			force = this.flee(this.targetPosition)
 			if (!this.accumulateForce(force)) { return this._combinedSteeringForce }
 		}
 
 		if (this.seekOn) {
-			force = this.seek(new Vector2D())
+			if (typeof this.targetPosition === 'undefined') { throw new Error('No targetPosition defined') }
+			force = this.seek(this.targetPosition)
 			if (!this.accumulateForce(force)) { return this._combinedSteeringForce }
 		}
 
 		if (this.arriveOn) {
-			force = this.arrive(new Vector2D())
+			if (typeof this.targetPosition === 'undefined') { throw new Error('No targetPosition defined') }
+			force = this.arrive(this.targetPosition)
 			if (!this.accumulateForce(force)) { return this._combinedSteeringForce }
 		}
 
@@ -291,6 +346,21 @@ class SteeringBehaviors {
 		this._combinedSteeringForce = Vector2D.add(this._combinedSteeringForce, toAdd)
 
 		return true
+	}
+
+	private createFeelers(): void {
+		// feeler pointing straight in front
+		this._feelers[0] = Vector2D.add(this._vehicle.position, Vector2D.multiply(this._vehicle.heading, this._feelerLength))
+
+		// feeler to left
+		let temp = this._vehicle.heading
+		temp = Matrix2D.vec2DRotateAroundOrigin(temp, (Math.PI * 0.5) * 3.5)
+		this._feelers[1] = Vector2D.add(this._vehicle.position, Vector2D.multiply(temp, this._feelerLength * 0.5))
+
+		// feeler to the right
+		temp = this._vehicle.heading
+		temp = Matrix2D.vec2DRotateAroundOrigin(temp, (Math.PI * 0.5) * 0.5)
+		this._feelers[2] = Vector2D.add(this._vehicle.position, Vector2D.multiply(temp, this._feelerLength * 0.5))
 	}
 }
 

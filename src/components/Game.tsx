@@ -9,6 +9,7 @@ import ObstacleRound from '../entity/ObstacleRound'
 import Matrix2D from '../utils/Matrix2D'
 import VehicleType from '../context/helpers/VehicleType'
 import ObstacleRect from '../entity/ObstacleRect'
+import Wall from '../entity/Wall'
 import * as Background from '../assets/world.png'
 
 class Game extends React.Component {
@@ -22,7 +23,7 @@ class Game extends React.Component {
 			const canvas = document.createElement('canvas')
 			canvas.width = 1056
 			canvas.height = 624
-			canvas.style.backgroundImage = `url(${Background})`
+			// canvas.style.backgroundImage = `url(${Background})`
 			this.element.appendChild(canvas)
 
 			// creating context
@@ -33,10 +34,25 @@ class Game extends React.Component {
 			this.world = new World(context)
 			this.frame = new Frame(this.world)
 
-			// const obstacle1 = new ObstacleRect(this.world, 100, 100, new Vector2D(100, 100))
-			// const obstacle2 = new ObstacleRect(this.world, 100, 100, new Vector2D(-100, -100))
-			this.carChase()
+			this.wallAvoidanceTest()
 		}
+	}
+
+	public wallAvoidanceTest(): void {
+		const wall1 = new Wall(this.world, new Vector2D(-205, -200), new Vector2D(195, 200))
+		const wall2 = new Wall(this.world,  new Vector2D(200, 200), new Vector2D(-200, -200))
+
+		const v1 = new Vehicle(this.world)
+		v1.position = new Vector2D(-100, 250)
+		v1.steering.targetPosition = new Vector2D(-100, -250)
+		v1.steering.wallAvoidanceOn = true
+		v1.steering.seekOn = true
+
+		const v2 = new Vehicle(this.world)
+		v2.position = new Vector2D(100, -250)
+		v2.steering.targetPosition = new Vector2D(100, 250)
+		v2.steering.wallAvoidanceOn = true
+		v2.steering.seekOn = true
 	}
 
 	public carChase(): void {

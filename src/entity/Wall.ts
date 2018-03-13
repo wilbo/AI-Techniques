@@ -5,18 +5,23 @@ import Vector2D from '../utils/Vector2D'
 import EntityType from './base/EntityType'
 import Utils from '../utils/utils'
 
-class ObstacleRound extends Entity {
+class Wall extends Entity {
 	constructor(
 		public world: World,
-		public position: Vector2D = Vector2D.random(world.context.width, world.context.height),
-		public radius: number = Utils.getRandomInt(20, 150),
-	) { super(world, EntityType.ObstacleRound, radius, position) }
+		public from: Vector2D,
+		public to: Vector2D,
+	) { super(world, EntityType.Wall, 1, Vector2D.subtract(from, to)) }
 
 	public update(delta: number): void { return }
 
 	public render(context: Context): void {
-		context.drawObstacleRound(this.position, this.radius)
+		context.drawWall(this.from, this.to)
+	}
+
+	public get normalized(): Vector2D {
+		const temp = Vector2D.normalize(Vector2D.subtract(this.to, this.from))
+		return new Vector2D(-temp.y, temp.x)
 	}
 }
 
-export default ObstacleRound
+export default Wall

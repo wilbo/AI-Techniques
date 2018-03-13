@@ -11,7 +11,7 @@ class ObstacleRect extends Entity {
 		public width: number = Utils.getRandomInt(100, 250),
 		public height: number = Utils.getRandomInt(100, 250),
 		public position: Vector2D = Vector2D.random(world.context.width, world.context.height),
-	) { super(world, EntityType.Obstacle, width, position) }
+	) { super(world, EntityType.ObstacleRect, width, position) }
 
 	public update(delta: number): void { return }
 
