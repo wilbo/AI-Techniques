@@ -9,20 +9,21 @@ import Matrix2D from '../utils/Matrix2D'
 import VehicleType from '../context/helpers/VehicleType'
 
 class Vehicle extends Entity implements IMovingEntity {
+	public velocity = new Vector2D()
+	public heading = new Vector2D()
+	public side = new Vector2D()
+	public mass = 0.5
+	public maxSpeed = 300
+	public maxForce = 1000
+	public maxTurnRate = 0.05
+	public vehicleType = VehicleType.Green5
 	public steering = new SteeringBehaviors(this)
+
 	private _angle: number
 
 	constructor(
 		public world: World,
 		public position = new Vector2D(),
-		public velocity = new Vector2D(),
-		public heading = new Vector2D(),
-		public side = new Vector2D(),
-		public mass = 0.5,
-		public maxSpeed = 300,
-		public maxForce = 1000,
-		public maxTurnRate = 0.05,
-		public vehicleType = VehicleType.Green5,
 	) { super(world, EntityType.Vehicle, 25, position) }
 
 	public get speed(): number {

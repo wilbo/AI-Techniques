@@ -1,5 +1,5 @@
 import Entity from './Entity'
-import Obstacle from '../Obstacle'
+import ObstacleRound from '../ObstacleRound'
 import Vehicle from '../Vehicle'
 import EntityType from './EntityType'
 
@@ -31,8 +31,8 @@ class EntityList {
 		return this._list
 	}
 
-	public get obstacles(): Obstacle[] {
-		return this._list.filter((e) => e.type === EntityType.Obstacle) as Obstacle[]
+	public get obstacles(): ObstacleRound[] {
+		return this._list.filter((e) => e.type === EntityType.Obstacle) as ObstacleRound[]
 	}
 
 	public get vehicles(): Vehicle[] {

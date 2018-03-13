@@ -3,7 +3,7 @@ import Vehicle from '../entity/Vehicle'
 import DecelerationLevel from './DecelerationLevel'
 import Utils from '../utils/utils'
 import Entity from '../entity/base/Entity'
-import Obstacle from '../entity/Obstacle'
+import ObstacleRound from '../entity/ObstacleRound'
 import EntityList from '../entity/base/EntityList'
 import Matrix2D from '../utils/Matrix2D'
 
@@ -134,7 +134,7 @@ class SteeringBehaviors {
 	 * Avoid obstacles that are close to the vehicle
 	 */
 	public obstacleAvoidance(): Vector2D {
-		let cib: Obstacle | null = null // the closest intersecting obstacle (cib)
+		let cib: ObstacleRound | null = null // the closest intersecting obstacle (cib)
 		let cibDistance = Number.MAX_VALUE // distance of cib
 		let cibLocal = new Vector2D() // local coordinates of cib
 

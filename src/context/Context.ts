@@ -3,8 +3,6 @@ import VehicleType from './helpers/VehicleType'
 import ImageLoader from './helpers/ImageLoader'
 import Matrix2D from '../utils/Matrix2D'
 
-import * as Road from '../assets/racing-pack/road/road_asphalt22.png'
-
 class Context  {
 	constructor(
 		public ctx: CanvasRenderingContext2D,
@@ -45,18 +43,25 @@ class Context  {
 		this.defaults()
 	}
 
-	public drawObstacle(position: Vector2D, radius: number): void {
+	public drawObstacleRound(position: Vector2D, radius: number, fill: boolean = false, color: string = 'black'): void {
 		this.ctx.translate(position.x, position.y)
-
-		this.ctx.fillStyle = 'white'
+		this.ctx.strokeStyle = color
 		this.ctx.beginPath()
 		this.ctx.arc(0, 0, radius, 0, 2 * Math.PI)
-		this.ctx.fill()
+		fill ? this.ctx.fill() : this.ctx.stroke()
+		this.defaults()
+	}
 
-		this.ctx.strokeStyle = 'black'
+	public drawObstacleRect(position: Vector2D, width: number, height: number, fill: boolean = false, color: string = 'black'): void {
+		this.ctx.translate(position.x - (width * 0.5), position.y - (height * 0.5))
+		this.ctx.strokeStyle = color
 		this.ctx.beginPath()
-		this.ctx.arc(0, 0, radius, 0, 2 * Math.PI)
-		this.ctx.stroke()
+		this.ctx.moveTo(0, 0)
+		this.ctx.lineTo(width, 0)
+		this.ctx.lineTo(width, height)
+		this.ctx.lineTo(0, height)
+		this.ctx.lineTo(0, 0)
+		fill ? this.ctx.fill() : this.ctx.stroke()
 		this.defaults()
 	}
 
@@ -66,14 +71,14 @@ class Context  {
 		this.defaults()
 	}
 
-	public drawShape(vectors: Vector2D[], position: Vector2D = new Vector2D()): void {
+	public drawShape(vectors: Vector2D[], position: Vector2D, fill: boolean = true): void {
 		this.ctx.translate(position.x, position.y)
 		this.ctx.beginPath()
 		this.ctx.moveTo(vectors[0].x, vectors[0].y)
 		for (let i = 1; i < vectors.length; i++) {
 			this.ctx.lineTo(vectors[i].x, vectors[i].y)
 		}
-		this.ctx.fill()
+		fill ? this.ctx.fill() : this.ctx.stroke()
 		this.defaults()
 	}
 }

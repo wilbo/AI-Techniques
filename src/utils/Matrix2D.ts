@@ -1,7 +1,7 @@
 import Vector2D from './Vector2D'
 
 class Matrix2D {
-	public static view(width: number = 1000, height: number = 600): Matrix2D {
+	public static view(width: number, height: number): Matrix2D {
 		return new Matrix2D(
 			1, 0, width * 0.5,
 			0, -1, height * 0.5,
