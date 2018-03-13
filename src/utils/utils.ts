@@ -28,7 +28,7 @@ class Utils {
 	 * @param min the lowest possible number
 	 * @param max the highest possible number
 	 */
-	public static getRandomInt(min: number, max: number): number {
+	public static randomInt(min: number, max: number): number {
 		min = Math.ceil(min)
 		max = Math.floor(max)
 		return Math.floor(Math.random() * (max - min)) + min

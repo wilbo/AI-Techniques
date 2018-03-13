@@ -42,7 +42,7 @@ class SteeringBehaviors {
 
 	// wall avoidance
 	private _feelers: Vector2D[] = []
-	private _feelerLength = 100
+	private _feelerLength = 60
 
 	constructor(private _vehicle: Vehicle) {
 		// wander, create a vector to a target position on the wander circle
@@ -220,7 +220,6 @@ class SteeringBehaviors {
 			if (closestWall != null) {
 				const overShoot = Vector2D.subtract(feeler, closestPoint)
 				steeringForce = Vector2D.multiply(closestWall.normalized, overShoot.length * 100)
-				console.log(steeringForce)
 			}
 		}
 

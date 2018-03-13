@@ -12,15 +12,15 @@ class Wall extends Entity {
 		public to: Vector2D,
 	) { super(world, EntityType.Wall, 1, Vector2D.subtract(from, to)) }
 
-	public update(delta: number): void { return }
-
-	public render(context: Context): void {
-		context.drawWall(this.from, this.to)
-	}
-
 	public get normalized(): Vector2D {
 		const temp = Vector2D.normalize(Vector2D.subtract(this.to, this.from))
 		return new Vector2D(-temp.y, temp.x)
+	}
+
+	public update(delta: number): void { return }
+
+	public render(context: Context): void {
+		// context.drawWall(this.from, this.to, 'red')
 	}
 }
 

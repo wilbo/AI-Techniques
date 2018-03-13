@@ -8,8 +8,8 @@ import Utils from '../utils/utils'
 class ObstacleRound extends Entity {
 	constructor(
 		public world: World,
-		public position: Vector2D = Vector2D.random(world.context.width, world.context.height),
-		public radius: number = Utils.getRandomInt(20, 150),
+		public position: Vector2D = Vector2D.random(world.width, world.height),
+		public radius: number = Utils.randomInt(20, 150),
 	) { super(world, EntityType.ObstacleRound, radius, position) }
 
 	public update(delta: number): void { return }
