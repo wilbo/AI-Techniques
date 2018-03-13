@@ -6,9 +6,10 @@ import Context from '../context/Context'
 import SteeringBehaviors from '../behavior/SteeringBehaviors'
 import EntityType from './base/EntityType'
 import Matrix2D from '../utils/Matrix2D'
+import VehicleType from '../context/helpers/VehicleType'
 
 class Vehicle extends Entity implements IMovingEntity {
-	private _steering = new SteeringBehaviors(this)
+	public steering = new SteeringBehaviors(this)
 	private _angle: number
 
 	constructor(
@@ -19,8 +20,9 @@ class Vehicle extends Entity implements IMovingEntity {
 		public side = new Vector2D(),
 		public mass = 0.5,
 		public maxSpeed = 300,
-		public maxForce = 1,
+		public maxForce = 1000,
 		public maxTurnRate = 0.05,
+		public vehicleType = VehicleType.Green5,
 	) { super(world, EntityType.Vehicle, 25, position) }
 
 	public get speed(): number {
@@ -36,8 +38,7 @@ class Vehicle extends Entity implements IMovingEntity {
 	}
 
 	public update(delta: number): void {
-		const steeringForce = this._steering.wander()
-		const acceleration = Vector2D.divide(steeringForce, this.mass) // acceleration = force / mass
+		const acceleration = Vector2D.divide(this.steering.calculate(), this.mass) // acceleration = force / mass
 		this.velocity = Vector2D.add(this.velocity, Vector2D.multiply(acceleration, delta)) // update velocity
 		this.velocity = Vector2D.truncate(this.velocity, this.maxSpeed) // make sure vehicle does not exceed maximum velocity
 		this.position = Vector2D.add(this.position, Vector2D.multiply(this.velocity, delta)) // update the position
@@ -51,7 +52,7 @@ class Vehicle extends Entity implements IMovingEntity {
 	}
 
 	public render(context: Context) {
-		context.drawVehicle(this.position, this._angle)
+		context.drawVehicle(this.position, this._angle, this.vehicleType)
 	}
 }
 

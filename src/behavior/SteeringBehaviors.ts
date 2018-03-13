@@ -8,9 +8,25 @@ import EntityList from '../entity/base/EntityList'
 import Matrix2D from '../utils/Matrix2D'
 
 class SteeringBehaviors {
+	public seekOn = false
+	public fleeOn = false
+	public arriveOn = false
+	public pursuitOn = false
+	public evadeOn = false
+	public wanderOn = false
+	public obstacleAvoidanceOn = false
+	public hideOn = false
+	public targetAgent: Vehicle
+	public panicDistance: number = 160
+
+	private _combinedSteeringForce = new Vector2D()
+
+	/*
+	 * behavior specific properties
+	 */
 
 	// wander
-	public wanderTarget = new Vector2D()
+	private _wanderTarget = new Vector2D()
 	private readonly _wanderRadius: number = 120 // the radius of the constraining circle for the wander behavior
 	private readonly _wanderDistance: number = 120 // distance the wander circle is projected in front of the agent
 	private readonly _wanderJitter: number = 60 // the maximum amount of displacement along the circle each frame
@@ -22,10 +38,9 @@ class SteeringBehaviors {
 	private readonly _minDetectionBoxLength: number = 50
 
 	constructor(private _vehicle: Vehicle) {
-
-		// create a vector to a target position on the wander circle
+		// wander, create a vector to a target position on the wander circle
 		const theta = Math.random() * (Math.PI * 2)
-		this.wanderTarget = new Vector2D(this._wanderRadius * Math.cos(theta), this._wanderRadius * Math.sin(theta))
+		this._wanderTarget = new Vector2D(this._wanderRadius * Math.cos(theta), this._wanderRadius * Math.sin(theta))
 	}
 
 	/**
@@ -42,8 +57,8 @@ class SteeringBehaviors {
 	 * @param targetPos the position to flee away from
 	 * @param panicDistance The distance from the targetPos when to flee
 	 */
-	public flee(targetPos: Vector2D, panicDistance = 0): Vector2D {
-		if (panicDistance && Vector2D.distanceSq(this._vehicle.position, targetPos) > (panicDistance * panicDistance)) {
+	public flee(targetPos: Vector2D): Vector2D {
+		if (this.panicDistance && Vector2D.distanceSq(this._vehicle.position, targetPos) > (this.panicDistance * this.panicDistance)) {
 			return new Vector2D(0, 0)
 		}
 
@@ -104,11 +119,11 @@ class SteeringBehaviors {
 	public wander(): Vector2D {
 		const random = new Vector2D(Utils.randomClamped() * this._wanderJitter, Utils.randomClamped() * this._wanderJitter)
 		// add a small random vector to the target's position
-		this.wanderTarget = Vector2D.normalize(Vector2D.add(this.wanderTarget, random))
+		this._wanderTarget = Vector2D.normalize(Vector2D.add(this._wanderTarget, random))
 		// increase the length to the same as the wander circle radius
-		this.wanderTarget = Vector2D.multiply(this.wanderTarget, this._wanderRadius)
+		this._wanderTarget = Vector2D.multiply(this._wanderTarget, this._wanderRadius)
 		// move the target into a position WanderDist in front of the agent
-		let target = Vector2D.add(this.wanderTarget, new Vector2D(this._wanderDistance, 0))
+		let target = Vector2D.add(this._wanderTarget, new Vector2D(this._wanderDistance, 0))
 		// project the target into world space
 		target = Matrix2D.pointToWorldSpace(target, this._vehicle.heading, this._vehicle.side,  this._vehicle.position)
 		// steer towards it
@@ -170,11 +185,11 @@ class SteeringBehaviors {
 	 * @param target the vehicle that is about to hide
 	 * @param obstacles The obstacles to choose from
 	 */
-	public hide(target: Vehicle, obstacles: Obstacle[]) {
+	public hide(target: Vehicle) {
 		let distToClosest = Number.MAX_VALUE
 		let bestHidingSpot = new Vector2D()
 
-		for (const obstacle of obstacles) {
+		for (const obstacle of EntityList.instance.obstacles) {
 			const hidingSpot = this.getHidingPosition(obstacle.position, obstacle.radius, target.position)
 			const distance = Vector2D.distanceSq(hidingSpot, this._vehicle.position)
 
@@ -192,10 +207,64 @@ class SteeringBehaviors {
 	}
 
 	/**
+	 * calculates the accumulated steering force
+	 */
+	public calculate(): Vector2D {
+		this._combinedSteeringForce.zero() // reset
+
+		let force = new Vector2D()
+
+		if (this.obstacleAvoidanceOn) {
+			force = this.obstacleAvoidance()
+			if (!this.accumulateForce(force)) { return this._combinedSteeringForce }
+		}
+
+		if (this.evadeOn) {
+			if (typeof this.targetAgent === 'undefined') { throw new Error('No targetAgent defined') }
+			force = this.evade(this.targetAgent)
+			if (!this.accumulateForce(force)) { return this._combinedSteeringForce }
+		}
+
+		if (this.fleeOn) {
+			force = this.flee(new Vector2D())
+			if (!this.accumulateForce(force)) { return this._combinedSteeringForce }
+		}
+
+		if (this.seekOn) {
+			force = this.seek(new Vector2D())
+			if (!this.accumulateForce(force)) { return this._combinedSteeringForce }
+		}
+
+		if (this.arriveOn) {
+			force = this.arrive(new Vector2D())
+			if (!this.accumulateForce(force)) { return this._combinedSteeringForce }
+		}
+
+		if (this.wanderOn) {
+			force = this.wander()
+			if (!this.accumulateForce(force)) { return this._combinedSteeringForce }
+		}
+
+		if (this.pursuitOn) {
+			if (typeof this.targetAgent === 'undefined') { throw new Error('No targetAgent defined') }
+			force = this.pursuit(this.targetAgent)
+			if (!this.accumulateForce(force)) { return this._combinedSteeringForce }
+		}
+
+		if (this.hideOn) {
+			if (typeof this.targetAgent === 'undefined') { throw new Error('No targetAgent defined') }
+			force = this.hide(this.targetAgent)
+			if (!this.accumulateForce(force)) { return this._combinedSteeringForce }
+		}
+
+		return this._combinedSteeringForce
+	}
+
+	/**
 	 * Returns a hiding position based on a target and obstacle
 	 * @param obstaclePosition The position of the obstacle
 	 * @param obstacleRadius The radius of the obstacle
-	 * @param targetPosition the position of the target to hide from
+	 * @param targetPosition The position of the target to hide from
 	 */
 	private getHidingPosition(obstaclePosition: Vector2D, obstacleRadius: number, targetPosition: Vector2D): Vector2D {
 		// calculate how far away the agent is to be from the chosen obstacle’s bounding radius
@@ -204,6 +273,24 @@ class SteeringBehaviors {
 		const toOb = Vector2D.normalize(Vector2D.subtract(obstaclePosition, targetPosition))
 		// scale it to size and add to the obstacle's position to get the hiding spot.
 		return Vector2D.add(Vector2D.multiply(toOb, distAway), obstaclePosition)
+	}
+
+	/**
+	 * Calculates how much of its max steering force the vehicle has left to apply
+	 * @param forceToAdd The force to add
+	 */
+	private accumulateForce(forceToAdd: Vector2D): boolean {
+		const magnitudeSoFar = this._combinedSteeringForce.length // calculate how much steering force the vehicle has used so far
+		const magnitudeRemaining = this._vehicle.maxForce - magnitudeSoFar // calculate how much steering force remains to be used by this vehicle
+
+		if (magnitudeRemaining <= 0) { return false } // return false if there is no more force left to use
+
+		const magnitudeToAdd = forceToAdd.length // calculate the magnitude of the force we want to add
+		// add all force or as much as possible
+		const toAdd = (magnitudeToAdd < magnitudeRemaining) ? forceToAdd : Vector2D.multiply(Vector2D.normalize(forceToAdd), magnitudeRemaining)
+		this._combinedSteeringForce = Vector2D.add(this._combinedSteeringForce, toAdd)
+
+		return true
 	}
 }
 

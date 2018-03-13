@@ -7,6 +7,7 @@ import Context from '../context/Context'
 import Vector2D from '../utils/Vector2D'
 import Obstacle from '../entity/Obstacle'
 import Matrix2D from '../utils/Matrix2D'
+import VehicleType from '../context/helpers/VehicleType'
 
 class Game extends React.Component {
 	private element: HTMLElement
@@ -35,7 +36,22 @@ class Game extends React.Component {
 			const obstacle4 = new Obstacle(this.world)
 			const obstacle5 = new Obstacle(this.world)
 			const obstacle6 = new Obstacle(this.world)
-			const v = new Vehicle(this.world)
+
+			const v1 = new Vehicle(this.world)
+			const v2 = new Vehicle(this.world)
+
+			v1.steering.targetAgent = v2
+			v1.steering.pursuitOn = true
+			v1.steering.obstacleAvoidanceOn = true
+			v1.vehicleType = VehicleType.Blue4
+			v1.maxSpeed = 360
+			v1.position = new Vector2D(200, 200)
+
+			v2.steering.targetAgent = v1
+			v2.steering.evadeOn = true
+			// v2.steering.hideOn = true
+			v2.steering.wanderOn = true
+			v2.steering.obstacleAvoidanceOn = true
 		}
 	}
 

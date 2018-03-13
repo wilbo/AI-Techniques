@@ -132,7 +132,7 @@ class Vector2D {
 	) { }
 
 	/**
-		* Check wether both x and y are zero
+		* Set x and y both to zero
 		*/
 	public zero(): void {
 		this.x = 0
@@ -140,7 +140,7 @@ class Vector2D {
 	}
 
 	/**
-		* Set x and y both to zero
+		* Check wether both x and y are zero
 		*/
 	public get isZero(): boolean {
 		return this.x === 0 && this.y === 0
