@@ -1,5 +1,7 @@
 import VehicleType from '../context/helpers/VehicleType'
 import Vector2D from './Vector2D'
+import EntityList from '../entity/base/EntityList'
+import ObstacleRect from '../entity/ObstacleRect'
 
 class Utils {
 	/**
@@ -59,6 +61,40 @@ class Utils {
 		}
 
 		dist = 0
+		return false
+	}
+
+	/**
+	 * Checks wether a vector is located inside a single ObstacleRect
+	 * @param vector the vector to check
+	 * @param	obstacleRect the obstacleRect to check
+	 */
+	public static insideObstacleRect(vector: Vector2D, obstacleRect: ObstacleRect): boolean {
+		const { topLeft, bottomRight } = obstacleRect
+
+		if (
+			vector.x >= topLeft.x && // not too much to left
+			vector.y <= topLeft.y && // not too high
+			vector.x <= bottomRight.x && // not too much to right
+			vector.y >= bottomRight.y // not too low
+		) {
+			return true
+		}
+
+		return false
+	}
+
+	/**
+	 * Checks wether a vector is located inside any ObstacleRect
+	 * @param vector the vector to check
+	 */
+	public static insideAllObstacleRect(vector: Vector2D): boolean {
+		for (const obstacleRect of EntityList.instance.obstaclesRect) {
+			if (this.insideObstacleRect(vector, obstacleRect)) {
+				return true
+			}
+		}
+
 		return false
 	}
 }

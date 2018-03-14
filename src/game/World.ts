@@ -5,15 +5,28 @@ import Context from '../context/Context'
 import Vector2D from '../utils/Vector2D'
 import Graph from '../paths/Graph'
 import GraphNode from '../paths/GraphNode'
+import Matrix2D from '../utils/Matrix2D'
+import ObstacleRect from '../entity/ObstacleRect'
+import Utils from '../utils/Utils'
+import GraphGenerator from '../paths/GraphGenerator'
 
 class World {
 	public fps: number = 0
-	public navigationGraph: Graph
+	public ng: GraphNode[] // TODO: change to: Graph
 
-	constructor(public context: Context) { }
-
-	public get width(): number { return this.context.width }
-	public get height(): number { return this.context.height }
+	constructor(
+		public context: Context,
+		public width: number,
+		public height: number,
+		public cell: number = 48,
+	) {
+		// apply view matrix
+		this.context.view = Matrix2D.view(width, height)
+		// generate walls
+		this.generateWorldBounds()
+		// generate graph
+		this.ng = new GraphGenerator(this).generateGraph()
+	}
 
 	public update(delta: number): void {
 		for (const entity of EntityList.instance.list) {
@@ -22,51 +35,38 @@ class World {
 	}
 
 	public render(): void {
-		this.context.clear()
+		this.context.clear(this.width, this.height)
 		for (const entity of EntityList.instance.list) {
 			entity.render(this.context)
 			this.wrapAround(entity)
 		}
 
 		this.drawFps()
+		this.drawGraph()
 	}
 
 	/**
-	 * Generate a navigation graph
+	 *
 	 */
-	public generateGraph(): void {
-		this.navigationGraph = new Graph()
+	private generateWorldBounds(): void {
+		const halfWidth = this.width * 0.5
+		const halfHeight = this.height * 0.5
 
-		this.floodfill(new Vector2D(24, 0))
-		for (const node of this.navigationGraph.nodes) {
-			this.context.drawEntity(node.position, 3, 'blue')
-		}
-
-		this.navigationGraph.print()
-	}
-
-	/**
-	 * Recursively fill the navigationgraph with nodes/positions
-	 * @param vector The starting vector
-	 * @param step The amount of pixels to move each step, the default value is the current tilesize
-	 * @param maxX The max width to fill with positions
-	 * @param maxY The max height to fill with positions
-	 */
-	private floodfill(vector: Vector2D, step: number = 48, maxX: number = this.width * 0.5, maxY: number = this.height * 0.5): void {
-		if (
-			vector.x > maxX ||
-			vector.x < -maxX ||
-			vector.y > maxY ||
-			vector.y < -maxY ||
-			this.navigationGraph.exists(vector)
-		) { return }
-
-		this.navigationGraph.addNode(new GraphNode(vector))
-
-		this.floodfill(new Vector2D(vector.x, vector.y + step))
-		this.floodfill(new Vector2D(vector.x + step, vector.y))
-		this.floodfill(new Vector2D(vector.x, vector.y - step))
-		this.floodfill(new Vector2D(vector.x - step, vector.y))
+		// the bounds around the circuit
+		new ObstacleRect(this, this.width, this.cell, new Vector2D(-halfWidth, halfHeight), true) // top
+		new ObstacleRect(this, this.width, this.cell, new Vector2D(-halfWidth, -halfHeight + this.cell), true) // bottom
+		new ObstacleRect(this, this.cell, this.height - (this.cell * 2), new Vector2D(-halfWidth, halfHeight - this.cell), true) // left
+		new ObstacleRect(this, this.cell, this.height - (this.cell * 2), new Vector2D(halfWidth - this.cell, halfHeight - this.cell), true) // right
+		new ObstacleRect(this, this.cell * 4, this.cell * 2, new Vector2D(-(this.cell * 8), this.cell * 3.5), true) // island top left
+		new ObstacleRect(this, this.cell * 4, this.cell * 3, new Vector2D(-(this.cell * 8), -(this.cell * .5)), true) // island bottom left
+		new ObstacleRect(this, this.cell * 6, this.cell, new Vector2D(-(this.cell * 4), -(this.cell * 2.5)), true) // "
+		new ObstacleRect(this, this.cell * 2, this.cell * 2, new Vector2D(-(this.cell * 2), (this.cell * 5.5)), true) // top mid square
+		new ObstacleRect(this, this.cell * 2, this.cell * 2, new Vector2D(this.cell * 8, (this.cell * 5.5)), true) // top right square
+		new ObstacleRect(this, this.cell * 6, this.cell, new Vector2D(this.cell, (this.cell * 4.5)), true) // pit rectangle
+		new ObstacleRect(this, this.cell * 4, this.cell * 5, new Vector2D(this.cell * 4, (this.cell * 1.5)), true) // island middle right
+		new ObstacleRect(this, 4, this.cell * 4, new Vector2D(-(this.cell * 2), (this.cell * 3.5)), true) // thin upright
+		new ObstacleRect(this,  this.cell * 4, 4, new Vector2D(0, (this.cell * 1.5)), true) // thin flat 1
+		new ObstacleRect(this,  this.cell * 4, 4, new Vector2D(-(this.cell * 2), -(this.cell * 0.5) + 4), true) // thin flat 2
 	}
 
 	/**
@@ -81,6 +81,12 @@ class World {
 
 	private drawFps(): void {
 		this.context.drawText(this.fps.toFixed(2) + ' fps', new Vector2D(-(this.width * 0.5) + 10, this.height * 0.5 - 10))
+	}
+
+	private drawGraph(): void {
+		for (const node of this.ng) {
+			this.context.drawEntity(node.position, 3, 'blue')
+		}
 	}
 }
 

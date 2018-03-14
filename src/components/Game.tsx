@@ -19,22 +19,22 @@ class Game extends React.Component {
 
 	public componentDidMount() {
 		if (this.element != null) {
+			// defaults
+			const width = 1056
+			const height = 624
+			const cell = 48
+
 			// adding a canvas element
 			const canvas = document.createElement('canvas')
-			canvas.width = 1056
-			canvas.height = 624
+			canvas.width = width
+			canvas.height = height
 			canvas.style.backgroundImage = `url(${Background})`
 			this.element.appendChild(canvas)
 
-			// creating context
+			// creating context, world and loop
 			const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
-
-			// creating a world and loop
-			const context = new Context(ctx, canvas.width, canvas.height)
-			this.world = new World(context)
+			this.world = new World(new Context(ctx), width, height, cell)
 			this.frame = new Frame(this.world)
-
-			this.world.generateGraph()
 		}
 	}
 

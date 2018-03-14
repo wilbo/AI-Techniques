@@ -20,7 +20,7 @@ class Wall extends Entity {
 	public update(delta: number): void { return }
 
 	public render(context: Context): void {
-		// context.drawWall(this.from, this.to, 'red')
+		context.drawWall(this.from, this.to, 'red')
 	}
 }
 

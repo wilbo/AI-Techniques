@@ -3,19 +3,20 @@ import VehicleType from './helpers/VehicleType'
 import ImageLoader from './helpers/ImageLoader'
 import Matrix2D from '../utils/Matrix2D'
 
-class Context  {
+class Context {
+	private _view: Matrix2D
+
 	constructor(
 		public ctx: CanvasRenderingContext2D,
-		public width: number,
-		public height: number,
-		private _view: Matrix2D = Matrix2D.view(width, height),
-	) {
-		this._view = Matrix2D.view(width, height)
+	) { }
+
+	public set view(matrix: Matrix2D) {
+		this._view = matrix
 		this.defaults()
 	}
 
-	public clear(): void {
-		this.ctx.clearRect(-(this.width * 0.5), -(this.height * 0.5), this.width, this.height)
+	public clear(width: number, height: number): void {
+		this.ctx.clearRect(-(width * 0.5), -(height * 0.5), width, height)
 	}
 
 	public defaults(): void {
@@ -26,7 +27,7 @@ class Context  {
 		this.ctx.font = '16px Arial'
 	}
 
-	public drawEntity(position: Vector2D, radius: number, color: string = 'black'): void {
+	public drawEntity(position: Vector2D, radius: number = 3, color: string = 'black'): void {
 		this.ctx.translate(position.x, position.y)
 		this.ctx.fillStyle = color
 		this.ctx.beginPath()
@@ -53,7 +54,7 @@ class Context  {
 	}
 
 	public drawObstacleRect(position: Vector2D, width: number, height: number, fill: boolean = false, color: string = 'black'): void {
-		this.ctx.translate(position.x - (width * 0.5), position.y - (height * 0.5))
+		this.ctx.translate(position.x, position.y - height)
 		this.ctx.strokeStyle = color
 		this.ctx.beginPath()
 		this.ctx.moveTo(0, 0)
