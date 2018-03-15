@@ -9,23 +9,24 @@ import Matrix2D from '../utils/Matrix2D'
 import ObstacleRect from '../entity/ObstacleRect'
 import Utils from '../utils/Utils'
 import GraphGenerator from '../paths/GraphGenerator'
+import AStar from '../paths/AStar'
 
 class World {
 	public fps: number = 0
-	public ng: GraphNode[] // TODO: change to: Graph
+	public navGraph: Graph
+	public aStar: AStar
+	public context: Context
 
 	constructor(
-		public context: Context,
+		private element: HTMLElement,
 		public width: number,
 		public height: number,
-		public cell: number = 48,
+		private cellSize: number = 48,
 	) {
-		// apply view matrix
-		this.context.view = Matrix2D.view(width, height)
-		// generate walls
-		this.generateWorldBounds()
-		// generate graph
-		this.ng = new GraphGenerator(this).generateGraph()
+		this.configureContext(element)
+		this.navGraph = new GraphGenerator(cellSize).generateGraph()
+		this.aStar = new AStar(this.navGraph)
+		this.navGraph.draw(this.context)
 	}
 
 	public update(delta: number): void {
@@ -42,31 +43,6 @@ class World {
 		}
 
 		this.drawFps()
-		this.drawGraph()
-	}
-
-	/**
-	 *
-	 */
-	private generateWorldBounds(): void {
-		const halfWidth = this.width * 0.5
-		const halfHeight = this.height * 0.5
-
-		// the bounds around the circuit
-		new ObstacleRect(this, this.width, this.cell, new Vector2D(-halfWidth, halfHeight), true) // top
-		new ObstacleRect(this, this.width, this.cell, new Vector2D(-halfWidth, -halfHeight + this.cell), true) // bottom
-		new ObstacleRect(this, this.cell, this.height - (this.cell * 2), new Vector2D(-halfWidth, halfHeight - this.cell), true) // left
-		new ObstacleRect(this, this.cell, this.height - (this.cell * 2), new Vector2D(halfWidth - this.cell, halfHeight - this.cell), true) // right
-		new ObstacleRect(this, this.cell * 4, this.cell * 2, new Vector2D(-(this.cell * 8), this.cell * 3.5), true) // island top left
-		new ObstacleRect(this, this.cell * 4, this.cell * 3, new Vector2D(-(this.cell * 8), -(this.cell * .5)), true) // island bottom left
-		new ObstacleRect(this, this.cell * 6, this.cell, new Vector2D(-(this.cell * 4), -(this.cell * 2.5)), true) // "
-		new ObstacleRect(this, this.cell * 2, this.cell * 2, new Vector2D(-(this.cell * 2), (this.cell * 5.5)), true) // top mid square
-		new ObstacleRect(this, this.cell * 2, this.cell * 2, new Vector2D(this.cell * 8, (this.cell * 5.5)), true) // top right square
-		new ObstacleRect(this, this.cell * 6, this.cell, new Vector2D(this.cell, (this.cell * 4.5)), true) // pit rectangle
-		new ObstacleRect(this, this.cell * 4, this.cell * 5, new Vector2D(this.cell * 4, (this.cell * 1.5)), true) // island middle right
-		new ObstacleRect(this, 4, this.cell * 4, new Vector2D(-(this.cell * 2), (this.cell * 3.5)), true) // thin upright
-		new ObstacleRect(this,  this.cell * 4, 4, new Vector2D(0, (this.cell * 1.5)), true) // thin flat 1
-		new ObstacleRect(this,  this.cell * 4, 4, new Vector2D(-(this.cell * 2), -(this.cell * 0.5) + 4), true) // thin flat 2
 	}
 
 	/**
@@ -80,13 +56,19 @@ class World {
 	}
 
 	private drawFps(): void {
-		this.context.drawText(this.fps.toFixed(2) + ' fps', new Vector2D(-(this.width * 0.5) + 10, this.height * 0.5 - 10))
+		this.context.drawText(this.fps.toFixed(2) + ' fps', new Vector2D(-(this.width * 0.5) + 10, -(this.height * 0.5) + 10))
 	}
 
-	private drawGraph(): void {
-		for (const node of this.ng) {
-			this.context.drawEntity(node.position, 3, 'blue')
-		}
+	private configureContext(element: HTMLElement): void {
+		this.context = new Context(element, this.width, this.height)
+		this.context.setView(this.width, this.height)
+		this.context.setClick(this.onWorldClick)
+	}
+
+	private onWorldClick = (evt: MouseEvent): void => {
+		const x = evt.clientX + document.body.scrollLeft + document.documentElement.scrollLeft - (evt.target as HTMLCanvasElement).offsetLeft
+		const y = evt.clientY + document.body.scrollTop + document.documentElement.scrollTop - (evt.target as HTMLCanvasElement).offsetTop
+		this.aStar.findPath([3, 7], [Math.floor(x / this.cellSize), Math.floor(y / this.cellSize)])
 	}
 }
 

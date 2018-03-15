@@ -2,7 +2,8 @@ import GraphNode from './GraphNode'
 
 class GraphEdge {
 	constructor(
-		public destination: GraphNode,
+		public from: number,
+		public to: number,
 		public cost: number = 1,
 	) { }
 }

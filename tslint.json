@@ -16,7 +16,8 @@
 			"variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore"],
 			"no-console": [false],
 			"max-line-length": [true, 180],
-			"no-unused-expression": [false]
+			"no-unused-expression": [false],
+			"radix": [false]
 		},
     "rulesDirectory": []
 }

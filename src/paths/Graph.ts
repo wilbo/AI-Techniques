@@ -1,59 +1,47 @@
 import GraphNode from './GraphNode'
 import GraphEdge from './GraphEdge'
 import Vector2D from '../utils/Vector2D'
+import Context from '../context/Context'
+import Matrix2D from '../utils/Matrix2D'
 
 class Graph {
 	constructor(
-		public nodes: { [index: number]: GraphNode } = {},
-		private _nextNodeIndex = 0,
+		public nodes: GraphNode[][] = [],
 	) { }
 
-	/**
-	 * Return a node by index
-	 */
-	public getNode(index: number): GraphNode {
-		return this.nodes[index]
+	public get columns(): number {
+		return this.nodes[0].length
+	}
+
+	public get rows(): number {
+		return this.nodes.length
 	}
 
 	/**
-	 * Add a node to the graph
+	 * Return nodes around a node from a certain position
 	 */
-	public addNode(node: GraphNode): void {
-		node.index = ++this._nextNodeIndex
-		this.nodes[node.index] = node
-	}
+	// public surroundingNodes(position: Vector2D): GraphNode[] {
+	// 		TODO: implement
+	// }
 
 	/**
-	 * Add an egde between two nodes
-	 * @param from The index value of the start node
-	 * @param to  The index value of the end node
+	 * Return a node at a certain position in the nodes array
 	 */
-	public addEdge(from: number, to: number): void {
-		if (typeof this.nodes[from] === 'undefined' || typeof this.nodes[to] === 'undefined') {
-			throw new Error(`The node at index ${from} or either ${to} is undefined`)
-		}
-
-		const destionationNode = this.nodes[to]
-		this.nodes[from].edges.push(new GraphEdge(destionationNode))
+	public nodeAt(row: number, column: number): GraphNode {
+		return this.nodes[row][column]
 	}
 
-	/**
-	 * Print the current Graph class to the console
-	 */
-	public print(): void {
-		let output = ''
-
-		for (const index in this.nodes) {
-			if (this.nodes.hasOwnProperty(index)) {
-				output +=  '[' + index + ']'
-				for (const edge of this.nodes[index].edges) {
-					output += ' -> ' + edge.destination.index
+	public draw(context: Context): void {
+		for (let y = 0; y < this.rows; y++) {
+			for (let x = 0; x < this.columns; x++) {
+				const node = this.nodes[y][x]
+				const position = Matrix2D.vector2DToView(node.position, context.view)
+				if (node.walkable) {
+					context.drawText(node.id + '', position)
+					context.drawEntity(position, 3, 'blue')
 				}
-				output += '\n'
 			}
 		}
-
-		console.log(output)
 	}
 }
 

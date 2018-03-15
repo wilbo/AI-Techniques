@@ -40,6 +40,15 @@ class Matrix2D {
 		return transformation.transformVector2D(vector)
 	}
 
+	public static vector2DToView(vector: Vector2D, currentView: Matrix2D): Vector2D {
+		const transformation = new Matrix2D(
+			1, 0, -currentView.m13, // translate back from view
+			0, -1, currentView.m23,
+		)
+
+		return transformation.transformVector2D(vector)
+	}
+
 	constructor(
 		public m11: number = 1, public m12: number = 0, public m13: number = 0,
 		public m21: number = 0, public m22: number = 1, public m23: number = 0,

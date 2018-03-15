@@ -10,7 +10,6 @@ import Matrix2D from '../utils/Matrix2D'
 import VehicleType from '../context/helpers/VehicleType'
 import ObstacleRect from '../entity/ObstacleRect'
 import Wall from '../entity/Wall'
-import * as Background from '../assets/world.png'
 
 class Game extends React.Component {
 	private element: HTMLElement
@@ -19,21 +18,7 @@ class Game extends React.Component {
 
 	public componentDidMount() {
 		if (this.element != null) {
-			// defaults
-			const width = 1056
-			const height = 624
-			const cell = 48
-
-			// adding a canvas element
-			const canvas = document.createElement('canvas')
-			canvas.width = width
-			canvas.height = height
-			canvas.style.backgroundImage = `url(${Background})`
-			this.element.appendChild(canvas)
-
-			// creating context, world and loop
-			const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
-			this.world = new World(new Context(ctx), width, height, cell)
+			this.world = new World(this.element, 1056, 672)
 			this.frame = new Frame(this.world)
 		}
 	}

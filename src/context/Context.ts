@@ -3,15 +3,32 @@ import VehicleType from './helpers/VehicleType'
 import ImageLoader from './helpers/ImageLoader'
 import Matrix2D from '../utils/Matrix2D'
 
+import * as Background from '../assets/world.png'
+
 class Context {
-	private _view: Matrix2D
+	public view: Matrix2D
+	public ctx: CanvasRenderingContext2D
+	public canvas: HTMLCanvasElement
 
 	constructor(
-		public ctx: CanvasRenderingContext2D,
-	) { }
+		element: HTMLElement,
+		width: number,
+		height: number,
+	) {
+		this.canvas = document.createElement('canvas')
+		this.canvas.width = width
+		this.canvas.height = height
+		this.canvas.style.backgroundImage = `url(${Background})` // TODO: move this to world or graphgenerator
+		element.appendChild(this.canvas)
+		this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D
+	}
 
-	public set view(matrix: Matrix2D) {
-		this._view = matrix
+	public setClick(action: (evt: MouseEvent) => void): void {
+		this.canvas.addEventListener('mousedown', action)
+	}
+
+	public setView(width: number, height: number) {
+		this.view = Matrix2D.view(width, height)
 		this.defaults()
 	}
 
@@ -20,7 +37,7 @@ class Context {
 	}
 
 	public defaults(): void {
-		const { m11, m12, m21, m22, m13, m23 } = this._view
+		const { m11, m12, m21, m22, m13, m23 } = this.view
 		this.ctx.setTransform(m11, m12, m21, m22, m13, m23)
 		this.ctx.fillStyle = 'black'
 		this.ctx.strokeStyle = 'black'
@@ -67,8 +84,9 @@ class Context {
 	}
 
 	public drawText(text: string, position: Vector2D = new Vector2D()): void {
+		this.ctx.translate(position.x, position.y)
 		this.ctx.scale(1, -1)
-		this.ctx.fillText(text, Math.round(position.x), Math.round(position.y), 200)
+		this.ctx.fillText(text, 0, 0, 200)
 		this.defaults()
 	}
 
