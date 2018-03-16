@@ -1,7 +1,7 @@
 import Vector2D from '../utils/Vector2D'
 import Vehicle from '../entity/Vehicle'
 import DecelerationLevel from './DecelerationLevel'
-import Utils from '../utils/utils'
+import Utils from '../utils/Utils'
 import Entity from '../entity/base/Entity'
 import ObstacleRound from '../entity/ObstacleRound'
 import EntityList from '../entity/base/EntityList'
@@ -150,7 +150,7 @@ class SteeringBehaviors {
 		this._vehicle.tagNeighbors(boxLength) // tag all obstacles within range
 
 		const output: Vector2D[] = []
-		for (const obstacle of EntityList.instance.obstacles) {
+		for (const obstacle of this._vehicle.world.entities.obstaclesRound) {
 			if (obstacle.isTagged) {
 				const localPos = Matrix2D.pointToLocalSpace(obstacle.position, this._vehicle.heading, this._vehicle.side, this._vehicle.position)
 
@@ -200,7 +200,7 @@ class SteeringBehaviors {
 		let closestPoint = new Vector2D()
 
 		for (const feeler of this._feelers) {
-			for (const wall of EntityList.instance.walls) {
+			for (const wall of this._vehicle.world.entities.walls) {
 				if (Utils.lineIntersection(
 					this._vehicle.position,
 					feeler,
@@ -235,7 +235,7 @@ class SteeringBehaviors {
 		let distToClosest = Number.MAX_VALUE
 		let bestHidingSpot = new Vector2D()
 
-		for (const obstacle of EntityList.instance.obstacles) {
+		for (const obstacle of this._vehicle.world.entities.obstaclesRound) {
 			const hidingSpot = this.getHidingPosition(obstacle.position, obstacle.radius, target.position)
 			const distance = Vector2D.distanceSq(hidingSpot, this._vehicle.position)
 

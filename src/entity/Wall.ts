@@ -3,7 +3,7 @@ import Context from '../context/Context'
 import World from '../game/World'
 import Vector2D from '../utils/Vector2D'
 import EntityType from './base/EntityType'
-import Utils from '../utils/utils'
+import Utils from '../utils/Utils'
 
 class Wall extends Entity {
 	constructor(

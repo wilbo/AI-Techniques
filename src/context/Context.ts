@@ -1,35 +1,26 @@
 import Vector2D from '../utils/Vector2D'
 import VehicleType from './helpers/VehicleType'
 import ImageLoader from './helpers/ImageLoader'
-import Matrix2D from '../utils/Matrix2D'
+import World from '../game/World'
 
 import * as Background from '../assets/world.png'
 
 class Context {
-	public view: Matrix2D
 	public ctx: CanvasRenderingContext2D
-	public canvas: HTMLCanvasElement
+	private _canvas: HTMLCanvasElement
 
-	constructor(
-		element: HTMLElement,
-		width: number,
-		height: number,
-	) {
-		this.canvas = document.createElement('canvas')
-		this.canvas.width = width
-		this.canvas.height = height
-		this.canvas.style.backgroundImage = `url(${Background})` // TODO: move this to world or graphgenerator
-		element.appendChild(this.canvas)
-		this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D
+	constructor(private _world: World) {
+		this._canvas = document.createElement('canvas')
+		this._canvas.width = _world.hPixels
+		this._canvas.height = _world.vPixels
+		this._canvas.style.backgroundImage = `url(${Background})` // TODO: move this to world or graphgenerator
+		_world.element.appendChild(this._canvas)
+		this.ctx = this._canvas.getContext('2d') as CanvasRenderingContext2D
+		this.defaults()
 	}
 
 	public setClick(action: (evt: MouseEvent) => void): void {
-		this.canvas.addEventListener('mousedown', action)
-	}
-
-	public setView(width: number, height: number) {
-		this.view = Matrix2D.view(width, height)
-		this.defaults()
+		this._canvas.addEventListener('mousedown', action)
 	}
 
 	public clear(width: number, height: number): void {
@@ -37,7 +28,7 @@ class Context {
 	}
 
 	public defaults(): void {
-		const { m11, m12, m21, m22, m13, m23 } = this.view
+		const { m11, m12, m21, m22, m13, m23 } = this._world.viewMatrix
 		this.ctx.setTransform(m11, m12, m21, m22, m13, m23)
 		this.ctx.fillStyle = 'black'
 		this.ctx.strokeStyle = 'black'

@@ -10,7 +10,7 @@ class ObstacleRect extends Entity {
 		public world: World,
 		public width: number = Utils.randomInt(100, 250),
 		public height: number = Utils.randomInt(100, 250),
-		public position: Vector2D = Vector2D.random(world.width, world.height),
+		public position: Vector2D = Utils.randomVector(world),
 		public invisble: boolean = false,
 	) { super(world, EntityType.ObstacleRect, width, position) }
 

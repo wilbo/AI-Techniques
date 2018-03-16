@@ -3,12 +3,12 @@ import Context from '../context/Context'
 import World from '../game/World'
 import Vector2D from '../utils/Vector2D'
 import EntityType from './base/EntityType'
-import Utils from '../utils/utils'
+import Utils from '../utils/Utils'
 
 class ObstacleRound extends Entity {
 	constructor(
 		public world: World,
-		public position: Vector2D = Vector2D.random(world.width, world.height),
+		public position: Vector2D = Utils.randomVector(world),
 		public radius: number = Utils.randomInt(20, 150),
 	) { super(world, EntityType.ObstacleRound, radius, position) }
 

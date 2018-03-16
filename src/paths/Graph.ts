@@ -1,8 +1,8 @@
 import GraphNode from './GraphNode'
-import GraphEdge from './GraphEdge'
 import Vector2D from '../utils/Vector2D'
 import Context from '../context/Context'
 import Matrix2D from '../utils/Matrix2D'
+import IArrayPosition from './IArrayPosition'
 
 class Graph {
 	constructor(
@@ -20,14 +20,16 @@ class Graph {
 	/**
 	 * Return nodes around a node from a certain position
 	 */
-	// public surroundingNodes(position: Vector2D): GraphNode[] {
-	// 		TODO: implement
-	// }
+	public surrounding(node: GraphNode): GraphNode[] {
+
+		// TODO: implement
+		return []
+	}
 
 	/**
 	 * Return a node at a certain position in the nodes array
 	 */
-	public nodeAt(row: number, column: number): GraphNode {
+	public node({ row, column }: IArrayPosition): GraphNode {
 		return this.nodes[row][column]
 	}
 
@@ -35,10 +37,9 @@ class Graph {
 		for (let y = 0; y < this.rows; y++) {
 			for (let x = 0; x < this.columns; x++) {
 				const node = this.nodes[y][x]
-				const position = Matrix2D.vector2DToView(node.position, context.view)
 				if (node.walkable) {
-					context.drawText(node.id + '', position)
-					context.drawEntity(position, 3, 'blue')
+					context.drawText(node.row + ',' + node.column, node.position)
+					context.drawEntity(node.position, 3, 'blue')
 				}
 			}
 		}

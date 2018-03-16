@@ -2,6 +2,9 @@ import VehicleType from '../context/helpers/VehicleType'
 import Vector2D from './Vector2D'
 import EntityList from '../entity/base/EntityList'
 import ObstacleRect from '../entity/ObstacleRect'
+import Matrix2D from './Matrix2D'
+import IArrayPosition from '../paths/IArrayPosition'
+import World from '../game/World'
 
 class Utils {
 	/**
@@ -62,6 +65,42 @@ class Utils {
 
 		dist = 0
 		return false
+	}
+
+	/**
+	 * Transform a node position to a vector point in pixels
+	 * @param coordinate the coordinate to be transformed into a vector
+	 * @param world the world this applies to
+	 */
+	public static coordinateToPosition(coordinate: IArrayPosition, world: World): Vector2D {
+		// create a vector in the middle of the cell
+		const vector = new Vector2D((coordinate.column * world.cellSize) + (world.cellSize * 0.5), (coordinate.row * world.cellSize) + (world.cellSize * 0.5))
+		// convert the vector to view coordinates
+		return Matrix2D.vector2DToView(vector, world.viewMatrix)
+	}
+
+	/**
+	 * Transform a node position to a vector point in pixels
+	 * @param position the position to transform
+	 * @param world the world this applies to
+	 * @param inDefault wether the position vector is in default coordinate system or in world view
+	 */
+	public static positionToCoordinate(position: Vector2D, world: World, inDefault = false): IArrayPosition {
+		// convert the position to default coordinate system
+		position = inDefault ? position : Matrix2D.vector2DToDefault(position, world.viewMatrix)
+		return {
+			row: Math.floor(position.y / world.cellSize),
+			column: Math.floor(position.x / world.cellSize),
+		}
+	}
+
+	/**
+	 * Returns a random vector inside world space
+	 */
+	public static randomVector(world: World): Vector2D {
+		const randX = Math.floor(Math.random() * world.hPixels - (world.hPixels / 2))
+		const randY = Math.floor(Math.random() * world.vPixels - (world.vPixels / 2))
+		return new Vector2D(randX, randY)
 	}
 }
 

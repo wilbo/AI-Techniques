@@ -120,12 +120,6 @@ class Vector2D {
 		return Vector2D.sign(target, origin) === 1 ? ((Math.PI * 2) - angle) : angle
 	}
 
-	public static random(maxX: number, maxY: number): Vector2D {
-		const randX = Math.floor(Math.random() * maxX - (maxX / 2))
-		const randY = Math.floor(Math.random() * maxY - (maxY / 2))
-		return new Vector2D(randX, randY)
-	}
-
 	constructor(
 		public x: number = 0,
 		public y: number = 0,

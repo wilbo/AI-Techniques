@@ -9,13 +9,13 @@ abstract class Entity {
 	private _tagged = false
 
 	public constructor(
-		public world: World,
+		private _world: World,
 		public type: EntityType,
 		public boundingRadius: number,
 		public position: Vector2D) {
 		// Add this new entity to entity list
-		this._id = EntityList.instance.nextId
-		EntityList.instance.add(this)
+		this._id = _world.entities.nextId
+		_world.entities.add(this)
 	}
 
 	public abstract update(delta: number): void
@@ -38,7 +38,7 @@ abstract class Entity {
 	}
 
 	public tagNeighbors(radius: number): void {
-		for (const entity of EntityList.instance.list) {
+		for (const entity of this._world.entities.list) {
 			entity.unTag() // clear any current tag
 			const to = Vector2D.subtract(this.position, entity.position)
 			const range = radius + entity.boundingRadius // take the bounding radius into account

@@ -18,7 +18,7 @@ class Game extends React.Component {
 
 	public componentDidMount() {
 		if (this.element != null) {
-			this.world = new World(this.element, 1056, 672)
+			this.world = new World(this.element)
 			this.frame = new Frame(this.world)
 		}
 	}

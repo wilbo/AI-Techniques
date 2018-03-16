@@ -13,32 +13,54 @@ import AStar from '../paths/AStar'
 
 class World {
 	public fps: number = 0
-	public navGraph: Graph
-	public aStar: AStar
-	public context: Context
+	public entities: EntityList
+	public viewMatrix: Matrix2D
+
+	private _context: Context
+	private _aStar: AStar
+	private _navGraph: Graph
 
 	constructor(
-		private element: HTMLElement,
-		public width: number,
-		public height: number,
-		private cellSize: number = 48,
+		public element: HTMLElement,
+		public hCells: number = 22,
+		public vCells: number = 14,
+		public cellSize: number = 48,
 	) {
-		this.configureContext(element)
-		this.navGraph = new GraphGenerator(cellSize).generateGraph()
-		this.aStar = new AStar(this.navGraph)
-		this.navGraph.draw(this.context)
+		// init viewmatrix
+		this.viewMatrix = Matrix2D.view(this.hPixels, this.vPixels)
+
+		// entities
+		this.entities = new EntityList(this)
+
+		// configuring context
+		this._context = new Context(this)
+		this._context.setClick(this.onWorldClick)
+
+		// pathfinding
+		this._navGraph = new GraphGenerator(this).generate()
+		this._aStar = new AStar(this._navGraph)
+		this._navGraph.draw(this._context)
+		console.log(this._navGraph)
+	}
+
+	public get hPixels(): number {
+		return this.hCells * this.cellSize
+	}
+
+	public get vPixels(): number {
+		return this.vCells * this.cellSize
 	}
 
 	public update(delta: number): void {
-		for (const entity of EntityList.instance.list) {
+		for (const entity of this.entities.list) {
 			entity.update(delta)
 		}
 	}
 
 	public render(): void {
-		this.context.clear(this.width, this.height)
-		for (const entity of EntityList.instance.list) {
-			entity.render(this.context)
+		this._context.clear(this.hPixels, this.vPixels)
+		for (const entity of this.entities.list) {
+			entity.render(this._context)
 			this.wrapAround(entity)
 		}
 
@@ -48,7 +70,7 @@ class World {
 	/**
 	 * Make the world act as a toroid
 	 */
-	private wrapAround(entity: Entity, maxX: number = this.width * 0.5, maxY: number = this.height * 0.5): void {
+	private wrapAround(entity: Entity, maxX: number = this.hPixels * 0.5, maxY: number = this.vPixels * 0.5): void {
 		if (entity.position.x > maxX) { entity.position.x = -maxX }
 		if (entity.position.x < -maxX) { entity.position.x = maxX }
 		if (entity.position.y < -maxY) { entity.position.y = maxY }
@@ -56,19 +78,14 @@ class World {
 	}
 
 	private drawFps(): void {
-		this.context.drawText(this.fps.toFixed(2) + ' fps', new Vector2D(-(this.width * 0.5) + 10, -(this.height * 0.5) + 10))
-	}
-
-	private configureContext(element: HTMLElement): void {
-		this.context = new Context(element, this.width, this.height)
-		this.context.setView(this.width, this.height)
-		this.context.setClick(this.onWorldClick)
+		this._context.drawText(this.fps.toFixed(2) + ' fps', new Vector2D(-(this.hPixels * 0.5) + 10, -(this.vPixels * 0.5) + 10))
 	}
 
 	private onWorldClick = (evt: MouseEvent): void => {
 		const x = evt.clientX + document.body.scrollLeft + document.documentElement.scrollLeft - (evt.target as HTMLCanvasElement).offsetLeft
 		const y = evt.clientY + document.body.scrollTop + document.documentElement.scrollTop - (evt.target as HTMLCanvasElement).offsetTop
-		this.aStar.findPath([3, 7], [Math.floor(x / this.cellSize), Math.floor(y / this.cellSize)])
+		const position = Utils.positionToCoordinate(new Vector2D(x, y), this, true)
+		this._aStar.findPath({row: 11, column: 18}, position)
 	}
 }
 
