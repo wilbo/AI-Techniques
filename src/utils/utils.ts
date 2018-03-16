@@ -3,8 +3,8 @@ import Vector2D from './Vector2D'
 import EntityList from '../entity/base/EntityList'
 import ObstacleRect from '../entity/ObstacleRect'
 import Matrix2D from './Matrix2D'
-import IArrayPosition from '../paths/IArrayPosition'
 import World from '../game/World'
+import IArrayPosition from './IArrayPosition'
 
 class Utils {
 	/**

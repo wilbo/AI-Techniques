@@ -3,19 +3,20 @@ import EntityList from '../entity/base/EntityList'
 import Entity from '../entity/base/Entity'
 import Context from '../context/Context'
 import Vector2D from '../utils/Vector2D'
-import Graph from '../paths/Graph'
-import GraphNode from '../paths/GraphNode'
 import Matrix2D from '../utils/Matrix2D'
-import ObstacleRect from '../entity/ObstacleRect'
 import Utils from '../utils/Utils'
-import GraphGenerator from '../paths/GraphGenerator'
-import AStar from '../paths/AStar'
+import Level1 from './levels/Level1'
+import ILevel from './levels/ILevel'
+import AStar from '../pathfinding/algorithms/AStar'
+import Graph from '../pathfinding/graph/Graph'
+import GraphGenerator from '../pathfinding/graph/GraphGenerator'
 
 class World {
 	public fps: number = 0
 	public entities: EntityList
 	public viewMatrix: Matrix2D
 
+	private _level: ILevel
 	private _context: Context
 	private _aStar: AStar
 	private _navGraph: Graph
@@ -26,8 +27,11 @@ class World {
 		public vCells: number = 14,
 		public cellSize: number = 48,
 	) {
-		// init viewmatrix
+		// viewmatrix
 		this.viewMatrix = Matrix2D.view(this.hPixels, this.vPixels)
+
+		// level
+		this._level = new Level1()
 
 		// entities
 		this.entities = new EntityList(this)
@@ -35,19 +39,23 @@ class World {
 		// configuring context
 		this._context = new Context(this)
 		this._context.setClick(this.onWorldClick)
+		this._context.setBackground(this._level.imageUrl)
 
 		// pathfinding
-		this._navGraph = new GraphGenerator(this).generate()
+		this._navGraph = new GraphGenerator(this, this._level.grid).generate()
 		this._aStar = new AStar(this._navGraph)
-		this._navGraph.draw(this._context)
-		console.log(this._navGraph)
-		console.log(this._navGraph.surrounding(this._navGraph.nodes[5][7]))
 	}
 
+	/**
+	 * World width in pixels
+	 */
 	public get hPixels(): number {
 		return this.hCells * this.cellSize
 	}
 
+	/**
+	 * World height in pixels
+	 */
 	public get vPixels(): number {
 		return this.vCells * this.cellSize
 	}
@@ -66,6 +74,7 @@ class World {
 		}
 
 		this.drawFps()
+		this._navGraph.draw(this._context)
 	}
 
 	/**
@@ -87,14 +96,10 @@ class World {
 		const y = evt.clientY + document.body.scrollTop + document.documentElement.scrollTop - (evt.target as HTMLCanvasElement).offsetTop
 		const position = Utils.positionToCoordinate(new Vector2D(x, y), this, true)
 		const path = this._aStar.findPath({row: 11, column: 18}, position)
-		console.log(path)
 
 		for (const arrayPosition of path) {
 			const node = this._navGraph.node(arrayPosition)
-
-			if (node) {
-				this._context.drawEntity(node.position, 6, 'red')
-			}
+			if (node) { this._context.drawEntity(node.position, 6, 'red') }
 		}
 	}
 }

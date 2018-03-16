@@ -1,9 +1,7 @@
 import * as _ from 'lodash'
-import Graph from './Graph'
-import Vector2D from '../utils/Vector2D'
-import GraphNode from './GraphNode'
-import Utils from '../utils/Utils'
-import IArrayPosition from './IArrayPosition'
+import GraphNode from '../graph/GraphNode'
+import Graph from '../graph/Graph'
+import IArrayPosition from '../../utils/IArrayPosition'
 
 class AStar {
 	private readonly _movementCost = 10

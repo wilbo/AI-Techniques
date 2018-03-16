@@ -1,8 +1,6 @@
 import GraphNode from './GraphNode'
-import Vector2D from '../utils/Vector2D'
-import Context from '../context/Context'
-import Matrix2D from '../utils/Matrix2D'
-import IArrayPosition from './IArrayPosition'
+import IArrayPosition from '../../utils/IArrayPosition'
+import Context from '../../context/Context'
 
 class Graph {
 	constructor(

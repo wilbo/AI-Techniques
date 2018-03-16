@@ -3,8 +3,6 @@ import VehicleType from './helpers/VehicleType'
 import ImageLoader from './helpers/ImageLoader'
 import World from '../game/World'
 
-import * as Background from '../assets/world.png'
-
 class Context {
 	public ctx: CanvasRenderingContext2D
 	private _canvas: HTMLCanvasElement
@@ -13,10 +11,13 @@ class Context {
 		this._canvas = document.createElement('canvas')
 		this._canvas.width = _world.hPixels
 		this._canvas.height = _world.vPixels
-		this._canvas.style.backgroundImage = `url(${Background})` // TODO: move this to world or graphgenerator
 		_world.element.appendChild(this._canvas)
 		this.ctx = this._canvas.getContext('2d') as CanvasRenderingContext2D
 		this.defaults()
+	}
+
+	public setBackground(imageUrl: string): void {
+		this._canvas.style.backgroundImage = `url(${imageUrl})`
 	}
 
 	public setClick(action: (evt: MouseEvent) => void): void {

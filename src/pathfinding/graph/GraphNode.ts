@@ -1,4 +1,4 @@
-import Vector2D from '../utils/Vector2D'
+import Vector2D from '../../utils/Vector2D'
 
 class GraphNode {
 	public parent: GraphNode | undefined
