@@ -14,7 +14,16 @@ class GraphNode {
 		public column: number,
 		public position: Vector2D,
 		public walkable: boolean,
-	) {
+	) { this.defaults() }
+
+	public setFValue(): number {
+		return this.fValue = this.gValue + this.hValue
+	}
+
+	/**
+	 * Reset every pathfinding value
+	 */
+	public defaults(): void {
 		this.parent = undefined
 		this.inClosedSet = false
 		this.inOpenSet = false
@@ -22,10 +31,6 @@ class GraphNode {
 		this.gValue = 0
 		this.hValue = 0
 		this.fValue = 0
-	}
-
-	public setFValue(): number {
-		return this.fValue = this.gValue + this.hValue
 	}
 }
 

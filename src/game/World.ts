@@ -41,6 +41,7 @@ class World {
 		this._aStar = new AStar(this._navGraph)
 		this._navGraph.draw(this._context)
 		console.log(this._navGraph)
+		console.log(this._navGraph.surrounding(this._navGraph.nodes[5][7]))
 	}
 
 	public get hPixels(): number {
@@ -85,7 +86,16 @@ class World {
 		const x = evt.clientX + document.body.scrollLeft + document.documentElement.scrollLeft - (evt.target as HTMLCanvasElement).offsetLeft
 		const y = evt.clientY + document.body.scrollTop + document.documentElement.scrollTop - (evt.target as HTMLCanvasElement).offsetTop
 		const position = Utils.positionToCoordinate(new Vector2D(x, y), this, true)
-		this._aStar.findPath({row: 11, column: 18}, position)
+		const path = this._aStar.findPath({row: 11, column: 18}, position)
+		console.log(path)
+
+		for (const arrayPosition of path) {
+			const node = this._navGraph.node(arrayPosition)
+
+			if (node) {
+				this._context.drawEntity(node.position, 6, 'red')
+			}
+		}
 	}
 }
 

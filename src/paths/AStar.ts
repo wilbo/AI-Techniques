@@ -15,20 +15,21 @@ class AStar {
 	constructor(private _graph: Graph) { }
 
 	public findPath(start: IArrayPosition, end: IArrayPosition): IArrayPosition[] {
+		this.resetValues()
+
 		const startNode = this._graph.node(start)
 		const endNode = this._graph.node(end)
 
+		if (!startNode || !endNode) {
+			return []
+		}
+
 		if (!startNode.walkable || !endNode.walkable) {
-			throw new Error('Invalid start or endPoint set!')
+			return []
 		}
 
 		let neighbors: GraphNode[] = []
 		let currentNode: GraphNode | undefined = startNode
-
-		// reset fgh values
-		currentNode.gValue = 0
-		currentNode.hValue = 0
-		currentNode.setFValue()
 
 		// initially, only the start node is known.
 		currentNode.inOpenSet = true
@@ -40,10 +41,8 @@ class AStar {
 		while (!_.isEmpty(this._openSet)) {
 			// the currentnode is the node with the lowest f value
 			currentNode = _.minBy(this._openSet, (node) => node.fValue)
-			// double check
-			if (typeof currentNode === 'undefined') {
-				throw new Error('no element returned from _.minBy()')
-			}
+
+			if (!currentNode) { continue }
 
 			// 'move' the currentnode to the closed set
 			currentNode.inOpenSet = false
@@ -57,22 +56,55 @@ class AStar {
 			}
 
 			// get surrounding nodes
-			// ..
-			// neighbors = this._graph.
+			neighbors = this._graph.surrounding(currentNode)
+
+			for (const neighbor of neighbors) {
+				if (neighbor.inClosedSet) { continue } // skip iteration if the neighbour is in the closed set
+
+				const nextGValue = this.calculateGValue(currentNode, neighbor)
+
+				// skip iteration, we are looking for the smallest G value
+				if (neighbor.inOpenSet && nextGValue > neighbor.gValue) { continue }
+
+				neighbor.gValue = nextGValue
+				neighbor.hValue = this.manhattanDistance(neighbor)
+				neighbor.setFValue()
+				neighbor.parent = currentNode
+
+				if (!neighbor.inOpenSet) {
+					neighbor.inOpenSet = true
+					this._openSet.push(neighbor)
+				}
+			}
 		}
 
 		return []
 	}
 
 	/**
-	 * 
+	 * Calculate cost of the path from the end node
+	 */
+	private manhattanDistance({ row, column }: IArrayPosition | GraphNode): number {
+		return (Math.abs(row) - Math.abs(column)) * this._movementCost
+	}
+
+	/**
+	 * Calculate cost of the path to a neigbour
+	 * @param current current node
+	 * @param neighbor a neigbour node of the current node
+	 */
+	private calculateGValue(current: GraphNode, neighbor: GraphNode): number {
+		return current.gValue + ((neighbor.row - current.row === 0 || neighbor.column - current.column === 0) ? this._movementCost : this._movementCostDiagonal)
+	}
+
+	/**
+	 * Fill the initial closed set with nodes that aren't walkable
 	 */
 	private fillInitalClosedSet(): void {
 		for (let row = 0; row < this._graph.rows; row++) {
 			for (let column = 0; column < this._graph.columns; column++) {
 				const node = this._graph.node({ row, column })
-
-				if (!node.walkable) {
+				if (node && !node.walkable) {
 					node.gValue = 0
 					node.hValue = 0
 					node.setFValue()
@@ -93,7 +125,8 @@ class AStar {
 		let currentNode = node
 
 		while (currentNode.parent) {
-			path.push({ row: currentNode.row, column: currentNode.column })
+			const { row, column } = currentNode
+			path.push({ row, column })
 			currentNode = currentNode.parent
 		}
 
@@ -101,6 +134,17 @@ class AStar {
 		return _.reverse(path)
 	}
 
+	private resetValues(): void {
+		this._closedSet = []
+		this._openSet = []
+
+		for (let row = 0; row < this._graph.rows; row++) {
+			for (let column = 0; column < this._graph.columns; column++) {
+				const node = this._graph.node({ row, column }) as GraphNode
+				node.defaults()
+			}
+		}
+	}
 }
 
 export default AStar
