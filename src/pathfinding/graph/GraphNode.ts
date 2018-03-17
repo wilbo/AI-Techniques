@@ -5,9 +5,10 @@ class GraphNode {
 	public inClosedSet: boolean
 	public inOpenSet: boolean
 
-	public gValue: number // cost of the path from the start node
-	public hValue: number // heuristic value
-	public fValue: number // g + h
+	public gScore: number // cost of the path from the start node
+	public fScore: number // g + h
+
+	public isDiagonal: boolean
 
 	constructor(
 		public row: number,
@@ -16,10 +17,6 @@ class GraphNode {
 		public walkable: boolean,
 	) { this.defaults() }
 
-	public setFValue(): number {
-		return this.fValue = this.gValue + this.hValue
-	}
-
 	/**
 	 * Reset every pathfinding value
 	 */
@@ -27,10 +24,10 @@ class GraphNode {
 		this.parent = undefined
 		this.inClosedSet = false
 		this.inOpenSet = false
+		this.isDiagonal = false
 
-		this.gValue = 0
-		this.hValue = 0
-		this.fValue = 0
+		this.gScore = Number.MAX_SAFE_INTEGER
+		this.fScore = Number.MAX_SAFE_INTEGER
 	}
 }
 

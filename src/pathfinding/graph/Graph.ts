@@ -19,27 +19,19 @@ class Graph {
 	 * Return the walkable nodes surrounding a node
 	 * @param node The node to start searching from
 	 */
-	public surrounding(node: GraphNode, diagonalAllowed = false): GraphNode[] {
+	public surrounding(node: GraphNode): GraphNode[] {
 		const { row, column } = node
 		const output: GraphNode[] = []
 
 		const north = this.node({ row: row - 1, column })
-		const northEast = this.node({ row: row - 1, column: column + 1 })
 		const east = this.node({ row, column: column + 1 })
-		const southEast = this.node({ row: row + 1, column: column + 1 })
 		const south = this.node({ row: row + 1, column })
-		const southWest = this.node({ row: row + 1, column: column - 1 })
 		const west = this.node({ row, column: column - 1 })
-		const northWest = this.node({ row: row - 1, column: column - 1 })
 
 		if (north && north.walkable) { output.push(north) }
-		if (northEast && northEast.walkable && diagonalAllowed) { output.push(northEast) }
 		if (east && east.walkable) { output.push(east) }
-		if (southEast && southEast.walkable && diagonalAllowed) { output.push(southEast) }
 		if (south && south.walkable) { output.push(south) }
-		if (southWest && southWest.walkable && diagonalAllowed) { output.push(southWest) }
 		if (west && west.walkable) { output.push(west) }
-		if (northWest && northWest.walkable && diagonalAllowed) { output.push(northWest) }
 
 		return output
 	}

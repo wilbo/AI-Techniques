@@ -5,21 +5,15 @@ import IArrayPosition from '../../utils/IArrayPosition'
 import Vector2D from '../../utils/Vector2D'
 
 class AStar {
-	private readonly _movementCost = 10
-	private readonly _movementCostDiagonal = 14
-
 	private _closedSet: GraphNode[] = []	// The set of nodes already evaluated
 	private _openSet: GraphNode[] = [] // The set of currently discovered nodes that are not evaluated yet
 
-	constructor(
-		private _graph: Graph,
-		private _diagonalAllowed: boolean = false,
-	) { }
+	constructor(private _graph: Graph) { }
 
 	/**
 	 * Returns the positions of the nodes in the openset for drawing purposes
 	 */
-	public get openSet(): Vector2D[] {
+	public get openSetPositions(): Vector2D[] {
 		return this._openSet.map((node) => node.position)
 	}
 
@@ -38,47 +32,35 @@ class AStar {
 			return []
 		}
 
-		let currentNode: GraphNode | undefined = startNode
+		this._closedSet = []
+		this._openSet = []
 
-		// initially, only the start node is known
-		currentNode.inOpenSet = true
-		this._openSet.push(currentNode)
-
-		// fill intital closed set with unwalkable nodes
-		this.fillInitalClosedSet()
+		this.addToOpenSet(startNode) // initially, only the start node is known
+		startNode.gScore = 0 // the cost of going from start to start is zero
+		startNode.fScore = this.manhattanDistance(startNode, endNode) // for the first node, that value is completely heuristic
 
 		while (!_.isEmpty(this._openSet)) {
-			// the currentnode is the node with the lowest f value
-			currentNode = _.minBy(this._openSet, (node) => node.fValue) as GraphNode
+			const currentNode = _.minBy(this._openSet, (node) => node.fScore) as GraphNode
 
-			// end of path reached
 			if (currentNode === endNode) {
 				return this.createPathFrom(endNode)
 			}
 
-			// 'move' the currentnode to the closed set
-			currentNode.inOpenSet = false
-			_.remove(this._openSet, currentNode)
-			currentNode.inClosedSet = true
-			this._closedSet.push(currentNode)
+			this.removeFromOpenSet(currentNode)
+			this.addToClosedSet(currentNode)
 
-			for (const neighbor of this._graph.surrounding(currentNode, this._diagonalAllowed)) {
-				if (neighbor.inClosedSet) { continue } // ignore the neighbor which is already evaluated.
+			for (const neighbor of this._graph.surrounding(currentNode)) {
+				if (neighbor.inClosedSet) { continue } // ignore the neighbor which is already evaluated
+				if (!neighbor.inOpenSet) { this.addToOpenSet(neighbor) } // discover a new node
 
-				const gScore = this.calculateGValue(currentNode, neighbor)
+				// the distance from start to a neighbor
+				const tentativeGScore = currentNode.gScore
+				if (tentativeGScore >= neighbor.gScore) { continue } // this is not a better path
 
-				// skip iteration, we are looking for the smallest G value
-				if (neighbor.inOpenSet && gScore >= neighbor.gValue) { continue }
-
-				neighbor.gValue = gScore
-				neighbor.hValue = this.manhattanDistance(neighbor)
-				neighbor.setFValue()
-				neighbor.parent = currentNode // continue with search
-
-				if (!neighbor.inOpenSet) {
-					neighbor.inOpenSet = true
-					this._openSet.push(neighbor)
-				}
+				// the best path until now
+				neighbor.parent = currentNode
+				neighbor.gScore = tentativeGScore
+				neighbor.fScore = neighbor.gScore + this.manhattanDistance(neighbor, endNode)
 			}
 		}
 
@@ -88,36 +70,8 @@ class AStar {
 	/**
 	 * Calculate cost of the path from the end node
 	 */
-	private manhattanDistance({ row, column }: IArrayPosition | GraphNode): number {
-		return (Math.abs(row) - Math.abs(column)) * this._movementCost
-	}
-
-	/**
-	 * Calculate cost of the path to a neigbour
-	 * @param current current node
-	 * @param neighbor a neigbour node of the current node
-	 */
-	private calculateGValue(current: GraphNode, neighbor: GraphNode): number {
-		return current.gValue + ((neighbor.row - current.row === 0 || neighbor.column - current.column === 0) ? this._movementCost : this._movementCostDiagonal)
-	}
-
-	/**
-	 * Fill the initial closed set with nodes that aren't walkable
-	 */
-	private fillInitalClosedSet(): void {
-		for (let row = 0; row < this._graph.rows; row++) {
-			for (let column = 0; column < this._graph.columns; column++) {
-				const node = this._graph.node({ row, column })
-				if (node && !node.walkable) {
-					node.gValue = 0
-					node.hValue = 0
-					node.setFValue()
-
-					node.inClosedSet = true
-					this._closedSet.push(node)
-				}
-			}
-		}
+	private manhattanDistance(node: GraphNode, goal: GraphNode): number {
+		return Math.abs(node.row - goal.row) + Math.abs(node.column - goal.column)
 	}
 
 	/**
@@ -142,15 +96,40 @@ class AStar {
 	 * Reset the default pathfinding values
 	 */
 	private resetValues(): void {
-		this._closedSet = []
-		this._openSet = []
-
 		for (let row = 0; row < this._graph.rows; row++) {
 			for (let column = 0; column < this._graph.columns; column++) {
 				const node = this._graph.node({ row, column }) as GraphNode
 				node.defaults()
 			}
 		}
+	}
+
+	private addToOpenSet(node: GraphNode): void {
+		if (node.inOpenSet) { return }
+
+		node.inOpenSet = true
+		this._openSet.push(node)
+	}
+
+	private addToClosedSet(node: GraphNode): void {
+		if (node.inClosedSet) { return }
+
+		node.inClosedSet = true
+		this._closedSet.push(node)
+	}
+
+	private removeFromOpenSet(node: GraphNode): void {
+		if (!node.inOpenSet) { return }
+
+		node.inOpenSet = false
+		_.remove(this._openSet, node)
+	}
+
+	private removeFromClosedSet(node: GraphNode): void {
+		if (!node.inClosedSet) { return }
+
+		node.inClosedSet = false
+		_.remove(this._closedSet, node)
 	}
 }
 
