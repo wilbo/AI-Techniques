@@ -20,8 +20,8 @@ class Wall extends Entity {
 	public update(delta: number): void { return }
 
 	public render(context: Context): void {
-		// context.drawWall(this.from, this.to)
-		// context.drawEntity(Vector2D.add(Vector2D.divide(Vector2D.add(this.to, this.from), 2), Vector2D.multiply(this.normalized, 6)), 3)
+		context.drawWall(this.from, this.to)
+		context.drawEntity(Vector2D.add(Vector2D.divide(Vector2D.add(this.to, this.from), 2), Vector2D.multiply(this.normalized, 6)), 3)
 	}
 }
 

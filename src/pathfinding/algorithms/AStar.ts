@@ -11,7 +11,10 @@ class AStar {
 	private _closedSet: GraphNode[] = []	// The set of nodes already evaluated
 	private _openSet: GraphNode[] = [] // The set of currently discovered nodes that are not evaluated yet
 
-	constructor(private _graph: Graph) { }
+	constructor(
+		private _graph: Graph,
+		private _diagonalAllowed: boolean = false,
+	) { }
 
 	/**
 	 * Returns the positions of the nodes in the openset for drawing purposes
@@ -59,7 +62,7 @@ class AStar {
 			currentNode.inClosedSet = true
 			this._closedSet.push(currentNode)
 
-			for (const neighbor of this._graph.surrounding(currentNode)) {
+			for (const neighbor of this._graph.surrounding(currentNode, this._diagonalAllowed)) {
 				if (neighbor.inClosedSet) { continue } // ignore the neighbor which is already evaluated.
 
 				const gScore = this.calculateGValue(currentNode, neighbor)

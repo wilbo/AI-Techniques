@@ -19,7 +19,7 @@ class Graph {
 	 * Return the walkable nodes surrounding a node
 	 * @param node The node to start searching from
 	 */
-	public surrounding(node: GraphNode): GraphNode[] {
+	public surrounding(node: GraphNode, diagonalAllowed = false): GraphNode[] {
 		const { row, column } = node
 		const output: GraphNode[] = []
 
@@ -33,13 +33,13 @@ class Graph {
 		const northWest = this.node({ row: row - 1, column: column - 1 })
 
 		if (north && north.walkable) { output.push(north) }
-		if (northEast && northEast.walkable) { output.push(northEast) }
+		if (northEast && northEast.walkable && diagonalAllowed) { output.push(northEast) }
 		if (east && east.walkable) { output.push(east) }
-		if (southEast && southEast.walkable) { output.push(southEast) }
+		if (southEast && southEast.walkable && diagonalAllowed) { output.push(southEast) }
 		if (south && south.walkable) { output.push(south) }
-		if (southWest && southWest.walkable) { output.push(southWest) }
+		if (southWest && southWest.walkable && diagonalAllowed) { output.push(southWest) }
 		if (west && west.walkable) { output.push(west) }
-		if (northWest && northWest.walkable) { output.push(northWest) }
+		if (northWest && northWest.walkable && diagonalAllowed) { output.push(northWest) }
 
 		return output
 	}
@@ -65,7 +65,7 @@ class Graph {
 				const node = this.nodes[y][x]
 				if (node.walkable) {
 					// context.drawText(node.row + ',' + node.column, node.position)
-					context.drawEntity(node.position, 3, 'blue')
+					context.drawEntity(node.position, 2, 'blue')
 				}
 			}
 		}

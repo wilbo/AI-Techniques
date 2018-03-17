@@ -3,7 +3,8 @@ import Frame from '../game/Frame'
 import World from '../game/World'
 
 interface IControlsProps {
-	world: World
+	world: World,
+	framesRunning: boolean
 }
 
 interface IControlsState {
@@ -38,7 +39,7 @@ class DevButton extends React.Component<IControlsProps, IControlsState> {
 			marginTop: 10,
 		}
 
-	 return <button style={style} onClick={this.handleOnClick}>{this.state.text}</button>
+	 return <button disabled={!this.props.framesRunning} style={style} onClick={this.handleOnClick}>{this.state.text}</button>
 	}
 }
 

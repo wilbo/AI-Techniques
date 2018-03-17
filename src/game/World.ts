@@ -11,6 +11,7 @@ import AStar from '../pathfinding/algorithms/AStar'
 import Graph from '../pathfinding/graph/Graph'
 import GraphGenerator from '../pathfinding/graph/GraphGenerator'
 import GraphNode from '../pathfinding/graph/GraphNode'
+import EntityType from '../entity/base/EntityType'
 
 class World {
 	public fps: number = 0
@@ -77,7 +78,11 @@ class World {
 	public render(): void {
 		this._context.clear(this.hPixels, this.vPixels)
 		for (const entity of this.entities.list) {
-			entity.render(this._context)
+			if (entity.type === EntityType.Vehicle) {
+				entity.render(this._context) // only show vehicles in !devmode
+			} else if (this.devMode) {
+				entity.render(this._context) // show all entities in devmode
+			}
 		}
 
 		this.drawFps()

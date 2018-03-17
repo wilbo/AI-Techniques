@@ -26,6 +26,7 @@ class SteeringBehaviors {
 	// follow path
 	public followPathPositions: Vector2D[]
 	public currentPositionIndex: number = 0
+	private _followStrictness = 48
 
 	// total force
 	private _combinedSteeringForce = new Vector2D()
@@ -254,7 +255,9 @@ class SteeringBehaviors {
 	 *
 	 */
 	public followPath(): Vector2D {
-		if (Vector2D.equalsRounded(this._vehicle.position, this.followPathPositions[this.currentPositionIndex], 24) && this.currentPositionIndex < this.followPathPositions.length - 1) {
+		if (
+			Vector2D.equalsRounded(this._vehicle.position, this.followPathPositions[this.currentPositionIndex], this._followStrictness) &&
+			this.currentPositionIndex < this.followPathPositions.length - 1) {
 			this.currentPositionIndex++
 		}
 

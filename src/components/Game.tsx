@@ -8,6 +8,7 @@ import Vector2D from '../utils/Vector2D'
 import ObstacleRound from '../entity/ObstacleRound'
 import Matrix2D from '../utils/Matrix2D'
 import VehicleType from '../context/helpers/VehicleType'
+import Utils from '../utils/Utils'
 
 interface IControlsState {
 	mounted: boolean
@@ -35,6 +36,13 @@ class Game extends React.Component<{}, IControlsState> {
 			this.vehicle = new Vehicle(this.world, new Vector2D(-120, 0))
 			// this.vehicle.steering.wanderOn = true
 			this.vehicle.steering.wallAvoidanceOn = true
+
+			// this.drunkDriver(Utils.randomVector(this.world))
+			// this.drunkDriver(Utils.randomVector(this.world))
+			// this.drunkDriver(Utils.randomVector(this.world))
+			// this.drunkDriver(Utils.randomVector(this.world))
+			// this.drunkDriver(Utils.randomVector(this.world))
+			// this.drunkDriver(Utils.randomVector(this.world))
 
 			this.setState({ mounted: true })
 		}
@@ -73,6 +81,12 @@ class Game extends React.Component<{}, IControlsState> {
 		// v2.steering.hideOn = true
 		v2.steering.wanderOn = true
 		v2.steering.obstacleAvoidanceOn = true
+	}
+
+	public drunkDriver(start: Vector2D): void {
+		const v = new Vehicle(this.world, start)
+		v.steering.wanderOn = true
+		v.steering.wallAvoidanceOn = true
 	}
 
 	public render(): JSX.Element {

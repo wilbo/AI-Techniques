@@ -29,7 +29,7 @@ class Controls extends React.Component<IControlsProps, IControlsState> {
 	 return (
 			<div>
 				<StartPauseButton frame={this.props.frame} updateRunning={this.updateRunning} />
-	 			{this.props.frame.isRunning && <DevButton world={this.props.world} />}
+	 			<DevButton world={this.props.world} framesRunning={this.props.frame.isRunning} />
 			</div>
 		)
 	}

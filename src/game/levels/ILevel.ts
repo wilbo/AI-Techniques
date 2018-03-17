@@ -1,4 +1,5 @@
 import Wall from '../../entity/Wall'
+import Vector2D from '../../utils/Vector2D'
 
 interface ILevel {
 	/**
@@ -12,9 +13,9 @@ interface ILevel {
 	readonly imagePath: string
 
 	/**
-	 * A list of walls that will keep moving entities on the circuit
+	 * A list of Vector2D's that can be used to create boundaries
 	 */
-	readonly walls: Wall[]
+	readonly walls: Vector2D[]
 }
 
 export default ILevel
