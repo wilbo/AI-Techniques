@@ -52,8 +52,8 @@ class Game extends React.Component<{}, IControlsState> {
 		const path = this.world.findPath(this.vehicle.position, clickedPosition)
 
 		if (path.length > 0) {
-			this.vehicle.steering.currentPositionIndex = 0
 			this.vehicle.steering.followPathPositions = path
+			this.vehicle.steering.currentFollowPathPosition = this.vehicle.steering.followPathPositions[0]
 			this.vehicle.steering.followPathOn = true
 		}
 	}
