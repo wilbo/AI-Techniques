@@ -8,16 +8,24 @@ import Vector2D from '../utils/Vector2D'
 import ObstacleRound from '../entity/ObstacleRound'
 import Matrix2D from '../utils/Matrix2D'
 import VehicleType from '../context/helpers/VehicleType'
-import ObstacleRect from '../entity/ObstacleRect'
-import Wall from '../entity/Wall'
-import IArrayPosition from '../utils/IArrayPosition';
 
-class Game extends React.Component {
+interface IControlsState {
+	mounted: boolean
+}
+
+class Game extends React.Component<{}, IControlsState> {
+	private _initialState: IControlsState = { mounted: false }
+
 	private element: HTMLElement
 	private world: World
 	private frame: Frame
 	private vehicle: Vehicle
 	// private positions: Vector2D[]
+
+	constructor(props: {}) {
+		super(props)
+		this.state = this._initialState
+	}
 
 	public componentDidMount() {
 		if (this.element != null) {
@@ -27,6 +35,8 @@ class Game extends React.Component {
 			this.vehicle = new Vehicle(this.world, new Vector2D(-120, 0))
 			// this.vehicle.steering.wanderOn = true
 			this.vehicle.steering.wallAvoidanceOn = true
+
+			this.setState({ mounted: true })
 		}
 	}
 
@@ -73,8 +83,7 @@ class Game extends React.Component {
 		return (
 			<>
 				<div ref={(r) => (r) && (this.element = r)} style={style} />
-				{/* tslint:disable-next-line:jsx-no-lambda */}
-				<Controls frame={() => this.frame} />
+				{this.state.mounted ? <Controls frame={this.frame} world={this.world} /> : null}
 			</>
 		)
 	}

@@ -16,7 +16,7 @@ class Vehicle extends Entity implements IMovingEntity {
 	public maxSpeed = 200
 	public maxForce = 1000
 	public maxTurnRate = 1
-	public vehicleType = VehicleType.Green5
+	public vehicleType = VehicleType.Red5
 	public steering = new SteeringBehaviors(this)
 
 	private _angle: number

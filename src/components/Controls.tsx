@@ -1,41 +1,35 @@
 import * as React from 'react'
 import Frame from '../game/Frame'
+import StartPauseButton from './StartPauseButton'
+import World from '../game/World'
+import DevButton from './DevButton'
 
 interface IControlsProps {
-	frame: () => Frame
+	frame: Frame,
+	world: World,
 }
 
 interface IControlsState {
-	text: string
+	framesRunning: boolean
 }
 
 class Controls extends React.Component<IControlsProps, IControlsState> {
-	private _initialState: IControlsState = { text: 'Start' }
-	private _element: HTMLElement
+	private _initialState: IControlsState = { framesRunning: false }
 
 	constructor(props: IControlsProps) {
 		super(props)
 		this.state = this._initialState
 	}
 
-	public handleOnClick = () => {
-		if (this.state.text === 'Start') {
-			this.props.frame().start()
-			this.setState({ text: 'Pause' })
-		} else {
-			this.props.frame().stop()
-			this.setState({ text: 'Start' })
-		}
+	public updateRunning = (): void => {
+		this.setState({ framesRunning: this.props.frame.isRunning })
 	}
 
 	public render(): JSX.Element {
-		const style: React.CSSProperties = {
-			marginTop: 10,
-		}
-
 	 return (
 			<div>
-				<button style={style} onClick={this.handleOnClick}>{this.state.text}</button>
+				<StartPauseButton frame={this.props.frame} updateRunning={this.updateRunning} />
+	 			{this.props.frame.isRunning && <DevButton world={this.props.world} />}
 			</div>
 		)
 	}

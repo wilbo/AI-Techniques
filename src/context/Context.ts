@@ -45,7 +45,7 @@ class Context {
 		this.defaults()
 	}
 
-	public drawVehicle(position: Vector2D, rotation: number = 0, vehicleType: VehicleType = VehicleType.Green5): void {
+	public drawVehicle(position: Vector2D, rotation: number = 0, vehicleType: VehicleType = VehicleType.Red5): void {
 		const image = ImageLoader.vehicle(vehicleType)
 		this.ctx.translate(position.x, position.y)
 		this.ctx.rotate(rotation)

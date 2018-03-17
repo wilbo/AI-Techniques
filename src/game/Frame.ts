@@ -14,6 +14,10 @@ class Frame {
 
 	constructor(private _world: World) { }
 
+	public get isRunning(): boolean {
+		return this._running
+	}
+
 	public start(): void {
 		// track inactive time to allow the game to be paused
 		this._inactiveTime += (performance.now() - this._stopTime)

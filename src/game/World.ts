@@ -10,13 +10,14 @@ import ILevel from './levels/ILevel'
 import AStar from '../pathfinding/algorithms/AStar'
 import Graph from '../pathfinding/graph/Graph'
 import GraphGenerator from '../pathfinding/graph/GraphGenerator'
-import GraphNode from '../pathfinding/graph/GraphNode';
+import GraphNode from '../pathfinding/graph/GraphNode'
 
 class World {
 	public fps: number = 0
 	public entities: EntityList
 	public viewMatrix: Matrix2D
 	public onClickListener: (clickedPosition: Vector2D) => void
+	public devMode: boolean = false
 
 	private _level: ILevel
 	private _context: Context
@@ -46,7 +47,6 @@ class World {
 		// pathfinding
 		this._navGraph = new GraphGenerator(this, this._level.grid).generate()
 		this._aStar = new AStar(this._navGraph)
-		this._navGraph.draw(this._context)
 	}
 
 	/**
@@ -63,6 +63,10 @@ class World {
 		return this.vCells * this.cellSize
 	}
 
+	public toggleDevMode(): void {
+		this.devMode = !this.devMode
+	}
+
 	public update(delta: number): void {
 		for (const entity of this.entities.list) {
 			entity.update(delta)
@@ -76,7 +80,10 @@ class World {
 		}
 
 		this.drawFps()
-		// this._navGraph.draw(this._context)
+
+		if (this.devMode) {
+			this._navGraph.draw(this._context)
+		}
 	}
 
 	public findPath(from: Vector2D, to: Vector2D): Vector2D[] {
