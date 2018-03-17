@@ -18,18 +18,14 @@ class AStar {
 		const startNode = this._graph.node(start)
 		const endNode = this._graph.node(end)
 
-		if (!startNode || !endNode) {
-			return []
-		}
-
-		if (!startNode.walkable || !endNode.walkable) {
+		if (!startNode || !endNode || !startNode.walkable || !endNode.walkable) {
 			return []
 		}
 
 		let neighbors: GraphNode[] = []
 		let currentNode: GraphNode | undefined = startNode
 
-		// initially, only the start node is known.
+		// initially, only the start node is known
 		currentNode.inOpenSet = true
 		this._openSet.push(currentNode)
 
@@ -38,9 +34,7 @@ class AStar {
 
 		while (!_.isEmpty(this._openSet)) {
 			// the currentnode is the node with the lowest f value
-			currentNode = _.minBy(this._openSet, (node) => node.fValue)
-
-			if (!currentNode) { continue }
+			currentNode = _.minBy(this._openSet, (node) => node.fValue) as GraphNode
 
 			// 'move' the currentnode to the closed set
 			currentNode.inOpenSet = false

@@ -10,16 +10,33 @@ import Matrix2D from '../utils/Matrix2D'
 import VehicleType from '../context/helpers/VehicleType'
 import ObstacleRect from '../entity/ObstacleRect'
 import Wall from '../entity/Wall'
+import IArrayPosition from '../utils/IArrayPosition';
 
 class Game extends React.Component {
 	private element: HTMLElement
 	private world: World
 	private frame: Frame
+	private vehicle: Vehicle
+	// private positions: Vector2D[]
 
 	public componentDidMount() {
 		if (this.element != null) {
 			this.world = new World(this.element)
+			this.world.onClickListener = this.onWorldClick
 			this.frame = new Frame(this.world)
+			this.vehicle = new Vehicle(this.world, new Vector2D(-120, 0))
+			// this.vehicle.steering.wanderOn = true
+			this.vehicle.steering.wallAvoidanceOn = true
+		}
+	}
+
+	public onWorldClick = (clickedPosition: Vector2D): void => {
+		const path = this.world.findPath(this.vehicle.position, clickedPosition)
+
+		if (path.length > 0) {
+			this.vehicle.steering.currentPositionIndex = 0
+			this.vehicle.steering.followPathPositions = path
+			this.vehicle.steering.followPathOn = true
 		}
 	}
 

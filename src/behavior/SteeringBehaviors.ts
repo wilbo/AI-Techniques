@@ -18,15 +18,17 @@ class SteeringBehaviors {
 	public obstacleAvoidanceOn = false
 	public wallAvoidanceOn = false
 	public hideOn = false
+	public followPathOn = false
 	public targetAgent: Vehicle
 	public targetPosition: Vector2D
 	public panicDistance = 160
 
-	private _combinedSteeringForce = new Vector2D()
+	// follow path
+	public followPathPositions: Vector2D[]
+	public currentPositionIndex: number = 0
 
-	/*
-	 * behavior specific properties
-	 */
+	// total force
+	private _combinedSteeringForce = new Vector2D()
 
 	// wander
 	private _wanderTarget = new Vector2D()
@@ -42,7 +44,7 @@ class SteeringBehaviors {
 
 	// wall avoidance
 	private _feelers: Vector2D[] = []
-	private _feelerLength = 60
+	private _feelerLength = 30
 
 	constructor(private _vehicle: Vehicle) {
 		// wander, create a vector to a target position on the wander circle
@@ -76,9 +78,10 @@ class SteeringBehaviors {
 	/**
 	 * A Vector smoothly arriving at a target position
 	 * @param targetPos The position to arrive on
+	 * @param distanceAwareness Keep the distance in mind
 	 * @param deceleration The level of deceleration
 	 */
-	public arrive(targetPos: Vector2D, deceleration = DecelerationLevel.normal): Vector2D {
+	public arrive(targetPos: Vector2D, distanceAwareness = true, deceleration = DecelerationLevel.normal): Vector2D {
 		const toTarget = Vector2D.subtract(targetPos, this._vehicle.position) // calculate the distance to the target position
 		const dist = toTarget.length
 
@@ -86,7 +89,7 @@ class SteeringBehaviors {
 			// the speed required to reach the target given the desired deceleration, '0.5' is tweaker.
 			let speed = dist / (deceleration * 0.5)
 			speed = Math.min(speed, this._vehicle.maxSpeed) // make sure the velocity does not exceed the max
-			const desiredVelocity = Vector2D.multiply(toTarget, speed / dist)
+			const desiredVelocity = Vector2D.multiply(toTarget, distanceAwareness ? (speed / dist) : speed)
 			return Vector2D.subtract(desiredVelocity, this._vehicle.velocity)
 		}
 
@@ -187,7 +190,9 @@ class SteeringBehaviors {
 		return steeringForce
 	}
 
-	//
+	/**
+	 * Avoid walls that are close to the vehicle
+	 */
 	public wallAvoidance(): Vector2D {
 		this.createFeelers()
 
@@ -201,14 +206,7 @@ class SteeringBehaviors {
 
 		for (const feeler of this._feelers) {
 			for (const wall of this._vehicle.world.entities.walls) {
-				if (Utils.lineIntersection(
-					this._vehicle.position,
-					feeler,
-					wall.from,
-					wall.to,
-					distToThisIP,
-					point,
-				)) {
+				if (Utils.lineIntersection(this._vehicle.position, feeler, wall.from, wall.to, distToThisIP, point)) {
 					if (distToThisIP < distToClosestIP) {
 						distToClosestIP = distToThisIP
 						closestWall = wall
@@ -249,7 +247,22 @@ class SteeringBehaviors {
 			return this.evade(target)
 		}
 
-		return this.arrive(bestHidingSpot, DecelerationLevel.fast)
+		return this.arrive(bestHidingSpot, true, DecelerationLevel.fast)
+	}
+
+	/**
+	 *
+	 */
+	public followPath(): Vector2D {
+		if (Vector2D.equalsRounded(this._vehicle.position, this.followPathPositions[this.currentPositionIndex], 24) && this.currentPositionIndex < this.followPathPositions.length - 1) {
+			this.currentPositionIndex++
+		}
+
+		if (this.currentPositionIndex < this.followPathPositions.length) {
+			return this.arrive(this.followPathPositions[this.currentPositionIndex], false, DecelerationLevel.fast)
+		}
+
+		return new Vector2D()
 	}
 
 	/**
@@ -285,6 +298,12 @@ class SteeringBehaviors {
 		if (this.seekOn) {
 			if (typeof this.targetPosition === 'undefined') { throw new Error('No targetPosition defined') }
 			force = this.seek(this.targetPosition)
+			if (!this.accumulateForce(force)) { return this._combinedSteeringForce }
+		}
+
+		if (this.followPathOn) {
+			if (typeof this.followPathPositions === 'undefined') { throw new Error('No _followPathPositions defined') }
+			force = this.followPath()
 			if (!this.accumulateForce(force)) { return this._combinedSteeringForce }
 		}
 

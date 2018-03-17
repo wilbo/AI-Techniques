@@ -12,10 +12,10 @@ class Vehicle extends Entity implements IMovingEntity {
 	public velocity = new Vector2D()
 	public heading = new Vector2D()
 	public side = new Vector2D()
-	public mass = 0.5
-	public maxSpeed = 300
+	public mass = 1
+	public maxSpeed = 200
 	public maxForce = 1000
-	public maxTurnRate = 0.05
+	public maxTurnRate = 1
 	public vehicleType = VehicleType.Green5
 	public steering = new SteeringBehaviors(this)
 
@@ -24,7 +24,7 @@ class Vehicle extends Entity implements IMovingEntity {
 	constructor(
 		public world: World,
 		public position = new Vector2D(),
-	) { super(world, EntityType.Vehicle, 25, position) }
+	) { super(world, EntityType.Vehicle, 16, position) }
 
 	public get speed(): number {
 		return this.velocity.length
