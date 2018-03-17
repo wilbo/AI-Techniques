@@ -2,6 +2,7 @@ import * as _ from 'lodash'
 import GraphNode from '../graph/GraphNode'
 import Graph from '../graph/Graph'
 import IArrayPosition from '../../utils/IArrayPosition'
+import Vector2D from '../../utils/Vector2D'
 
 class AStar {
 	private readonly _movementCost = 10
@@ -12,6 +13,18 @@ class AStar {
 
 	constructor(private _graph: Graph) { }
 
+	/**
+	 * Returns the positions of the nodes in the openset for drawing purposes
+	 */
+	public get openSet(): Vector2D[] {
+		return this._openSet.map((node) => node.position)
+	}
+
+	/**
+	 * Find the shortest path from start to end
+	 * @param start Array position in graph of start
+	 * @param end Array position in graph of end
+	 */
 	public findPath(start: IArrayPosition, end: IArrayPosition): IArrayPosition[] {
 		this.resetValues()
 
@@ -22,7 +35,6 @@ class AStar {
 			return []
 		}
 
-		let neighbors: GraphNode[] = []
 		let currentNode: GraphNode | undefined = startNode
 
 		// initially, only the start node is known
@@ -36,32 +48,29 @@ class AStar {
 			// the currentnode is the node with the lowest f value
 			currentNode = _.minBy(this._openSet, (node) => node.fValue) as GraphNode
 
+			// end of path reached
+			if (currentNode === endNode) {
+				return this.createPathFrom(endNode)
+			}
+
 			// 'move' the currentnode to the closed set
 			currentNode.inOpenSet = false
 			_.remove(this._openSet, currentNode)
 			currentNode.inClosedSet = true
 			this._closedSet.push(currentNode)
 
-			// end of path reached
-			if (currentNode === endNode) {
-				return this.createPathFrom(endNode)
-			}
+			for (const neighbor of this._graph.surrounding(currentNode)) {
+				if (neighbor.inClosedSet) { continue } // ignore the neighbor which is already evaluated.
 
-			// get surrounding nodes
-			neighbors = this._graph.surrounding(currentNode)
-
-			for (const neighbor of neighbors) {
-				if (neighbor.inClosedSet) { continue } // skip iteration if the neighbour is in the closed set
-
-				const nextGValue = this.calculateGValue(currentNode, neighbor)
+				const gScore = this.calculateGValue(currentNode, neighbor)
 
 				// skip iteration, we are looking for the smallest G value
-				if (neighbor.inOpenSet && nextGValue > neighbor.gValue) { continue }
+				if (neighbor.inOpenSet && gScore >= neighbor.gValue) { continue }
 
-				neighbor.gValue = nextGValue
+				neighbor.gValue = gScore
 				neighbor.hValue = this.manhattanDistance(neighbor)
 				neighbor.setFValue()
-				neighbor.parent = currentNode
+				neighbor.parent = currentNode // continue with search
 
 				if (!neighbor.inOpenSet) {
 					neighbor.inOpenSet = true
@@ -126,6 +135,9 @@ class AStar {
 		return _.reverse(path)
 	}
 
+	/**
+	 * Reset the default pathfinding values
+	 */
 	private resetValues(): void {
 		this._closedSet = []
 		this._openSet = []

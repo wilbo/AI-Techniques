@@ -36,12 +36,13 @@ class Context {
 		this.ctx.font = '16px Arial'
 	}
 
-	public drawEntity(position: Vector2D, radius: number = 3, color: string = 'black'): void {
+	public drawEntity(position: Vector2D, radius: number = 3, color: string = 'black', fill: boolean = true): void {
 		this.ctx.translate(position.x, position.y)
 		this.ctx.fillStyle = color
+		this.ctx.strokeStyle = color
 		this.ctx.beginPath()
 		this.ctx.arc(0, 0, radius, 0, 2 * Math.PI)
-		this.ctx.fill()
+		fill ? this.ctx.fill() : this.ctx.stroke()
 		this.defaults()
 	}
 
@@ -55,6 +56,7 @@ class Context {
 
 	public drawObstacleRound(position: Vector2D, radius: number, fill: boolean = false, color: string = 'black'): void {
 		this.ctx.translate(position.x, position.y)
+		this.ctx.fillStyle = color
 		this.ctx.strokeStyle = color
 		this.ctx.beginPath()
 		this.ctx.arc(0, 0, radius, 0, 2 * Math.PI)
@@ -64,6 +66,7 @@ class Context {
 
 	public drawObstacleRect(position: Vector2D, width: number, height: number, fill: boolean = false, color: string = 'black'): void {
 		this.ctx.translate(position.x, position.y - height)
+		this.ctx.fillStyle = color
 		this.ctx.strokeStyle = color
 		this.ctx.beginPath()
 		this.ctx.moveTo(0, 0)

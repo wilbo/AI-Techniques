@@ -23,6 +23,7 @@ class World {
 	private _context: Context
 	private _aStar: AStar
 	private _navGraph: Graph
+	private _currentPath: Vector2D[] = []
 
 	constructor(
 		public readonly element: HTMLElement,
@@ -83,6 +84,14 @@ class World {
 
 		if (this.devMode) {
 			this._navGraph.draw(this._context)
+
+			for (const position of this._aStar.openSet) {
+				this._context.drawEntity(position, 5, 'black', false)
+			}
+
+			for (const position of this._currentPath) {
+				this._context.drawEntity(position, 5, 'red', false)
+			}
 		}
 	}
 
@@ -91,9 +100,9 @@ class World {
 		const toCoordinate = Utils.positionToCoordinate(to, this)
 		if ((this._navGraph.node(toCoordinate) as GraphNode).walkable) {
 			const path = this._aStar.findPath(fromCoordinate, toCoordinate)
-			const vectors = path.map((arrayPosition) => (this._navGraph.node(arrayPosition) as GraphNode).position)
-			vectors.push(to) // add the last vector
-			return vectors
+			this._currentPath = path.map((arrayPosition) => (this._navGraph.node(arrayPosition) as GraphNode).position)
+			this._currentPath.push(to) // add the last vector
+			return this._currentPath
 		}
 
 		return []
