@@ -82,6 +82,7 @@ class World {
 		this._context.clear(this.hPixels, this.vPixels)
 		for (const entity of this.entities.list) {
 			entity.render(this._context)
+			this.wrapAround(entity)
 		}
 
 		this.drawFps()

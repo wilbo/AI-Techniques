@@ -11,7 +11,7 @@ import Configuration from '../base/Configuration'
  */
 const eddie: Configuration = (world: World): Vehicle => {
 	const vehicle = new Vehicle(world, 'Eddie')
-	vehicle.steering.wallAvoidanceOn = true
+	vehicle.steering.obstacleAvoidanceOn = true
 	vehicle.steering.wanderOn = true
 	vehicle.vehicleType = VehicleType.Green4
 	return vehicle

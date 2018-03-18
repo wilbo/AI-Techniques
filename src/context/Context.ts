@@ -55,14 +55,13 @@ class Context {
 	}
 
 	public drawObstacleRound(position: Vector2D, radius: number, imagePath: string = '', drawBounds: boolean = false, color: string = 'black'): void {
-		this.ctx.translate(position.x + radius, position.y - radius)
-
 		if (imagePath) {
 			const image = ImageLoader.vehicle(imagePath)
-			this.ctx.drawImage(image, -radius, -radius)
+			this.ctx.drawImage(image, position.x - radius, position.y - radius)
 		}
 
 		if (drawBounds || !imagePath) {
+			this.ctx.translate(position.x, position.y)
 			this.ctx.fillStyle = color
 			this.ctx.strokeStyle = color
 			this.ctx.beginPath()

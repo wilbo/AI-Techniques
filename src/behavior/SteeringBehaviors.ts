@@ -34,9 +34,9 @@ class SteeringBehaviors {
 
 	// wander
 	private _wanderTarget = new Vector2D()
-	private readonly _wanderRadius = 120 // the radius of the constraining circle for the wander behavior
-	private readonly _wanderDistance = 120 // distance the wander circle is projected in front of the agent
-	private readonly _wanderJitter = 120 // the maximum amount of displacement along the circle each frame
+	private readonly _wanderRadius = 200 // the radius of the constraining circle for the wander behavior
+	private readonly _wanderDistance = 300 // distance the wander circle is projected in front of the agent
+	private readonly _wanderJitter = 100 // the maximum amount of displacement along the circle each frame
 
 	// hide
 	private readonly _distanceFromBoundary = 30

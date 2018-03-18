@@ -6,6 +6,10 @@ import Configuration from '../base/Configuration'
 import * as imagePath from '../../assets/racing-pack/objects/barrels_2.png'
 
 const barrels2: Configuration = (world: World, position: Vector2D): ObstacleRound => {
+	if (typeof position === 'undefined') {
+		throw new Error('position is undefined')
+	}
+
 	position = Vector2D.multiply(position, world.cellSize)
 	position = Matrix2D.vector2DToView(position, world.viewMatrix)
 

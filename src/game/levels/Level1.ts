@@ -9,10 +9,11 @@ import ConfigurationList from '../../configurations/base/ConfigurationList'
 import albert from '../../configurations/vehicles/albert'
 import largeTree from '../../configurations/obstacles/largeTree'
 import bob from '../../configurations/vehicles/bob'
-import smallTree from '../../configurations/obstacles/smallTree';
-import rocks from '../../configurations/obstacles/rocks';
-import barrels from '../../configurations/obstacles/barrels';
-import barrels2 from '../../configurations/obstacles/barrels2';
+import smallTree from '../../configurations/obstacles/smallTree'
+import rocks from '../../configurations/obstacles/rocks'
+import barrels from '../../configurations/obstacles/barrels'
+import barrels2 from '../../configurations/obstacles/barrels2'
+import eddie from '../../configurations/vehicles/eddie'
 
 class Level1 implements ILevel {
 	public readonly configurations: ConfigurationList = new ConfigurationList(this._world)
@@ -40,17 +41,17 @@ class Level1 implements ILevel {
 	}
 
 	private addConfigurations(): void {
+		this.configurations.add('largeTree1', largeTree.bind(null, this._world, new Vector2D(4, 10)))
+		this.configurations.add('largeTree2', largeTree.bind(null, this._world, new Vector2D(10, 2)))
+		this.configurations.add('largeTree3', largeTree.bind(null, this._world, new Vector2D(18, 10)))
+		this.configurations.add('smallTree1', smallTree.bind(null, this._world, new Vector2D(10.5, 6.5)))
+		this.configurations.add('smallTree2', smallTree.bind(null, this._world, new Vector2D(12.5, 6.5)))
+		this.configurations.add('rocks1', rocks.bind(null, this._world, new Vector2D(3.5, 3.5)))
+		this.configurations.add('rocks2', rocks.bind(null, this._world, new Vector2D(5.5, 4.5)))
+		this.configurations.add('barrels1', barrels.bind(null, this._world, new Vector2D(15.5, 0.5)))
+		this.configurations.add('barrels2', barrels2.bind(null, this._world, new Vector2D(14.5, 0.5)))
 		this.configurations.add('bob', bob)
-		this.configurations.add('largeTree1', largeTree.bind(null, this._world, new Vector2D(3, 9)))
-		this.configurations.add('largeTree2', largeTree.bind(null, this._world, new Vector2D(9, 1)))
-		this.configurations.add('largeTree3', largeTree.bind(null, this._world, new Vector2D(17, 9)))
-		this.configurations.add('smallTree1', smallTree.bind(null, this._world, new Vector2D(10, 6)))
-		this.configurations.add('smallTree2', smallTree.bind(null, this._world, new Vector2D(12, 6)))
-		this.configurations.add('rocks1', rocks.bind(null, this._world, new Vector2D(3, 3)))
-		this.configurations.add('rocks2', rocks.bind(null, this._world, new Vector2D(5, 4)))
-
-		this.configurations.add('barrels1', barrels.bind(null, this._world, new Vector2D(15, 0)))
-		this.configurations.add('barrels2', barrels2.bind(null, this._world, new Vector2D(14, 0)))
+		this.configurations.add('eddie', eddie)
 	}
 }
 
