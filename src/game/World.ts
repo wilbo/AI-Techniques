@@ -81,11 +81,7 @@ class World {
 	public render(): void {
 		this._context.clear(this.hPixels, this.vPixels)
 		for (const entity of this.entities.list) {
-			if (entity.type === EntityType.Vehicle) {
-				entity.render(this._context) // only show vehicles in !devmode
-			} else if (this.devMode) {
-				entity.render(this._context) // show all entities in devmode
-			}
+			entity.render(this._context)
 		}
 
 		this.drawFps()

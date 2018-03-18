@@ -1,5 +1,6 @@
 import Wall from '../../entity/Wall'
 import Vector2D from '../../utils/Vector2D'
+import ConfigurationList from '../../configurations/base/ConfigurationList';
 
 interface ILevel {
 	/**
@@ -13,9 +14,9 @@ interface ILevel {
 	readonly imagePath: string
 
 	/**
-	 * A list of Vector2D's that can be used to create boundaries
+	 * the configurations that need to be executed
 	 */
-	readonly walls: Vector2D[]
+	readonly configurations: ConfigurationList
 }
 
 export default ILevel

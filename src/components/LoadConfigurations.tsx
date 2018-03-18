@@ -1,23 +1,29 @@
 import * as React from 'react'
 import Frame from '../game/Frame'
 import World from '../game/World'
-
-import bob from '../configurations/bob'
-import eddie from '../configurations/eddie'
-import albert from '../configurations/albert'
-import Configurations from '../configurations/base/Configurations'
 import Utils from '../utils/Utils'
+import ConfigurationList from '../configurations/base/ConfigurationList'
+
+// the configurations displayed in the dropdown
+import albert from '../configurations/vehicles/albert'
+import bob from '../configurations/vehicles/bob'
+import eddie from '../configurations/vehicles/eddie'
 
 interface IControlsProps {
 	world: World
 }
 
 class LoadConfigurations extends React.Component<IControlsProps> {
-	private configurations: Configurations
+	private configurations: ConfigurationList
 
 	constructor(props: IControlsProps) {
 		super(props)
-		this.configurations = new Configurations(props.world)
+		this.configurations = new ConfigurationList(props.world)
+
+		// the configurations displayed in the dropdown
+		this.configurations.add('albert', albert)
+		this.configurations.add('bob', bob)
+		this.configurations.add('eddie', eddie)
 	}
 
 	public onSelectChange = (evt: React.ChangeEvent<HTMLSelectElement>) => {

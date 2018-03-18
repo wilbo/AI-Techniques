@@ -8,7 +8,6 @@ import Vector2D from '../utils/Vector2D'
 import ObstacleRound from '../entity/ObstacleRound'
 import Matrix2D from '../utils/Matrix2D'
 import Utils from '../utils/Utils'
-import albert from '../configurations/albert'
 
 interface IControlsState {
 	mounted: boolean
@@ -30,7 +29,7 @@ class Game extends React.Component<{}, IControlsState> {
 			this.world = new World(this.element)
 			this.frame = new Frame(this.world)
 
-			albert(this.world)
+			// albert(this.world)
 
 			this.setState({ mounted: true })
 		}

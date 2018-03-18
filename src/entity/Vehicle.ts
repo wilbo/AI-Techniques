@@ -6,7 +6,7 @@ import Context from '../context/Context'
 import SteeringBehaviors from '../behavior/SteeringBehaviors'
 import EntityType from './base/EntityType'
 import Matrix2D from '../utils/Matrix2D'
-import VehicleType from '../context/base/VehicleType'
+import VehicleType from './VehicleType'
 
 class Vehicle extends Entity implements IMovingEntity {
 	public velocity = new Vector2D()

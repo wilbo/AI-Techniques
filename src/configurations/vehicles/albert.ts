@@ -1,15 +1,16 @@
-import World from '../game/World'
-import Vehicle from '../entity/Vehicle'
-import Vector2D from '../utils/Vector2D'
-import Utils from '../utils/Utils'
-import VehicleType from '../context/base/VehicleType'
+import World from '../../game/World'
+import Vehicle from '../../entity/Vehicle'
+import Vector2D from '../../utils/Vector2D'
+import Utils from '../../utils/Utils'
+import VehicleType from '../../entity/VehicleType'
+import Configuration from '../base/Configuration'
 
 /**
  * This is Albert
  *
  * Albert is a clean driver, wandering around perfectly between the lines.
  */
-const albert = (world: World): Vehicle => {
+const albert: Configuration = (world: World): Vehicle => {
 	const vehicle = new Vehicle(world, 'Albert')
 	vehicle.maxSpeed = 120
 	vehicle.vehicleType = VehicleType.Blue1

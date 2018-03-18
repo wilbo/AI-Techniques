@@ -1,14 +1,15 @@
-import World from '../game/World'
-import Vehicle from '../entity/Vehicle'
-import Vector2D from '../utils/Vector2D'
-import VehicleType from '../context/base/VehicleType'
+import World from '../../game/World'
+import Vehicle from '../../entity/Vehicle'
+import Vector2D from '../../utils/Vector2D'
+import VehicleType from '../../entity/VehicleType'
+import Configuration from '../base/Configuration'
 
 /**
  * This is Bob
  *
  * Bob is a driver that will follow your orders. A simple mouseclick on the circuit will make him ride to that position.
  */
-const bob = (world: World): Vehicle => {
+const bob: Configuration = (world: World): Vehicle => {
 	const vehicle = new Vehicle(world, 'Bob')
 	vehicle.steering.wallAvoidanceOn = true
 	vehicle.vehicleType = VehicleType.Yellow5

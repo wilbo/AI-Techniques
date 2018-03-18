@@ -1,7 +1,7 @@
 import Vector2D from '../utils/Vector2D'
 import World from '../game/World'
-import VehicleType from './base/VehicleType'
-import ImageLoader from './base/ImageLoader'
+import VehicleType from '../entity/VehicleType'
+import ImageLoader from '../utils/ImageLoader'
 
 class Context {
 	public ctx: CanvasRenderingContext2D
@@ -54,13 +54,22 @@ class Context {
 		this.defaults()
 	}
 
-	public drawObstacleRound(position: Vector2D, radius: number, fill: boolean = false, color: string = 'black'): void {
-		this.ctx.translate(position.x, position.y)
-		this.ctx.fillStyle = color
-		this.ctx.strokeStyle = color
-		this.ctx.beginPath()
-		this.ctx.arc(0, 0, radius, 0, 2 * Math.PI)
-		fill ? this.ctx.fill() : this.ctx.stroke()
+	public drawObstacleRound(position: Vector2D, radius: number, imagePath: string = '', drawBounds: boolean = false, color: string = 'black'): void {
+		this.ctx.translate(position.x + radius, position.y - radius)
+
+		if (imagePath) {
+			const image = ImageLoader.vehicle(imagePath)
+			this.ctx.drawImage(image, -radius, -radius)
+		}
+
+		if (drawBounds || !imagePath) {
+			this.ctx.fillStyle = color
+			this.ctx.strokeStyle = color
+			this.ctx.beginPath()
+			this.ctx.arc(0, 0, radius, 0, 2 * Math.PI)
+			this.ctx.stroke()
+		}
+
 		this.defaults()
 	}
 

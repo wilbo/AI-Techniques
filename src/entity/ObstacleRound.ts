@@ -9,13 +9,14 @@ class ObstacleRound extends Entity {
 	constructor(
 		public world: World,
 		public position: Vector2D = Utils.randomVector(world),
-		public radius: number = Utils.randomInt(20, 150),
+		public radius: number = world.cellSize * 0.5,
+		public imagePath: string = '',
 	) { super(world, EntityType.ObstacleRound, radius, position) }
 
 	public update(delta: number): void { return }
 
 	public render(context: Context): void {
-		context.drawObstacleRound(this.position, this.radius)
+		context.drawObstacleRound(this.position, this.radius, this.imagePath)
 	}
 }
 
