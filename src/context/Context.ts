@@ -1,7 +1,7 @@
 import Vector2D from '../utils/Vector2D'
-import VehicleType from './helpers/VehicleType'
-import ImageLoader from './helpers/ImageLoader'
 import World from '../game/World'
+import VehicleType from './base/VehicleType'
+import ImageLoader from './base/ImageLoader'
 
 class Context {
 	public ctx: CanvasRenderingContext2D

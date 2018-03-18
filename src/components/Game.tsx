@@ -7,12 +7,7 @@ import Context from '../context/Context'
 import Vector2D from '../utils/Vector2D'
 import ObstacleRound from '../entity/ObstacleRound'
 import Matrix2D from '../utils/Matrix2D'
-import VehicleType from '../context/helpers/VehicleType'
 import Utils from '../utils/Utils'
-
-// configurations
-import bob from '../configurations/bob'
-import eddie from '../configurations/eddie'
 import albert from '../configurations/albert'
 
 interface IControlsState {
@@ -35,8 +30,6 @@ class Game extends React.Component<{}, IControlsState> {
 			this.world = new World(this.element)
 			this.frame = new Frame(this.world)
 
-			bob(this.world)
-			eddie(this.world)
 			albert(this.world)
 
 			this.setState({ mounted: true })

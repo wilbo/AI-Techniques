@@ -4,7 +4,8 @@ import World from '../game/World'
 
 interface IControlsProps {
 	world: World,
-	framesRunning: boolean
+	framesRunning: boolean,
+	updateDevMode: () => void
 }
 
 interface IControlsState {
@@ -32,6 +33,7 @@ class DevButton extends React.Component<IControlsProps, IControlsState> {
 		}
 
 		this.props.world.toggleDevMode()
+		this.props.updateDevMode()
 	}
 
 	public render(): JSX.Element {

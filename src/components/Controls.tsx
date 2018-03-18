@@ -3,6 +3,7 @@ import Frame from '../game/Frame'
 import StartPauseButton from './StartPauseButton'
 import World from '../game/World'
 import DevButton from './DevButton'
+import LoadConfigurations from './LoadConfigurations'
 
 interface IControlsProps {
 	frame: Frame,
@@ -10,11 +11,15 @@ interface IControlsProps {
 }
 
 interface IControlsState {
-	framesRunning: boolean
+	framesRunning: boolean,
+	devMode: boolean
 }
 
 class Controls extends React.Component<IControlsProps, IControlsState> {
-	private _initialState: IControlsState = { framesRunning: false }
+	private _initialState: IControlsState = {
+		framesRunning: false,
+		devMode: false,
+	}
 
 	constructor(props: IControlsProps) {
 		super(props)
@@ -25,11 +30,16 @@ class Controls extends React.Component<IControlsProps, IControlsState> {
 		this.setState({ framesRunning: this.props.frame.isRunning })
 	}
 
+	public updateDevMode = (): void => {
+		this.setState({ devMode: this.props.world.devMode })
+	}
+
 	public render(): JSX.Element {
 	 return (
 			<div>
 				<StartPauseButton frame={this.props.frame} updateRunning={this.updateRunning} />
-	 			<DevButton world={this.props.world} framesRunning={this.props.frame.isRunning} />
+	 			<DevButton world={this.props.world} framesRunning={this.props.frame.isRunning} updateDevMode={this.updateDevMode} />
+				{this.state.devMode && <LoadConfigurations world={this.props.world} />}
 			</div>
 		)
 	}

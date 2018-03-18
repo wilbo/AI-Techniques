@@ -1,3 +1,4 @@
+import * as _ from 'lodash'
 import Entity from './Entity'
 import ObstacleRound from '../ObstacleRound'
 import Vehicle from '../Vehicle'
@@ -21,6 +22,18 @@ class EntityList {
 
 	public get list(): Entity[] {
 		return this._entities
+	}
+
+	public clear(): void {
+		_.remove(this._entities)
+	}
+
+	public remove(entity: Entity): void {
+		_.remove(this._entities, (e) => e === entity)
+	}
+
+	public removeVehicles(): void {
+		_.remove(this._entities, (entity) => entity.type === EntityType.Vehicle)
 	}
 
 	public get obstaclesRound(): ObstacleRound[] {
