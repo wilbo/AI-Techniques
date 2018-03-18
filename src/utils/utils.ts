@@ -102,6 +102,13 @@ class Utils {
 		const randY = Math.floor(Math.random() * world.vPixels - (world.vPixels / 2))
 		return new Vector2D(randX, randY)
 	}
+
+	/**
+	 * Returns a random vector on the circuit
+	 */
+	public static randomCircuitVector(world: World): Vector2D {
+		return world.navGraph.getRandomWalkableNode().position
+	}
 }
 
 export default Utils

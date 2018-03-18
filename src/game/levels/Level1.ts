@@ -48,7 +48,7 @@ class Level1 implements ILevel {
 		new Vector2D(21, 4), new Vector2D(20, 3),
 		new Vector2D(9, 2), new Vector2D(8, 1),
 		new Vector2D(7, 9), new Vector2D(8, 10),
-		new Vector2D(14, 8), new Vector2D(15, 9),
+		new Vector2D(15, 9), new Vector2D(14, 8),
 		new Vector2D(12 - 0.5, 1), new Vector2D(11, 2 - 0.5),
 		new Vector2D(19, 1 + 0.5), new Vector2D(18 + 0.5, 1),
 	]

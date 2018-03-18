@@ -21,12 +21,13 @@ class SteeringBehaviors {
 	public followPathOn = false
 	public targetAgent: Vehicle
 	public targetPosition: Vector2D
-	public panicDistance = 160
+	public targetPositions: Vector2D[]
+
+	// flee
+	public panicDistance = 160 // The distance from the targetPos when to flee
 
 	// follow path
-	public followPathPositions: Vector2D[]
-	public currentFollowPathPosition: Vector2D
-	private _followStrictness = 48
+	private _equalsStrictness = 48
 
 	// total force
 	private _combinedSteeringForce = new Vector2D()
@@ -65,7 +66,6 @@ class SteeringBehaviors {
 	/**
 	 * A Vector fleeing a target position
 	 * @param targetPos the position to flee away from
-	 * @param panicDistance The distance from the targetPos when to flee
 	 */
 	public flee(targetPos: Vector2D): Vector2D {
 		if (this.panicDistance && Vector2D.distanceSq(this._vehicle.position, targetPos) > (this.panicDistance * this.panicDistance)) {
@@ -255,12 +255,12 @@ class SteeringBehaviors {
 	 * Follow a list of vectors
 	 */
 	public followPath(): Vector2D {
-		if (this.followPathPositions.length > 0 &&
-			Vector2D.equalsRounded(this._vehicle.position, this.currentFollowPathPosition, this._followStrictness)) {
-			this.currentFollowPathPosition = this.followPathPositions.shift() as Vector2D
+		if (this.targetPositions.length > 0 &&
+			Vector2D.equalsRounded(this._vehicle.position, this.targetPosition, this._equalsStrictness)) {
+			this.targetPosition = this.targetPositions.shift() as Vector2D
 		}
 
-		return this.arrive(this.currentFollowPathPosition, false, DecelerationLevel.fast)
+		return this.arrive(this.targetPosition, this.targetPositions.length < 2 ? true : false, DecelerationLevel.fast)
 	}
 
 	/**
@@ -300,7 +300,7 @@ class SteeringBehaviors {
 		}
 
 		if (this.followPathOn) {
-			if (typeof this.followPathPositions === 'undefined') { throw new Error('No _followPathPositions defined') }
+			if (typeof this.targetPosition === 'undefined' || typeof this.targetPositions === 'undefined') { throw new Error('No targetPosition or targetPositions defined') }
 			force = this.followPath()
 			if (!this.accumulateForce(force)) { return this._combinedSteeringForce }
 		}

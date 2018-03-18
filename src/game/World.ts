@@ -17,13 +17,13 @@ class World {
 	public fps: number = 0
 	public entities: EntityList
 	public viewMatrix: Matrix2D
-	public onClickListener: (clickedPosition: Vector2D) => void
+	public navGraph: Graph
+	public onClickListeners: Array<((clickedPosition: Vector2D) => void)> = []
 	public devMode: boolean = false
 
 	private _level: ILevel
 	private _context: Context
 	private _aStar: AStar
-	private _navGraph: Graph
 	private _currentPath: Vector2D[] = []
 
 	constructor(
@@ -47,8 +47,8 @@ class World {
 		this._context.setBackground(this._level.imagePath)
 
 		// pathfinding
-		this._navGraph = new GraphGenerator(this, this._level.grid).generate()
-		this._aStar = new AStar(this._navGraph)
+		this.navGraph = new GraphGenerator(this, this._level.grid).generate()
+		this._aStar = new AStar(this.navGraph)
 	}
 
 	/**
@@ -65,6 +65,9 @@ class World {
 		return this.vCells * this.cellSize
 	}
 
+	/**
+	 * Toggles between dev mode to enable develeopment visualizations
+	 */
 	public toggleDevMode(): void {
 		this.devMode = !this.devMode
 	}
@@ -88,7 +91,7 @@ class World {
 		this.drawFps()
 
 		if (this.devMode) {
-			this._navGraph.draw(this._context)
+			this.navGraph.draw(this._context)
 
 			for (const position of this._aStar.openSetPositions) {
 				this._context.drawEntity(position, 5, 'black', false)
@@ -103,10 +106,10 @@ class World {
 	public findPath(from: Vector2D, to: Vector2D): Vector2D[] {
 		const fromCoordinate = Utils.positionToCoordinate(from, this)
 		const toCoordinate = Utils.positionToCoordinate(to, this)
-		if ((this._navGraph.node(toCoordinate) as GraphNode).walkable) {
+		if ((this.navGraph.node(toCoordinate) as GraphNode).walkable) {
 			const path = this._aStar.findPath(fromCoordinate, toCoordinate)
-			this._currentPath = path.map((arrayPosition) => (this._navGraph.node(arrayPosition) as GraphNode).position)
-			this._currentPath.push(to) // add the last vector
+			this._currentPath = path.map((arrayPosition) => (this.navGraph.node(arrayPosition) as GraphNode).position)
+			this._currentPath.push(to) // add the last 'clicked' vector
 			return this._currentPath
 		}
 
@@ -128,11 +131,13 @@ class World {
 	}
 
 	private clickToVector = (evt: MouseEvent): void => {
-		if (this.onClickListener) {
+		if (this.onClickListeners.length > 0) {
 			const x = evt.clientX + document.body.scrollLeft + document.documentElement.scrollLeft - (evt.target as HTMLCanvasElement).offsetLeft
 			const y = evt.clientY + document.body.scrollTop + document.documentElement.scrollTop - (evt.target as HTMLCanvasElement).offsetTop
 			const vector = Matrix2D.vector2DToView(new Vector2D(x, y), this.viewMatrix)
-			this.onClickListener(vector)
+			for (const listener of this.onClickListeners) {
+				listener(vector)
+			}
 		}
 	}
 }

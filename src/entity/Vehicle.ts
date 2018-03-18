@@ -18,12 +18,14 @@ class Vehicle extends Entity implements IMovingEntity {
 	public maxTurnRate = 1
 	public vehicleType = VehicleType.Red5
 	public steering = new SteeringBehaviors(this)
+	public updateHook: (delta: number) => void
 
 	private _angle: number
 
 	constructor(
 		public world: World,
-		public position = new Vector2D(),
+		public name: string,
+		public position = new Vector2D(0, 140),
 	) { super(world, EntityType.Vehicle, 16, position) }
 
 	public get speed(): number {
@@ -39,6 +41,10 @@ class Vehicle extends Entity implements IMovingEntity {
 	}
 
 	public update(delta: number): void {
+		if (typeof this.updateHook !== 'undefined') {
+			this.updateHook(delta)
+		}
+
 		const acceleration = Vector2D.divide(this.steering.calculate(), this.mass) // acceleration = force / mass
 		this.velocity = Vector2D.add(this.velocity, Vector2D.multiply(acceleration, delta)) // update velocity
 		this.velocity = Vector2D.truncate(this.velocity, this.maxSpeed) // make sure vehicle does not exceed maximum velocity
@@ -54,6 +60,7 @@ class Vehicle extends Entity implements IMovingEntity {
 
 	public render(context: Context) {
 		context.drawVehicle(this.position, this._angle, this.vehicleType)
+		context.drawText('     ' + this.name, this.position)
 	}
 }
 

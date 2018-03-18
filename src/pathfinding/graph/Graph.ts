@@ -1,6 +1,7 @@
 import GraphNode from './GraphNode'
 import IArrayPosition from '../../utils/IArrayPosition'
 import Context from '../../context/Context'
+import Utils from '../../utils/Utils'
 
 class Graph {
 	constructor(
@@ -13,6 +14,14 @@ class Graph {
 
 	public get rows(): number {
 		return this.nodes.length
+	}
+
+	public getRandomWalkableNode(): GraphNode {
+		let node: GraphNode
+		do {
+			node = this.nodes[Utils.randomInt(0, this.rows - 1)][Utils.randomInt(0, this.columns - 1)]
+		} while (!node.walkable)
+		return node
 	}
 
 	/**
