@@ -1,7 +1,7 @@
 import World from '../game/World'
 import Vehicle from '../entity/Vehicle'
 import Vector2D from '../utils/Vector2D'
-import VehicleType from '../context/helpers/VehicleType'
+import VehicleType from '../context/base/VehicleType'
 
 /**
  * This is Bob

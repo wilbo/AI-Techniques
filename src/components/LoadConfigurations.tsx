@@ -5,32 +5,23 @@ import World from '../game/World'
 import bob from '../configurations/bob'
 import eddie from '../configurations/eddie'
 import albert from '../configurations/albert'
-import Configuration from '../configurations/base/Configuration'
+import Configurations from '../configurations/base/Configurations'
+import Utils from '../utils/Utils'
 
 interface IControlsProps {
 	world: World
 }
 
 class LoadConfigurations extends React.Component<IControlsProps> {
+	private configurations: Configurations
+
 	constructor(props: IControlsProps) {
 		super(props)
+		this.configurations = new Configurations(props.world)
 	}
 
 	public onSelectChange = (evt: React.ChangeEvent<HTMLSelectElement>) => {
-		switch (evt.target.value) {
-			case Configuration.Albert:
-				albert(this.props.world)
-				break
-			case Configuration.Bob:
-				bob(this.props.world)
-				break
-			case Configuration.Eddie:
-				eddie(this.props.world)
-				break
-			default:
-				break
-		}
-
+		this.configurations.create(evt.target.value)
 		evt.target.selectedIndex = 0
 	}
 
@@ -39,19 +30,18 @@ class LoadConfigurations extends React.Component<IControlsProps> {
 			marginTop: 10,
 		}
 
+		const options = this.configurations.names.map((key) => <option key={key} value={key}>add {key}</option>)
+
 		return (
 			<div style={style}>
 				<span>add entity: </span>
 				<select onChange={this.onSelectChange}>
-					<option />
-					<option value={Configuration.Albert}>add {Configuration.Albert}</option>
-					<option value={Configuration.Bob}>add {Configuration.Bob}</option>
-					<option value={Configuration.Eddie}>add {Configuration.Eddie}</option>
+					<option>Select to add</option>
+					{options}
 				</select>
 				<button style={{ marginLeft: 10 }} onClick={() => this.props.world.entities.removeVehicles()}>remove entities</button>
 			</div>
 		)
-
 	}
 }
 

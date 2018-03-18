@@ -19,7 +19,8 @@
 			"no-unused-expression": [false],
 			"radix": [false],
 			"object-literal-sort-keys": [false],
-			"jsx-no-lambda": [false]
+			"jsx-no-lambda": [false],
+			"no-string-literal": [false]
 		},
     "rulesDirectory": []
 }

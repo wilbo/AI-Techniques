@@ -1,4 +1,3 @@
-import VehicleType from '../context/helpers/VehicleType'
 import Vector2D from './Vector2D'
 import EntityList from '../entity/base/EntityList'
 import ObstacleRect from '../entity/ObstacleRect'
