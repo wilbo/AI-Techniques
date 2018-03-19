@@ -21,15 +21,20 @@ class Vehicle extends Entity implements IMovingEntity, IStateEntity<Vehicle> {
 	public vehicleType = VehicleType.Red5
 	public steering = new SteeringBehaviors(this)
 	public updateHook: (delta: number) => void
-	public currentState: IState<Vehicle>
+
+	public readonly fuelMax = 1000
+	public fuel = this.fuelMax
 
 	private _angle: number
 
 	constructor(
 		public world: World,
-		public name: string,
+		public currentState: IState<Vehicle>,
 		public position = new Vector2D(0, 140),
-	) { super(world, EntityType.Vehicle, 16, position) }
+	) {
+		super(world, EntityType.Vehicle, 16, position)
+		this.currentState.enter(this)
+	}
 
 	public get speed(): number {
 		return this.velocity.length
@@ -44,6 +49,8 @@ class Vehicle extends Entity implements IMovingEntity, IStateEntity<Vehicle> {
 	}
 
 	public update(delta: number): void {
+		this.currentState.execute(this)
+
 		if (typeof this.updateHook !== 'undefined') {
 			this.updateHook(delta)
 		}
@@ -63,7 +70,11 @@ class Vehicle extends Entity implements IMovingEntity, IStateEntity<Vehicle> {
 
 	public render(context: Context) {
 		context.drawVehicle(this.position, this._angle, this.vehicleType)
-		context.drawText('     ' + this.name, this.position)
+
+		if (this.world.devMode) {
+			context.drawText('     state: ' + this.currentState.name, this.position)
+			context.drawText(`     fuel: ${this.fuel}/${this.fuelMax}`, Vector2D.subtract(this.position, new Vector2D(0, 20)))
+		}
 	}
 
 	public changeState(state: IState<Vehicle>): void {

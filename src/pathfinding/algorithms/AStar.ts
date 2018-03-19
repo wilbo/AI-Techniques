@@ -29,7 +29,7 @@ class AStar {
 		const startNode = this._graph.node(start)
 		const endNode = this._graph.node(end)
 
-		if (!startNode || !endNode || !startNode.walkable || !endNode.walkable) {
+		if (!startNode || !endNode) { //  || !startNode.walkable || !endNode.walkable
 			return []
 		}
 

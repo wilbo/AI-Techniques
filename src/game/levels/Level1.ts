@@ -6,15 +6,14 @@ import Vector2D from '../../utils/Vector2D'
 import Utils from '../../utils/Utils'
 import Matrix2D from '../../utils/Matrix2D'
 import ConfigurationList from '../../configurations/base/ConfigurationList'
-import albert from '../../configurations/vehicles/albert'
 import largeTree from '../../configurations/obstacles/largeTree'
-import bob from '../../configurations/vehicles/bob'
 import smallTree from '../../configurations/obstacles/smallTree'
 import rocks from '../../configurations/obstacles/rocks'
 import barrels from '../../configurations/obstacles/barrels'
 import barrels2 from '../../configurations/obstacles/barrels2'
-import eddie from '../../configurations/vehicles/eddie'
 import tires from '../../configurations/obstacles/tires'
+import Vehicle from '../../entity/Vehicle'
+import WanderAroundMap from '../../state/states/vehicle/WanderAroundMap'
 
 class Level1 implements ILevel {
 	public readonly configurations: ConfigurationList = new ConfigurationList(this._world)
@@ -55,8 +54,7 @@ class Level1 implements ILevel {
 		this.configurations.add('tires2', tires.bind(null, this._world, new Vector2D(20.5, 2.5)))
 		this.configurations.add('tires3', tires.bind(null, this._world, new Vector2D(6.5, 7.5)))
 		this.configurations.add('tires4', tires.bind(null, this._world, new Vector2D(6.5, 8.5)))
-		this.configurations.add('bob', bob)
-		this.configurations.add('eddie', eddie)
+		this.configurations.add('eddie', () => { new Vehicle(this._world, new WanderAroundMap()) })
 	}
 }
 

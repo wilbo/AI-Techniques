@@ -9,25 +9,25 @@ import Matrix2D from '../utils/Matrix2D'
 import Wall from '../entity/Wall'
 
 class SteeringBehaviors {
-	public seekOn = false
-	public fleeOn = false
-	public arriveOn = false
-	public pursuitOn = false
-	public evadeOn = false
-	public wanderOn = false
-	public obstacleAvoidanceOn = false
-	public wallAvoidanceOn = false
-	public hideOn = false
-	public followPathOn = false
+	public seekOn: boolean
+	public fleeOn: boolean
+	public arriveOn: boolean
+	public pursuitOn: boolean
+	public evadeOn: boolean
+	public wanderOn: boolean
+	public obstacleAvoidanceOn: boolean
+	public wallAvoidanceOn: boolean
+	public hideOn: boolean
+	public followPathOn: boolean
 	public targetAgent: Vehicle
 	public targetPosition: Vector2D
 	public targetPositions: Vector2D[]
 
 	// flee
-	public panicDistance = 160 // The distance from the targetPos when to flee
+	public readonly panicDistance = 160 // The distance from the targetPos when to flee
 
 	// follow path
-	private _equalsStrictness = 48
+	private readonly _equalsStrictness = 48
 
 	// total force
 	private _combinedSteeringForce = new Vector2D()
@@ -42,13 +42,15 @@ class SteeringBehaviors {
 	private readonly _distanceFromBoundary = 30
 
 	// obstacle avoidance
-	private readonly _minDetectionBoxLength = 50
+	private readonly _minDetectionBoxLength = 30
 
 	// wall avoidance
 	private _feelers: Vector2D[] = []
-	private _feelerLength = 30
+	private readonly _feelerLength = 30
 
 	constructor(private _vehicle: Vehicle) {
+		this.reset()
+
 		// wander, create a vector to a target position on the wander circle
 		const theta = Math.random() * (Math.PI * 2)
 		this._wanderTarget = new Vector2D(this._wanderRadius * Math.cos(theta), this._wanderRadius * Math.sin(theta))
@@ -182,9 +184,9 @@ class SteeringBehaviors {
 		let steeringForce = new Vector2D()
 
 		if (cib != null) {
-			const multiplier = ((boxLength - cibLocal.x) / boxLength) + 10 // extra
+			const multiplier = ((boxLength - cibLocal.x) / boxLength) + 100 // extra multiplying weight
 			steeringForce.y = (cib.boundingRadius - cibLocal.y) * multiplier
-			steeringForce.x = (cib.boundingRadius -  cibLocal.x) * 10 // braking weight
+			steeringForce.x = (cib.boundingRadius -  cibLocal.x) * 100 // extra braking weight
 			steeringForce = Matrix2D.vectorToWorldSpace(steeringForce, this._vehicle.heading, this._vehicle.side)
 		}
 
@@ -329,6 +331,22 @@ class SteeringBehaviors {
 		}
 
 		return this._combinedSteeringForce
+	}
+
+	/**
+	 * Reset all steering behaviors
+	 */
+	public reset(): void {
+		this.seekOn = false
+		this.fleeOn = false
+		this.arriveOn = false
+		this.pursuitOn = false
+		this.evadeOn = false
+		this.wanderOn = false
+		this.obstacleAvoidanceOn = false
+		this.wallAvoidanceOn = false
+		this.hideOn = false
+		this.followPathOn = false
 	}
 
 	/**
