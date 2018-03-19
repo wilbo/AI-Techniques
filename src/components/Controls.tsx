@@ -3,7 +3,6 @@ import Frame from '../game/Frame'
 import StartPauseButton from './StartPauseButton'
 import World from '../game/World'
 import DevButton from './DevButton'
-import LoadConfigurations from './LoadConfigurations'
 
 interface IControlsProps {
 	frame: Frame,
@@ -39,7 +38,6 @@ class Controls extends React.Component<IControlsProps, IControlsState> {
 			<div>
 				<StartPauseButton frame={this.props.frame} updateRunning={this.updateRunning} />
 	 			<DevButton world={this.props.world} framesRunning={this.props.frame.isRunning} updateDevMode={this.updateDevMode} />
-				{this.state.devMode && <LoadConfigurations world={this.props.world} />}
 			</div>
 		)
 	}

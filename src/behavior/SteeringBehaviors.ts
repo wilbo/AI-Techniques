@@ -182,9 +182,9 @@ class SteeringBehaviors {
 		let steeringForce = new Vector2D()
 
 		if (cib != null) {
-			const multiplier = ((boxLength - cibLocal.x) / boxLength) + 8 // extra
+			const multiplier = ((boxLength - cibLocal.x) / boxLength) + 10 // extra
 			steeringForce.y = (cib.boundingRadius - cibLocal.y) * multiplier
-			steeringForce.x = (cib.boundingRadius -  cibLocal.x) * 8 // braking weight
+			steeringForce.x = (cib.boundingRadius -  cibLocal.x) * 10 // braking weight
 			steeringForce = Matrix2D.vectorToWorldSpace(steeringForce, this._vehicle.heading, this._vehicle.side)
 		}
 

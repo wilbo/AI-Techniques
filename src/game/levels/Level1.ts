@@ -14,6 +14,7 @@ import rocks from '../../configurations/obstacles/rocks'
 import barrels from '../../configurations/obstacles/barrels'
 import barrels2 from '../../configurations/obstacles/barrels2'
 import eddie from '../../configurations/vehicles/eddie'
+import tires from '../../configurations/obstacles/tires'
 
 class Level1 implements ILevel {
 	public readonly configurations: ConfigurationList = new ConfigurationList(this._world)
@@ -48,8 +49,12 @@ class Level1 implements ILevel {
 		this.configurations.add('smallTree2', smallTree.bind(null, this._world, new Vector2D(12.5, 6.5)))
 		this.configurations.add('rocks1', rocks.bind(null, this._world, new Vector2D(3.5, 3.5)))
 		this.configurations.add('rocks2', rocks.bind(null, this._world, new Vector2D(5.5, 4.5)))
-		this.configurations.add('barrels1', barrels.bind(null, this._world, new Vector2D(15.5, 0.5)))
-		this.configurations.add('barrels2', barrels2.bind(null, this._world, new Vector2D(14.5, 0.5)))
+		this.configurations.add('barrels1', barrels.bind(null, this._world, new Vector2D(15.5, 2.5)))
+		this.configurations.add('barrels2', barrels2.bind(null, this._world, new Vector2D(14.5, 2.5)))
+		this.configurations.add('tires1', tires.bind(null, this._world, new Vector2D(19.5, 2.5)))
+		this.configurations.add('tires2', tires.bind(null, this._world, new Vector2D(20.5, 2.5)))
+		this.configurations.add('tires3', tires.bind(null, this._world, new Vector2D(6.5, 7.5)))
+		this.configurations.add('tires4', tires.bind(null, this._world, new Vector2D(6.5, 8.5)))
 		this.configurations.add('bob', bob)
 		this.configurations.add('eddie', eddie)
 	}

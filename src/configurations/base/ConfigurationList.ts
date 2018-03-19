@@ -45,6 +45,10 @@ class ConfigurationList {
 	 * @param conf something that this configuration should do
 	 */
 	public add(name: string, conf: Configuration): void {
+		if (typeof this._configurations[name] !== 'undefined') {
+			throw new Error(`configurations with name ${name} already exists!`)
+		}
+
 		this._configurations[name] = conf
 	}
 }

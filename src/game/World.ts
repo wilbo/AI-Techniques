@@ -89,14 +89,7 @@ class World {
 
 		if (this.devMode) {
 			this.navGraph.draw(this._context)
-
-			for (const position of this._aStar.openSetPositions) {
-				this._context.drawEntity(position, 5, 'black', false)
-			}
-
-			for (const position of this._currentPath) {
-				this._context.drawEntity(position, 5, 'red', false)
-			}
+			this._aStar.draw(this._context, this._currentPath)
 		}
 	}
 

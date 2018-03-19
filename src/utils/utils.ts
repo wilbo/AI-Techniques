@@ -4,6 +4,8 @@ import ObstacleRect from '../entity/ObstacleRect'
 import Matrix2D from './Matrix2D'
 import World from '../game/World'
 import IArrayPosition from './IArrayPosition'
+import Graph from '../pathfinding/graph/Graph'
+import GraphNode from '../pathfinding/graph/GraphNode'
 
 class Utils {
 	/**
@@ -103,10 +105,16 @@ class Utils {
 	}
 
 	/**
-	 * Returns a random vector on the circuit
+	 * Returns a random walkable node on the circuit
 	 */
-	public static randomCircuitVector(world: World): Vector2D {
-		return world.navGraph.getRandomWalkableNode().position
+	public static getRandomWalkableNode(graph: Graph): GraphNode {
+		let node: GraphNode
+
+		do {
+			node = graph.nodes[Utils.randomInt(0, graph.rows - 1)][Utils.randomInt(0, graph.columns - 1)]
+		} while (!node.walkable)
+
+		return node
 	}
 }
 

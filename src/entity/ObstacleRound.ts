@@ -16,7 +16,7 @@ class ObstacleRound extends Entity {
 	public update(delta: number): void { return }
 
 	public render(context: Context): void {
-		context.drawObstacleRound(this.position, this.radius, this.imagePath)
+		context.drawObstacleRound(this.position, this.radius, this.imagePath, this.world.devMode)
 	}
 }
 

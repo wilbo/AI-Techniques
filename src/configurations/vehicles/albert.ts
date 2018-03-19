@@ -17,7 +17,7 @@ const albert: Configuration = (world: World): Vehicle => {
 	vehicle.steering.wallAvoidanceOn = true
 	vehicle.steering.followPathOn = true
 
-	const targetPosition = Utils.randomCircuitVector(world)
+	const targetPosition = Utils.getRandomWalkableNode(world.navGraph).position
 	vehicle.steering.targetPositions = world.findPath(vehicle.position, targetPosition)
 	vehicle.steering.targetPosition = vehicle.steering.targetPositions[0]
 
@@ -27,7 +27,7 @@ const albert: Configuration = (world: World): Vehicle => {
 
 const updateHook = function(this: { vehicle: Vehicle, world: World, targetPosition: Vector2D }, delta: number): void {
 	if (Vector2D.equalsRounded(this.vehicle.position, this.targetPosition, 48)) {
-		this.targetPosition = Utils.randomCircuitVector(this.world)
+		this.targetPosition = Utils.getRandomWalkableNode(this.world.navGraph).position
 		this.vehicle.steering.targetPositions = this.world.findPath(this.vehicle.position, this.targetPosition)
 		this.vehicle.steering.targetPosition = this.vehicle.steering.targetPositions[0]
 	}

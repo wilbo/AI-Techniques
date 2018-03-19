@@ -3,6 +3,7 @@ import GraphNode from '../graph/GraphNode'
 import Graph from '../graph/Graph'
 import IArrayPosition from '../../utils/IArrayPosition'
 import Vector2D from '../../utils/Vector2D'
+import Context from '../../context/Context'
 
 class AStar {
 	private _closedSet: GraphNode[] = []	// The set of nodes already evaluated
@@ -65,6 +66,19 @@ class AStar {
 		}
 
 		return []
+	}
+
+	/**
+	 * Draw a current Astar algorithm to the screen
+	 */
+	public draw(context: Context, path: Vector2D[]): void {
+		for (const node of this._openSet) {
+			context.drawEntity(node.position, 5, 'black', false)
+		}
+
+		for (const vector of path) {
+			context.drawEntity(vector, 5, 'red', false)
+		}
 	}
 
 	/**

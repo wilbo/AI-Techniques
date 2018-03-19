@@ -7,8 +7,10 @@ import SteeringBehaviors from '../behavior/SteeringBehaviors'
 import EntityType from './base/EntityType'
 import Matrix2D from '../utils/Matrix2D'
 import VehicleType from './VehicleType'
+import IStateEntity from '../state/IStateEntity'
+import IState from '../state/IState'
 
-class Vehicle extends Entity implements IMovingEntity {
+class Vehicle extends Entity implements IMovingEntity, IStateEntity<Vehicle> {
 	public velocity = new Vector2D()
 	public heading = new Vector2D()
 	public side = new Vector2D()
@@ -19,6 +21,7 @@ class Vehicle extends Entity implements IMovingEntity {
 	public vehicleType = VehicleType.Red5
 	public steering = new SteeringBehaviors(this)
 	public updateHook: (delta: number) => void
+	public currentState: IState<Vehicle>
 
 	private _angle: number
 
@@ -61,6 +64,12 @@ class Vehicle extends Entity implements IMovingEntity {
 	public render(context: Context) {
 		context.drawVehicle(this.position, this._angle, this.vehicleType)
 		context.drawText('     ' + this.name, this.position)
+	}
+
+	public changeState(state: IState<Vehicle>): void {
+		this.currentState.exit(this)
+		this.currentState = state
+		this.currentState.enter(this)
 	}
 }
 
