@@ -7,8 +7,6 @@ import FillTank from './FillTank'
 class DoNothing implements IState<Vehicle> {
 	public name = 'do nothing'
 
-	private pitPosition = new Vector2D(240, 288)
-
 	public enter(vehicle: Vehicle): void {
 		vehicle.steering.reset()
 		vehicle.velocity = new Vector2D()

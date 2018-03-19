@@ -14,6 +14,8 @@ import barrels2 from '../../configurations/obstacles/barrels2'
 import tires from '../../configurations/obstacles/tires'
 import Vehicle from '../../entity/Vehicle'
 import WanderAroundMap from '../../state/states/vehicle/WanderAroundMap'
+import FollowMouseClick from '../../state/states/vehicle/FollowMouseClick';
+import VehicleType from '../../entity/VehicleType';
 
 class Level1 implements ILevel {
 	public readonly configurations: ConfigurationList = new ConfigurationList(this._world)
@@ -54,7 +56,12 @@ class Level1 implements ILevel {
 		this.configurations.add('tires2', tires.bind(null, this._world, new Vector2D(20.5, 2.5)))
 		this.configurations.add('tires3', tires.bind(null, this._world, new Vector2D(6.5, 7.5)))
 		this.configurations.add('tires4', tires.bind(null, this._world, new Vector2D(6.5, 8.5)))
-		this.configurations.add('eddie', () => { new Vehicle(this._world, new WanderAroundMap()) })
+		this.configurations.add('wanderer', () => { new Vehicle(this._world, new WanderAroundMap()) })
+
+		this.configurations.add('followMouseClick', () => {
+			const v = new Vehicle(this._world, new FollowMouseClick())
+			v.vehicleType = VehicleType.Yellow5
+		})
 	}
 }
 

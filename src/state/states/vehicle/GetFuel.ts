@@ -15,7 +15,6 @@ class GetFuel implements IState<Vehicle> {
 
 		// initialize path following
 		const path = vehicle.world.findPath(vehicle.position, this.pitPosition)
-		console.log(path)
 		vehicle.steering.targetPositions = path
 		vehicle.steering.targetPosition = vehicle.steering.targetPositions[0]
 		vehicle.steering.followPathOn = true
@@ -24,7 +23,7 @@ class GetFuel implements IState<Vehicle> {
 	public execute(vehicle: Vehicle): void {
 		vehicle.fuel--
 
-		if (Vector2D.equalsRounded(vehicle.position, this.pitPosition)) {
+		if (Vector2D.equalsRounded(vehicle.position, this.pitPosition, 24)) {
 			vehicle.changeState(new FillTank())
 		}
 
