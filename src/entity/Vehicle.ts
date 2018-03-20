@@ -48,6 +48,10 @@ class Vehicle extends Entity implements IMovingEntity, IStateEntity<Vehicle> {
 		return this.maxSpeed * this.maxSpeed >= this.velocity.lengthSq
 	}
 
+	public stop(): void {
+		this.velocity = new Vector2D()
+	}
+
 	public update(delta: number): void {
 		this.currentState.execute(this)
 

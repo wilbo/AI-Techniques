@@ -14,8 +14,8 @@ import barrels2 from '../../configurations/obstacles/barrels2'
 import tires from '../../configurations/obstacles/tires'
 import Vehicle from '../../entity/Vehicle'
 import WanderAroundMap from '../../state/states/vehicle/WanderAroundMap'
-import FollowMouseClick from '../../state/states/vehicle/FollowMouseClick';
-import VehicleType from '../../entity/VehicleType';
+import FollowMouseClick from '../../state/states/vehicle/FollowMouseClick'
+import VehicleType from '../../entity/VehicleType'
 
 class Level1 implements ILevel {
 	public readonly configurations: ConfigurationList = new ConfigurationList(this._world)

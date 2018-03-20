@@ -8,7 +8,7 @@ import DoNothing from './DoNothing'
 class GetFuel implements IState<Vehicle> {
 	public name = 'get fuel'
 
-	private pitPosition = new Vector2D(240, 288)
+	private pitPosition = new Vector2D(216, 264)
 
 	public enter(vehicle: Vehicle): void {
 		vehicle.steering.reset()
@@ -24,6 +24,7 @@ class GetFuel implements IState<Vehicle> {
 		vehicle.fuel--
 
 		if (Vector2D.equalsRounded(vehicle.position, this.pitPosition, 24)) {
+			vehicle.stop()
 			vehicle.changeState(new FillTank())
 		}
 

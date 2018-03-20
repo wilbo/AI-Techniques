@@ -9,7 +9,6 @@ class FillTank implements IState<Vehicle> {
 
 	public enter(vehicle: Vehicle): void {
 		vehicle.steering.reset()
-		vehicle.velocity = new Vector2D()
 	}
 
 	public execute(vehicle: Vehicle): void {
