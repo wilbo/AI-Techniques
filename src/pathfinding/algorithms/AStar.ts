@@ -55,7 +55,7 @@ class AStar {
 				if (!neighbor.inOpenSet) { this.addToOpenSet(neighbor) } // discover a new node
 
 				// the distance from start to a neighbor
-				const tentativeGScore = currentNode.gScore
+				const tentativeGScore = currentNode.gScore + currentNode.cost
 				if (tentativeGScore >= neighbor.gScore) { continue } // this is not a better path
 
 				// the best path until now

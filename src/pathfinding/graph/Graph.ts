@@ -58,7 +58,11 @@ class Graph {
 				const node = this.nodes[y][x]
 				if (node.walkable) {
 					// context.drawText(node.row + ',' + node.column, node.position)
-					context.drawEntity(node.position, 2, 'blue')
+					if (node.cost === 5) {
+						context.drawEntity(node.position, 2, 'blue')
+					} else {
+						context.drawEntity(node.position, 2, 'brown')
+					}
 				}
 			}
 		}

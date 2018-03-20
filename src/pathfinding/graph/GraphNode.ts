@@ -14,6 +14,7 @@ class GraphNode {
 		public row: number,
 		public column: number,
 		public position: Vector2D,
+		public cost: number,
 		public walkable: boolean,
 	) { this.defaults() }
 

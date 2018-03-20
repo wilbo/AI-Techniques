@@ -9,13 +9,13 @@ import Matrix2D from '../utils/Matrix2D'
 import VehicleType from './VehicleType'
 import IStateEntity from '../state/IStateEntity'
 import IState from '../state/IState'
+import Utils from '../utils/Utils';
 
 class Vehicle extends Entity implements IMovingEntity, IStateEntity<Vehicle> {
 	public velocity = new Vector2D()
 	public heading = new Vector2D()
 	public side = new Vector2D()
 	public mass = 1
-	public maxSpeed = 200
 	public maxForce = 1000
 	public maxTurnRate = 1
 	public vehicleType = VehicleType.Red5
@@ -25,6 +25,7 @@ class Vehicle extends Entity implements IMovingEntity, IStateEntity<Vehicle> {
 	public readonly fuelMax = 2500
 	public fuel = this.fuelMax
 
+	private readonly defaultMaxSpeed = 250
 	private _angle: number
 
 	constructor(
@@ -34,6 +35,15 @@ class Vehicle extends Entity implements IMovingEntity, IStateEntity<Vehicle> {
 	) {
 		super(world, EntityType.Vehicle, 16, position)
 		this.currentState.enter(this)
+	}
+
+	/**
+	 * Calculates the maxspeed based on the position on the map
+	 */
+	public get maxSpeed(): number {
+		console.log(Utils.positionToCoordinate(this.position, this.world, false))
+		const { row, column } = Utils.positionToCoordinate(this.position, this.world, false)
+		return this.defaultMaxSpeed - (this.world.navGraph.nodes[row][column].cost * 10)
 	}
 
 	public get speed(): number {

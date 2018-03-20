@@ -30,8 +30,8 @@ class GraphGenerator {
 		for (let row = 0; row < this.rows; row++) {
 			nodes[row] = []
 			for (let column = 0; column < this.columns; column++) {
-				const walkable = this._grid[row][column]
-				nodes[row][column] = new GraphNode(row, column, Utils.coordinateToPosition({ row, column }, this._world), !walkable)
+				const value = this._grid[row][column]
+				nodes[row][column] = new GraphNode(row, column, Utils.coordinateToPosition({ row, column }, this._world), value, value >= 0)
 			}
 		}
 

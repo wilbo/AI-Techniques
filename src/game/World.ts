@@ -5,13 +5,13 @@ import Context from '../context/Context'
 import Vector2D from '../utils/Vector2D'
 import Matrix2D from '../utils/Matrix2D'
 import Utils from '../utils/Utils'
-import Level1 from './levels/Level1'
-import ILevel from './levels/ILevel'
 import AStar from '../pathfinding/algorithms/AStar'
 import Graph from '../pathfinding/graph/Graph'
 import GraphGenerator from '../pathfinding/graph/GraphGenerator'
 import GraphNode from '../pathfinding/graph/GraphNode'
 import EntityType from '../entity/base/EntityType'
+import ILevel from '../configurations/levels/ILevel'
+import Level1 from '../configurations/levels/Level1'
 
 class World {
 	public fps: number = 0
