@@ -12,9 +12,9 @@ class FillTank implements IState<Vehicle> {
 	}
 
 	public execute(vehicle: Vehicle): void {
-		vehicle.fuel++
+		vehicle.fuel += 4
 
-		if (vehicle.fuel === vehicle.fuelMax) {
+		if (vehicle.fuel >= vehicle.fuelMax) {
 			vehicle.changeState(new WanderAroundMap())
 		}
 	}

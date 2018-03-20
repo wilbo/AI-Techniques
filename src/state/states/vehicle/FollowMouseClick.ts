@@ -13,7 +13,11 @@ class FollowMouseClick implements IState<Vehicle> {
 	}
 
 	// tslint:disable-next-line:no-empty
-	public execute(vehicle: Vehicle): void {}
+	public execute(vehicle: Vehicle): void {
+		if (vehicle.isMoving) {
+			vehicle.fuel--
+		}
+	}
 
 	public exit(vehicle: Vehicle): void {
 		console.log('exit' + name)

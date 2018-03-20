@@ -12,7 +12,9 @@ class WanderAroundMap implements IState<Vehicle> {
 	}
 
 	public execute(vehicle: Vehicle): void {
-		vehicle.fuel--
+		if (vehicle.isMoving) {
+			vehicle.fuel--
+		}
 
 		if (vehicle.fuel < 500) {
 			vehicle.changeState(new GetFuel())

@@ -96,7 +96,6 @@ class SteeringBehaviors {
 			return Vector2D.subtract(desiredVelocity, this._vehicle.velocity)
 		}
 
-		this._vehicle.stop()
 		return new Vector2D(0, 0)
 	}
 
@@ -261,6 +260,13 @@ class SteeringBehaviors {
 		if (this.targetPositions.length > 0 &&
 			Vector2D.equalsRounded(this._vehicle.position, this.targetPosition, this._equalsStrictness)) {
 			this.targetPosition = this.targetPositions.shift() as Vector2D
+		}
+
+		// At the last vector in the list
+		if (this.targetPositions.length === 0 &&
+			Vector2D.equalsRounded(this._vehicle.position, this.targetPosition)) {
+			this._vehicle.stop()
+			return new Vector2D()
 		}
 
 		return this.arrive(this.targetPosition, false, DecelerationLevel.fast)

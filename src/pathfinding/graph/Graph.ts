@@ -16,14 +16,6 @@ class Graph {
 		return this.nodes.length
 	}
 
-	public getRandomWalkableNode(): GraphNode {
-		let node: GraphNode
-		do {
-			node = this.nodes[Utils.randomInt(0, this.rows - 1)][Utils.randomInt(0, this.columns - 1)]
-		} while (!node.walkable)
-		return node
-	}
-
 	/**
 	 * Return the walkable nodes surrounding a node
 	 * @param node The node to start searching from

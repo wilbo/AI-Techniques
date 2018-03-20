@@ -21,7 +21,9 @@ class GetFuel implements IState<Vehicle> {
 	}
 
 	public execute(vehicle: Vehicle): void {
-		vehicle.fuel--
+		if (vehicle.isMoving) {
+			vehicle.fuel--
+		}
 
 		if (Vector2D.equalsRounded(vehicle.position, this.pitPosition, 24)) {
 			vehicle.stop()

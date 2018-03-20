@@ -22,7 +22,7 @@ class Vehicle extends Entity implements IMovingEntity, IStateEntity<Vehicle> {
 	public steering = new SteeringBehaviors(this)
 	public updateHook: (delta: number) => void
 
-	public readonly fuelMax = 1000
+	public readonly fuelMax = 2500
 	public fuel = this.fuelMax
 
 	private _angle: number
@@ -48,6 +48,10 @@ class Vehicle extends Entity implements IMovingEntity, IStateEntity<Vehicle> {
 		return this.maxSpeed * this.maxSpeed >= this.velocity.lengthSq
 	}
 
+	public get isMoving(): boolean {
+		return this.velocity.lengthSq > 0.00000001
+	}
+
 	public stop(): void {
 		this.velocity = new Vector2D()
 	}
@@ -64,7 +68,7 @@ class Vehicle extends Entity implements IMovingEntity, IStateEntity<Vehicle> {
 		this.velocity = Vector2D.truncate(this.velocity, this.maxSpeed) // make sure vehicle does not exceed maximum velocity
 		this.position = Vector2D.add(this.position, Vector2D.multiply(this.velocity, delta)) // update the position
 
-		if (this.velocity.lengthSq > 0.00000001) {
+		if (this.isMoving) {
 			this.heading = Vector2D.normalize(this.velocity)
 			this.side = Vector2D.perp(this.heading)
 		}
