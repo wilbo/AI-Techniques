@@ -7,11 +7,12 @@ import SteeringBehaviors from '../behavior/SteeringBehaviors'
 import EntityType from './base/EntityType'
 import Matrix2D from '../utils/Matrix2D'
 import VehicleType from './VehicleType'
-import IStateEntity from '../state/IStateEntity'
+import Utils from '../utils/Utils'
+import StateMachine from '../state/StateMachine'
 import IState from '../state/IState'
-import Utils from '../utils/Utils';
+import VehicleGlobalState from '../state/states/vehicle/VehicleGlobalState'
 
-class Vehicle extends Entity implements IMovingEntity, IStateEntity<Vehicle> {
+class Vehicle extends Entity implements IMovingEntity {
 	public velocity = new Vector2D()
 	public heading = new Vector2D()
 	public side = new Vector2D()
@@ -21,20 +22,20 @@ class Vehicle extends Entity implements IMovingEntity, IStateEntity<Vehicle> {
 	public vehicleType = VehicleType.Red5
 	public steering = new SteeringBehaviors(this)
 	public updateHook: (delta: number) => void
-
 	public readonly fuelMax = 2500
 	public fuel = this.fuelMax
+	public stateMachine: StateMachine<Vehicle>
 
 	private readonly defaultMaxSpeed = 250
 	private _angle: number
 
 	constructor(
 		public world: World,
-		public currentState: IState<Vehicle>,
+		defaultState: IState<Vehicle>,
 		public position = new Vector2D(0, 140),
 	) {
 		super(world, EntityType.Vehicle, 16, position)
-		this.currentState.enter(this)
+		this.stateMachine = new StateMachine<Vehicle>(this, new VehicleGlobalState(), defaultState)
 	}
 
 	/**
@@ -42,7 +43,7 @@ class Vehicle extends Entity implements IMovingEntity, IStateEntity<Vehicle> {
 	 */
 	public get maxSpeed(): number {
 		const node = this.world.navGraph.node(Utils.positionToCoordinate(this.position, this.world, false))
-		return node !== null ? (this.defaultMaxSpeed - (node.cost * 10)) : this.defaultMaxSpeed
+		return this.defaultMaxSpeed - (node !== null ? node.cost * 10 : 0)
 	}
 
 	public get speed(): number {
@@ -66,11 +67,11 @@ class Vehicle extends Entity implements IMovingEntity, IStateEntity<Vehicle> {
 	}
 
 	public update(delta: number): void {
-		this.currentState.execute(this)
-
 		if (typeof this.updateHook !== 'undefined') {
 			this.updateHook(delta)
 		}
+
+		this.stateMachine.update()
 
 		const acceleration = Vector2D.divide(this.steering.calculate(), this.mass) // acceleration = force / mass
 		this.velocity = Vector2D.add(this.velocity, Vector2D.multiply(acceleration, delta)) // update velocity
@@ -89,15 +90,9 @@ class Vehicle extends Entity implements IMovingEntity, IStateEntity<Vehicle> {
 		context.drawVehicle(this.position, this._angle, this.vehicleType)
 
 		if (this.world.devMode) {
-			context.drawText('     state: ' + this.currentState.name, this.position)
-			context.drawText(`     fuel: ${this.fuel}/${this.fuelMax}`, Vector2D.subtract(this.position, new Vector2D(0, 20)))
+			context.drawText('      state: ' + this.stateMachine.currentState.name, this.position)
+			context.drawText(`      fuel: ${this.fuel}/${this.fuelMax}`, Vector2D.subtract(this.position, new Vector2D(0, 20)))
 		}
-	}
-
-	public changeState(state: IState<Vehicle>): void {
-		this.currentState.exit(this)
-		this.currentState = state
-		this.currentState.enter(this)
 	}
 }
 

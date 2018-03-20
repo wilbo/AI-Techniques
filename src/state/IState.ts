@@ -1,8 +1,8 @@
-interface IState<Entity> {
+interface IState<T> {
 	name: string
-	enter(entity: Entity): void
-	execute(entity: Entity): void
-	exit(entity: Entity): void
+	enter(entity: T): void
+	execute(entity: T): void
+	exit(entity: T): void
 }
 
 export default IState

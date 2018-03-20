@@ -1,7 +1,6 @@
 import IState from '../../IState'
 import Vehicle from '../../../entity/Vehicle'
 import Vector2D from '../../../utils/Vector2D'
-import Matrix2D from '../../../utils/Matrix2D'
 import FillTank from './FillTank'
 import DoNothing from './DoNothing'
 
@@ -21,23 +20,13 @@ class GetFuel implements IState<Vehicle> {
 	}
 
 	public execute(vehicle: Vehicle): void {
-		if (vehicle.isMoving) {
-			vehicle.fuel--
-		}
-
 		if (Vector2D.equalsRounded(vehicle.position, this.pitPosition, 24)) {
 			vehicle.stop()
-			vehicle.changeState(new FillTank())
-		}
-
-		if (vehicle.fuel === 0) {
-			vehicle.changeState(new DoNothing())
+			vehicle.stateMachine.changeState(new FillTank())
 		}
 	}
 
-	public exit(vehicle: Vehicle): void {
-		console.log('exit' + name)
-	}
+	public exit(vehicle: Vehicle): void {}
 }
 
 export default GetFuel

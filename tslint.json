@@ -20,7 +20,8 @@
 			"radix": [false],
 			"object-literal-sort-keys": [false],
 			"jsx-no-lambda": [false],
-			"no-string-literal": [false]
+			"no-string-literal": [false],
+			"no-empty": [false]
 		},
     "rulesDirectory": []
 }

@@ -9,18 +9,12 @@ class FollowMouseClick implements IState<Vehicle> {
 
 	public enter(vehicle: Vehicle): void {
 		vehicle.steering.reset()
-		vehicle.world.onClickListeners.push(this.onWorldClick.bind(vehicle))
+		vehicle.world.onClickListener = this.onWorldClick.bind(vehicle)
 	}
 
-	// tslint:disable-next-line:no-empty
-	public execute(vehicle: Vehicle): void {
-		if (vehicle.isMoving) {
-			vehicle.fuel--
-		}
-	}
-
+	public execute(vehicle: Vehicle): void {}
 	public exit(vehicle: Vehicle): void {
-		console.log('exit' + name)
+		vehicle.world.onClickListener = () => {}
 	}
 
 	private onWorldClick = function(this: Vehicle, clickedPosition: Vector2D): void {

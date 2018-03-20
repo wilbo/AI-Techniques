@@ -1,6 +1,5 @@
 import IState from '../../IState'
 import Vehicle from '../../../entity/Vehicle'
-import GetFuel from './GetFuel'
 
 class WanderAroundMap implements IState<Vehicle> {
 	public name = 'wander around map'
@@ -11,19 +10,8 @@ class WanderAroundMap implements IState<Vehicle> {
 		vehicle.steering.wanderOn = true
 	}
 
-	public execute(vehicle: Vehicle): void {
-		if (vehicle.isMoving) {
-			vehicle.fuel--
-		}
-
-		if (vehicle.fuel < 500) {
-			vehicle.changeState(new GetFuel())
-		}
-	}
-
-	public exit(vehicle: Vehicle): void {
-		console.log('exit' + name)
-	}
+	public execute(vehicle: Vehicle): void {}
+	public exit(vehicle: Vehicle): void {}
 }
 
 export default WanderAroundMap

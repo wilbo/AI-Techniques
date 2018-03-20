@@ -18,7 +18,7 @@ class World {
 	public entities: EntityList
 	public viewMatrix: Matrix2D
 	public navGraph: Graph
-	public onClickListeners: Array<((clickedPosition: Vector2D) => void)> = []
+	public onClickListener: (clickedPosition: Vector2D) => void
 	public devMode: boolean = false
 
 	private _level: ILevel
@@ -121,13 +121,11 @@ class World {
 	}
 
 	private clickToVector = (evt: MouseEvent): void => {
-		if (this.onClickListeners.length > 0) {
+		if (this.onClickListener) {
 			const x = evt.clientX + document.body.scrollLeft + document.documentElement.scrollLeft - (evt.target as HTMLCanvasElement).offsetLeft
 			const y = evt.clientY + document.body.scrollTop + document.documentElement.scrollTop - (evt.target as HTMLCanvasElement).offsetTop
 			const vector = Matrix2D.vector2DToView(new Vector2D(x, y), this.viewMatrix)
-			for (const listener of this.onClickListeners) {
-				listener(vector)
-			}
+			this.onClickListener(vector)
 		}
 	}
 }
