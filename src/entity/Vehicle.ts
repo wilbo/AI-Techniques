@@ -41,9 +41,8 @@ class Vehicle extends Entity implements IMovingEntity, IStateEntity<Vehicle> {
 	 * Calculates the maxspeed based on the position on the map
 	 */
 	public get maxSpeed(): number {
-		console.log(Utils.positionToCoordinate(this.position, this.world, false))
-		const { row, column } = Utils.positionToCoordinate(this.position, this.world, false)
-		return this.defaultMaxSpeed - (this.world.navGraph.nodes[row][column].cost * 10)
+		const node = this.world.navGraph.node(Utils.positionToCoordinate(this.position, this.world, false))
+		return node !== null ? (this.defaultMaxSpeed - (node.cost * 10)) : this.defaultMaxSpeed
 	}
 
 	public get speed(): number {
