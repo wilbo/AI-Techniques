@@ -16,15 +16,18 @@ class GoToStart implements IState<Vehicle> {
 		const poi1 = vehicle.world.level.poi('start1')
 		const poi2 = vehicle.world.level.poi('start2')
 
-		if (poi1.available) {
+		if (!poi1.occupied && !poi1.reserved) { // TODO: only check for reserved here
 			this.targetPoi = poi1
-		} else if (poi2.available) {
+		} else if (!poi2.occupied && !poi2.reserved) {
 			this.targetPoi = poi2
+		} else {
+			// no poi available
+			// TODO: // ChangeState(new ...)
 		}
 
-		this.targetPoi.reserved = true
-
 		if (typeof this.targetPoi !== 'undefined') {
+			this.targetPoi.reserved = true
+
 			// initialize path following
 			const path = vehicle.world.findPath(vehicle.position, this.targetPoi.point)
 			vehicle.steering.targetPositions = path
@@ -34,6 +37,9 @@ class GoToStart implements IState<Vehicle> {
 	}
 
 	public execute(vehicle: Vehicle): void {
+		// TODO: Check underway if poi becomes occupied
+		// if so, then plan another path
+
 		if (typeof this.targetPoi !== 'undefined' && Vector2D.equalsRounded(vehicle.position, this.targetPoi.point, 24)) {
 			this.targetPoi.occupied = true
 			this.targetPoi.reserved = false

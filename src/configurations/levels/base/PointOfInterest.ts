@@ -22,13 +22,6 @@ class PointOfInterest {
 		 */
 		public reserved: boolean = false,
 	) { }
-
-	/**
-	 * Return wether this point of interest is available
-	 */
-	public get available(): boolean {
-		return !this.occupied && !this.reserved
-	}
 }
 
 export default PointOfInterest

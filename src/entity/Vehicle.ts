@@ -11,6 +11,7 @@ import Utils from '../utils/Utils'
 import StateMachine from '../state/StateMachine'
 import IState from '../state/IState'
 import VehicleGlobalState from '../state/states/vehicle/VehicleGlobalState'
+import ImageLoader from '../utils/ImageLoader'
 
 class Vehicle extends Entity implements IMovingEntity {
 	public velocity = new Vector2D()
@@ -24,9 +25,11 @@ class Vehicle extends Entity implements IMovingEntity {
 	public readonly fuelMax = 2500
 	public fuel = this.fuelMax
 	public stateMachine: StateMachine<Vehicle>
+	public maxSpeedMultiplier = 1
 
-	private readonly defaultMaxSpeed = 250
+	private readonly _defaultMaxSpeed = 250
 	private _angle: number
+	private _image: HTMLImageElement
 
 	constructor(
 		public world: World,
@@ -43,7 +46,7 @@ class Vehicle extends Entity implements IMovingEntity {
 	 */
 	public get maxSpeed(): number {
 		const node = this.world.navGraph.node(Utils.positionToCoordinate(this.position, this.world, false))
-		return this.defaultMaxSpeed - (node !== null ? node.cost * 10 : 0)
+		return (this._defaultMaxSpeed - (node !== null ? node.cost * (10 /* cost weight */) : 0)) * this.maxSpeedMultiplier
 	}
 
 	public get speed(): number {
@@ -87,7 +90,11 @@ class Vehicle extends Entity implements IMovingEntity {
 	}
 
 	public render(context: Context) {
-		context.drawVehicle(this.position, this._angle, this.vehicleType)
+		if (typeof this._image === 'undefined') {
+			this._image = ImageLoader.vehicle(this.vehicleType)
+		} else {
+			context.drawVehicle(this.position, this._angle, this._image)
+		}
 
 		if (this.world.devMode) {
 			context.drawText('      state: ' + this.stateMachine.currentState.name, this.position)

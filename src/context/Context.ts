@@ -46,21 +46,19 @@ class Context {
 		this.defaults()
 	}
 
-	public drawVehicle(position: Vector2D, rotation: number = 0, vehicleType: VehicleType = VehicleType.Red5): void {
-		const image = ImageLoader.vehicle(vehicleType)
+	public drawVehicle(position: Vector2D, rotation: number, image: HTMLImageElement): void {
 		this.ctx.translate(position.x, position.y)
 		this.ctx.rotate(rotation)
 		this.ctx.drawImage(image, -(image.width * 0.5), -(image.height * 0.5)) // center the image origin
 		this.defaults()
 	}
 
-	public drawObstacleRound(position: Vector2D, radius: number, imagePath: string = '', drawBounds: boolean = false, color: string = 'black'): void {
-		if (imagePath) {
-			const image = ImageLoader.vehicle(imagePath)
+	public drawObstacleRound(position: Vector2D, radius: number, image: HTMLImageElement | null = null, drawBounds: boolean = false, color: string = 'black'): void {
+		if (image) {
 			this.ctx.drawImage(image, position.x - radius, position.y - radius)
 		}
 
-		if (drawBounds || !imagePath) {
+		if (drawBounds || !image) {
 			this.ctx.translate(position.x, position.y)
 			this.ctx.fillStyle = color
 			this.ctx.strokeStyle = color

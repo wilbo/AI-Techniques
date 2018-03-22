@@ -4,8 +4,11 @@ import World from '../game/World'
 import Vector2D from '../utils/Vector2D'
 import EntityType from './base/EntityType'
 import Utils from '../utils/Utils'
+import ImageLoader from '../utils/ImageLoader'
 
 class ObstacleRound extends Entity {
+	private _image: HTMLImageElement
+
 	constructor(
 		public world: World,
 		public position: Vector2D = Utils.randomVector(world),
@@ -16,7 +19,11 @@ class ObstacleRound extends Entity {
 	public update(delta: number): void { return }
 
 	public render(context: Context): void {
-		context.drawObstacleRound(this.position, this.radius, this.imagePath, this.world.devMode)
+		if (typeof this._image === 'undefined') {
+			this._image = ImageLoader.vehicle(this.imagePath)
+		} else {
+			context.drawObstacleRound(this.position, this.radius, this._image, this.world.devMode)
+		}
 	}
 }
 

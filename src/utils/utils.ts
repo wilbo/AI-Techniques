@@ -30,7 +30,7 @@ class Utils {
 	}
 
 	/**
-	 * Returns a random in between two values
+	 * Returns a random int between two values
 	 * @param min the lowest possible number
 	 * @param max the highest possible number
 	 */
@@ -38,6 +38,15 @@ class Utils {
 		min = Math.ceil(min)
 		max = Math.floor(max)
 		return Math.floor(Math.random() * (max - min)) + min
+	}
+
+	/**
+	 * Returns a random float between two values
+	 * @param min the lowest possible number
+	 * @param max the highest possible number
+	 */
+	public static randomFloat(min: number, max: number): number {
+		return Math.random() * (max - min) + min
 	}
 
 	/**
