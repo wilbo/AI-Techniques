@@ -16,6 +16,8 @@ import Vehicle from '../../entity/Vehicle'
 import WanderAroundMap from '../../state/states/vehicle/WanderAroundMap'
 import FollowMouseClick from '../../state/states/vehicle/FollowMouseClick'
 import VehicleType from '../../entity/VehicleType'
+import GoToStart from '../../state/states/vehicle/GoToStart'
+import PointOfInterest from './base/PointOfInterest'
 
 class Level1 implements ILevel {
 	public readonly configurations: ConfigurationList = new ConfigurationList(this._world)
@@ -36,13 +38,14 @@ class Level1 implements ILevel {
 		[14, 14,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5, 14, 14],
 		[14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14],
 	]
+	public pointsOfInterest: PointOfInterest[] = [
+		new PointOfInterest('pit', new Vector2D(216, 264)),
+		new PointOfInterest('start1', new Vector2D(360, -216)),
+		new PointOfInterest('start2', new Vector2D(360, -264)),
+	]
 
 	constructor(private _world: World) {
-		this.addConfigurations()
-		this.configurations.createAll()
-	}
-
-	private addConfigurations(): void {
+		// objects
 		this.configurations.add('largeTree1', largeTree.bind(null, this._world, new Vector2D(4, 10)))
 		this.configurations.add('largeTree2', largeTree.bind(null, this._world, new Vector2D(10, 2)))
 		this.configurations.add('largeTree3', largeTree.bind(null, this._world, new Vector2D(18, 10)))
@@ -56,12 +59,25 @@ class Level1 implements ILevel {
 		this.configurations.add('tires2', tires.bind(null, this._world, new Vector2D(20.5, 2.5)))
 		this.configurations.add('tires3', tires.bind(null, this._world, new Vector2D(6.5, 7.5)))
 		this.configurations.add('tires4', tires.bind(null, this._world, new Vector2D(6.5, 8.5)))
-		this.configurations.add('wanderer', () => { new Vehicle(this._world, new WanderAroundMap()) })
+		// vehicles
+		this.configurations.add('wanderer', () => new Vehicle(this._world, new WanderAroundMap(), VehicleType.Black4))
+		this.configurations.add('followMouseClick', () => new Vehicle(this._world, new FollowMouseClick(), VehicleType.Yellow5))
+		this.configurations.add('raceCar1', () => new Vehicle(this._world, new GoToStart(), VehicleType.Blue5))
+		this.configurations.add('raceCar2', () => new Vehicle(this._world, new GoToStart(), VehicleType.Red5))
+	}
 
-		this.configurations.add('followMouseClick', () => {
-			const v = new Vehicle(this._world, new FollowMouseClick())
-			v.vehicleType = VehicleType.Yellow5
-		})
+	public init(): void {
+		this.configurations.createAll()
+	}
+
+	public poi(name: string): PointOfInterest {
+		const poi = this.pointsOfInterest.find((x) => x.name === name)
+
+		if (typeof poi === 'undefined') {
+			throw new Error('Point of interest is undefined')
+		}
+
+		return poi
 	}
 }
 

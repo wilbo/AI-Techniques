@@ -12,16 +12,18 @@ import GraphNode from '../pathfinding/graph/GraphNode'
 import EntityType from '../entity/base/EntityType'
 import ILevel from '../configurations/levels/ILevel'
 import Level1 from '../configurations/levels/Level1'
+import IPointOfInterest from '../configurations/levels/base/PointOfInterest'
 
 class World {
-	public fps: number = 0
+	public fps = 0
+	public onClickListener: (clickedPosition: Vector2D) => void
+	public devMode = false
+
 	public entities: EntityList
 	public viewMatrix: Matrix2D
 	public navGraph: Graph
-	public onClickListener: (clickedPosition: Vector2D) => void
-	public devMode: boolean = false
+	public level: ILevel
 
-	private _level: ILevel
 	private _context: Context
 	private _aStar: AStar
 	private _currentPath: Vector2D[] = []
@@ -39,16 +41,18 @@ class World {
 		this.entities = new EntityList(this)
 
 		// level
-		this._level = new Level1(this)
+		this.level = new Level1(this)
+
+		// pathfinding
+		this.navGraph = new GraphGenerator(this, this.level.grid).generate()
+		this._aStar = new AStar(this.navGraph)
 
 		// configuring context
 		this._context = new Context(this)
 		this._context.setClick(this.clickToVector)
-		this._context.setBackground(this._level.imagePath)
+		this._context.setBackground(this.level.imagePath)
 
-		// pathfinding
-		this.navGraph = new GraphGenerator(this, this._level.grid).generate()
-		this._aStar = new AStar(this.navGraph)
+		this.level.configurations.createAll()
 	}
 
 	/**

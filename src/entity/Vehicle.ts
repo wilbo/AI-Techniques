@@ -19,7 +19,6 @@ class Vehicle extends Entity implements IMovingEntity {
 	public mass = 1
 	public maxForce = 1000
 	public maxTurnRate = 1
-	public vehicleType = VehicleType.Red5
 	public steering = new SteeringBehaviors(this)
 	public updateHook: (delta: number) => void
 	public readonly fuelMax = 2500
@@ -32,6 +31,7 @@ class Vehicle extends Entity implements IMovingEntity {
 	constructor(
 		public world: World,
 		defaultState: IState<Vehicle>,
+		public vehicleType = VehicleType.Red5,
 		public position = new Vector2D(0, 140),
 	) {
 		super(world, EntityType.Vehicle, 16, position)

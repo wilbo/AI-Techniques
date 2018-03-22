@@ -1,6 +1,7 @@
 import Wall from '../../entity/Wall'
 import Vector2D from '../../utils/Vector2D'
 import ConfigurationList from '../../configurations/base/ConfigurationList'
+import PointOfInterest from './base/PointOfInterest'
 
 interface ILevel {
 	/**
@@ -18,9 +19,24 @@ interface ILevel {
 	readonly imagePath: string
 
 	/**
-	 * the configurations that need to be executed
+	 * The configurations that need to be executed
 	 */
 	readonly configurations: ConfigurationList
+
+	/**
+	 * Store some points of interest for this level
+	 */
+	readonly pointsOfInterest: PointOfInterest[]
+
+	/**
+	 * Return a point of interest by name
+	 */
+	poi(name: string): PointOfInterest
+
+	/**
+	 * a method that will load all configurations
+	 */
+	init(): void
 }
 
 export default ILevel
