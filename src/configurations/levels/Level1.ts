@@ -42,6 +42,8 @@ class Level1 implements ILevel {
 		new PointOfInterest('pit', new Vector2D(216, 264)),
 		new PointOfInterest('start1', new Vector2D(360, -216)),
 		new PointOfInterest('start2', new Vector2D(360, -264)),
+		new PointOfInterest('finish1', new Vector2D(-360, -216)),
+		new PointOfInterest('finish2', new Vector2D(-360, -264)),
 	]
 
 	constructor(private _world: World) {

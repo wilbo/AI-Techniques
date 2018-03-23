@@ -22,6 +22,14 @@ class PointOfInterest {
 		 */
 		public reserved: boolean = false,
 	) { }
+
+	/**
+	 * Reset the poi to its initial values
+	 */
+	public clear(): void {
+		this.occupied = false
+		this.reserved = false
+	}
 }
 
 export default PointOfInterest

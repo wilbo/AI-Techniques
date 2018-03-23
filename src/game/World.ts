@@ -84,17 +84,18 @@ class World {
 
 	public render(): void {
 		this._context.clear(this.hPixels, this.vPixels)
+
+		if (this.devMode) {
+			this.navGraph.draw(this._context)
+			this._aStar.draw(this._context, this._currentPath)
+		}
+
 		for (const entity of this.entities.list) {
 			entity.render(this._context)
 			this.wrapAround(entity)
 		}
 
 		this.drawFps()
-
-		if (this.devMode) {
-			this.navGraph.draw(this._context)
-			this._aStar.draw(this._context, this._currentPath)
-		}
 	}
 
 	public findPath(from: Vector2D, to: Vector2D): Vector2D[] {

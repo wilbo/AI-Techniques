@@ -6,17 +6,11 @@ import Vector2D from '../../utils/Vector2D'
 import Context from '../../context/Context'
 
 class AStar {
+	private _evaluated: GraphNode[] = []
 	private _closedSet: GraphNode[] = []	// The set of nodes already evaluated
 	private _openSet: GraphNode[] = [] // The set of currently discovered nodes that are not evaluated yet
 
 	constructor(private _graph: Graph) { }
-
-	/**
-	 * Returns the positions of the nodes in the openset for drawing purposes
-	 */
-	public get openSetPositions(): Vector2D[] {
-		return this._openSet.map((node) => node.position)
-	}
 
 	/**
 	 * Find the shortest path from start to end
@@ -35,6 +29,7 @@ class AStar {
 
 		this._closedSet = []
 		this._openSet = []
+		this._evaluated = []
 
 		this.addToOpenSet(startNode) // initially, only the start node is known
 		startNode.gScore = 0 // the cost of going from start to start is zero
@@ -55,13 +50,17 @@ class AStar {
 				if (!neighbor.inOpenSet) { this.addToOpenSet(neighbor) } // discover a new node
 
 				// the distance from start to a neighbor
-				const tentativeGScore = currentNode.gScore + currentNode.cost
-				if (tentativeGScore >= neighbor.gScore) { continue } // this is not a better path
+				const tentativeGScore = currentNode.gScore + neighbor.cost
+
+				// this is not a better path
+				if (tentativeGScore >= neighbor.gScore) { continue }
 
 				// the best path until now
 				neighbor.parent = currentNode
 				neighbor.gScore = tentativeGScore
 				neighbor.fScore = neighbor.gScore + this.manhattanDistance(neighbor, endNode)
+
+				this._evaluated.push(currentNode)
 			}
 		}
 
@@ -72,9 +71,9 @@ class AStar {
 	 * Draw a current Astar algorithm to the screen
 	 */
 	public draw(context: Context, path: Vector2D[]): void {
-		for (const node of this._openSet) {
-			context.drawEntity(node.position, 5, 'black', false)
-		}
+		// for (const node of this._evaluated) {
+		// 	context.drawEntity(node.position, 5, 'black', false)
+		// }
 
 		for (const vector of path) {
 			context.drawEntity(vector, 5, 'red', false)

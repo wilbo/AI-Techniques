@@ -22,10 +22,11 @@ class Vehicle extends Entity implements IMovingEntity {
 	public maxTurnRate = 1
 	public steering = new SteeringBehaviors(this)
 	public updateHook: (delta: number) => void
-	public readonly fuelMax = 2500
-	public fuel = this.fuelMax
 	public stateMachine: StateMachine<Vehicle>
-	public maxSpeedMultiplier = 1
+	public maxSpeedMultiplier: number
+	public readonly fuelMax = 1500
+	public readonly fuelSubtractor = Utils.randomFloat(1, 2)
+	public fuel = this.fuelMax
 
 	private readonly _defaultMaxSpeed = 250
 	private _angle: number
@@ -38,6 +39,7 @@ class Vehicle extends Entity implements IMovingEntity {
 		public position = new Vector2D(0, 140),
 	) {
 		super(world, EntityType.Vehicle, 16, position)
+		this.setSpeedMultiplier()
 		this.stateMachine = new StateMachine<Vehicle>(this, new VehicleGlobalState(), defaultState)
 	}
 
@@ -63,6 +65,10 @@ class Vehicle extends Entity implements IMovingEntity {
 
 	public get isMoving(): boolean {
 		return this.velocity.lengthSq > 0.00000001
+	}
+
+	public setSpeedMultiplier() {
+		this.maxSpeedMultiplier = Utils.randomFloat(0.8, 1.2)
 	}
 
 	public stop(): void {
@@ -98,7 +104,7 @@ class Vehicle extends Entity implements IMovingEntity {
 
 		if (this.world.devMode) {
 			context.drawText('      state: ' + this.stateMachine.currentState.name, this.position)
-			context.drawText(`      fuel: ${this.fuel}/${this.fuelMax}`, Vector2D.subtract(this.position, new Vector2D(0, 20)))
+			context.drawText(`      fuel: ${Math.round(this.fuel)}/${this.fuelMax}`, Vector2D.subtract(this.position, new Vector2D(0, 20)))
 		}
 	}
 }

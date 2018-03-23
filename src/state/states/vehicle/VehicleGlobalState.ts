@@ -13,7 +13,7 @@ class VehicleGlobalState implements IState<Vehicle> {
 		const { currentState, defaultState } = vehicle.stateMachine
 
 		if (vehicle.isMoving) {
-			vehicle.fuel--
+			vehicle.fuel -= vehicle.fuelSubtractor
 		}
 
 		if (vehicle.fuel >= vehicle.fuelMax && !vehicle.stateMachine.isInState(defaultState)) {
