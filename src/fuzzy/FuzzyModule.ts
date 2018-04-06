@@ -4,8 +4,8 @@ import FuzzyTerm from './FuzzyTerm'
 
 class FuzzyModule {
 	constructor(
-		private _flvs: { [flv: string]: FuzzyVariable },
-		private _rules: FuzzyRule[],
+		private _flvs: { [flv: string]: FuzzyVariable } = {},
+		private _rules: FuzzyRule[] = [],
 	) { }
 
 	/**
@@ -13,32 +13,54 @@ class FuzzyModule {
 	 * @returns reference to new fuzzy linguistic variable
 	 */
 	public createFLV(name: string): FuzzyVariable {
-		return this._flvs[name] = new FuzzyVariable()
+		this._flvs[name] = new FuzzyVariable()
+		return this._flvs[name]
 	}
 
 	/**
 	 * Adds a rule to the module
 	 */
 	public addRule(antecedent: FuzzyTerm, consequence: FuzzyTerm): void {
-
+		this._rules.push(new FuzzyRule(antecedent, consequence))
 	}
 
 	/**
-	 * calls the fuzzify method of the named fuzzy linguistic variable
+	 * Calls the fuzzify method of the named fuzzy linguistic variable
 	 */
-	public fuzzify(name: string): void {
-
+	public fuzzify(name: string, value: number): void {
+		this._flvs[name].fuzzify(value)
 	}
 
 	/**
-	 * returns a crisp value of a fuzzy linguistic variable
+	 * Returns a crisp value of a fuzzy linguistic variable
 	 * @param name name of the fuzzy linguistic variable
 	 */
 	public deFuzzify(name: string): number {
-		return 0
+		// Make sure the key exists
+		if (typeof this._flvs[name] === 'undefined') {
+			throw new Error('Key not found')
+		}
+
+		// clear the dom's of all consequents
+		this.setConfidencesOfConsequentsToZero()
+
+		// process the rules
+		for (const rule of this._rules) {
+			rule.calculate()
+		}
+
+		// defuzzify
+		return this._flvs[name].deFuzzify()
 	}
 
+	/**
+	 * Zeros the DOMs of the consequents of each rule
+	 */
 	private setConfidencesOfConsequentsToZero(): void {
-
+		for (const rule of this._rules) {
+			rule.setConfidenceOfConsequentToZero()
+		}
 	}
 }
+
+export default FuzzyModule

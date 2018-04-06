@@ -18,6 +18,8 @@ import FollowMouseClick from '../../state/states/vehicle/FollowMouseClick'
 import VehicleType from '../../entity/VehicleType'
 import GoToStart from '../../state/states/vehicle/GoToStart'
 import PointOfInterest from './base/PointOfInterest'
+import FuzzyModule from '../../fuzzy/FuzzyModule'
+import FuzzyAnd from '../../fuzzy/operators/FuzzyAnd'
 
 class Level1 implements ILevel {
 	public readonly configurations: ConfigurationList = new ConfigurationList(this._world)
@@ -61,17 +63,47 @@ class Level1 implements ILevel {
 		this.configurations.add('tires2', tires.bind(null, this._world, new Vector2D(20.5, 2.5)))
 		this.configurations.add('tires3', tires.bind(null, this._world, new Vector2D(6.5, 7.5)))
 		this.configurations.add('tires4', tires.bind(null, this._world, new Vector2D(6.5, 8.5)))
+
+		const fm = new FuzzyModule()
+
+		const distToPit = fm.createFLV('distToFuel')
+		const close = distToPit.addLeftShoulderSet('close', 0, 50000, 100000)
+		const medium = distToPit.addTriangularSet('medium', 50000, 150000, 250000)
+		const far = distToPit.addRightShoulderSet('far', 200000, 250000, 1000000)
+
+		const fuelLevel = fm.createFLV('fuelLevel')
+		const low = fuelLevel.addLeftShoulderSet('low', 0, 250, 500)
+		const okay = fuelLevel.addTriangularSet('okay', 250, 750, 1250)
+		const loads = fuelLevel.addRightShoulderSet('loads', 1000, 1500, 2500)
+
+		const fuelAdvice = fm.createFLV('fuelAdvice')
+		const keepDriving = fuelAdvice.addLeftShoulderSet('keepDriving', 0, 33, 66)
+		const fillTank = fuelAdvice.addRightShoulderSet('fillTank', 33, 66, 100)
+
+		fm.addRule(new FuzzyAnd([close, low]), fillTank)
+		fm.addRule(new FuzzyAnd([close, okay]), keepDriving)
+		fm.addRule(new FuzzyAnd([close, loads]), keepDriving)
+
+		fm.addRule(new FuzzyAnd([medium, low]), fillTank)
+		fm.addRule(new FuzzyAnd([medium, okay]), keepDriving)
+		fm.addRule(new FuzzyAnd([medium, loads]), keepDriving)
+
+		fm.addRule(new FuzzyAnd([far, low]), fillTank)
+		fm.addRule(new FuzzyAnd([far, okay]), fillTank)
+		fm.addRule(new FuzzyAnd([far, loads]), keepDriving)
+
 		// vehicles
-		this.configurations.add('wanderer', () => new Vehicle(this._world, new WanderAroundMap(), VehicleType.Black4))
-		this.configurations.add('followMouseClick', () => new Vehicle(this._world, new FollowMouseClick(), VehicleType.Yellow5))
-		this.configurations.add('raceCar1', () => new Vehicle(this._world, new GoToStart(), VehicleType.Blue5))
-		this.configurations.add('raceCar2', () => new Vehicle(this._world, new GoToStart(), VehicleType.Red5))
+		this.configurations.add('wanderer', () => new Vehicle(this._world, new WanderAroundMap(), fm, VehicleType.Black4))
+		// this.configurations.add('followMouseClick', () => new Vehicle(this._world, new FollowMouseClick(), VehicleType.Yellow5))
+		// this.configurations.add('raceCar1', () => new Vehicle(this._world, new GoToStart(), VehicleType.Blue5))
+		// this.configurations.add('raceCar2', () => new Vehicle(this._world, new GoToStart(), VehicleType.Red5))
 	}
 
 	public init(): void {
 		this.configurations.createAll()
 	}
 
+	// TODO: move this somewhere
 	public poi(name: string): PointOfInterest {
 		const poi = this.pointsOfInterest.find((x) => x.name === name)
 

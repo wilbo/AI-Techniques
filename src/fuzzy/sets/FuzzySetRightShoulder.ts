@@ -1,6 +1,6 @@
-import FuzzySet from './FuzzySet'
+import FuzzySet from '../FuzzySet'
 
-class FuzzySetLeftShoulder extends FuzzySet {
+class FuzzySetRightShoulder extends FuzzySet {
 	private _peakPoint: number
 	private _leftOffset: number
 	private _rightOffset: number
@@ -19,14 +19,14 @@ class FuzzySetLeftShoulder extends FuzzySet {
 			return 1
 		}
 
-		// find dom if right of center
-		if ((value >= this._peakPoint) && (value < (this._peakPoint + this._rightOffset))) {
-			const grad = 1 / -this._rightOffset
-			return grad * (value - this._peakPoint) + 1
+		// find dom if left of center
+		if ((value <= this._peakPoint) && (value > (this._peakPoint - this._leftOffset))) {
+			const grad = 1 / this._leftOffset
+			return grad * (value - (this._peakPoint - this._leftOffset))
 		}
 
-		// find dom left of center
-		if ((value < this._peakPoint) && (value >= this._peakPoint - this._leftOffset)) {
+		// find dom right of center
+		if ((value > this._peakPoint) && (value <= this._peakPoint + this._rightOffset)) {
 			return 1
 		}
 
@@ -35,4 +35,4 @@ class FuzzySetLeftShoulder extends FuzzySet {
 	}
 }
 
-export default FuzzySetLeftShoulder
+export default FuzzySetRightShoulder

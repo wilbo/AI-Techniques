@@ -12,6 +12,8 @@ import StateMachine from '../state/StateMachine'
 import IState from '../state/IState'
 import VehicleGlobalState from '../state/states/vehicle/VehicleGlobalState'
 import ImageLoader from '../utils/ImageLoader'
+import FuzzyModule from '../fuzzy/FuzzyModule'
+import GetFuel from '../state/states/vehicle/GetFuel';
 
 class Vehicle extends Entity implements IMovingEntity {
 	public velocity = new Vector2D()
@@ -24,17 +26,20 @@ class Vehicle extends Entity implements IMovingEntity {
 	public updateHook: (delta: number) => void
 	public stateMachine: StateMachine<Vehicle>
 	public maxSpeedMultiplier: number
-	public readonly fuelMax = 1500
+	public readonly fuelMax = 2500
 	public readonly fuelSubtractor = Utils.randomFloat(1, 2)
 	public fuel = this.fuelMax
+	public distToPit: number = 0
 
 	private readonly _defaultMaxSpeed = 250
 	private _angle: number
 	private _image: HTMLImageElement
+	private _accSeconds: number = 0
 
 	constructor(
 		public world: World,
 		defaultState: IState<Vehicle>,
+		public fuzzyModule: FuzzyModule,
 		public vehicleType = VehicleType.Red5,
 		public position = new Vector2D(0, 140),
 	) {
@@ -93,6 +98,21 @@ class Vehicle extends Entity implements IMovingEntity {
 		}
 
 		this._angle = Vector2D.angle(this.heading)
+
+		//
+		// Fuzzy logic
+		// check for getting fuel every second
+		//
+
+		this._accSeconds += delta
+		this.distToPit = Math.round(Vector2D.distanceSq(this.world.level.poi('pit').point, this.position))
+
+		if (this._accSeconds > 1 && this.stateMachine.isInState(this.stateMachine.defaultState)) {
+			if (this.calculateFuelAdvice(this.distToPit, this.fuel) > 50) {
+				this.stateMachine.changeState(new GetFuel())
+			}
+			this._accSeconds = 0
+		}
 	}
 
 	public render(context: Context) {
@@ -105,7 +125,15 @@ class Vehicle extends Entity implements IMovingEntity {
 		if (this.world.devMode) {
 			context.drawText('      state: ' + this.stateMachine.currentState.name, this.position)
 			context.drawText(`      fuel: ${Math.round(this.fuel)}/${this.fuelMax}`, Vector2D.subtract(this.position, new Vector2D(0, 20)))
+			context.drawText(`      dist: ${this.distToPit}`, Vector2D.subtract(this.position, new Vector2D(0, 40)))
 		}
+	}
+
+	private calculateFuelAdvice(dist: number, fuelLevel: number): number {
+		this.fuzzyModule.fuzzify('distToFuel', dist)
+		this.fuzzyModule.fuzzify('fuelLevel', fuelLevel)
+
+		return this.fuzzyModule.deFuzzify('fuelAdvice')
 	}
 }
 

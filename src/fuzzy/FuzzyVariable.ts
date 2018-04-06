@@ -1,7 +1,8 @@
 import FuzzySet from './FuzzySet'
-import FuzzySetTriangle from './FuzzySetTriangle'
-import FuzzySetLeftShoulder from './FuzzySetLeftShoulder'
-import FuzzySetRightShoulder from './FuzzySetRightShoulder'
+import FuzzySetTriangle from './sets/FuzzySetTriangle'
+import FuzzySetLeftShoulder from './sets/FuzzySetLeftShoulder'
+import FuzzySetRightShoulder from './sets/FuzzySetRightShoulder'
+import FuzzySetProxy from './operators/FuzzySetProxy'
 
 class FuzzyVariable {
 	private _sets: { [name: string]: FuzzySet }
@@ -17,28 +18,28 @@ class FuzzyVariable {
 	/**
 	 * Add a left shoulder set to to the fuzzy variable
 	 */
-	public addLeftShoulderSet(name: string, minBound: number, peak: number, maxBound: number): FuzzySet {
+	public addLeftShoulderSet(name: string, minBound: number, peak: number, maxBound: number): FuzzySetProxy {
 		this._sets[name] = new FuzzySetLeftShoulder(peak, peak - minBound, maxBound - peak)
 		this.adjustRangeToFit(minBound, maxBound)
-		return this._sets[name]
+		return new FuzzySetProxy(this._sets[name])
 	}
 
 	/**
 	 * Add a right shoulder set to to the fuzzy variable
 	 */
-	public addRightShoulderSet(name: string, minBound: number, peak: number, maxBound: number): FuzzySet {
+	public addRightShoulderSet(name: string, minBound: number, peak: number, maxBound: number): FuzzySetProxy {
 		this._sets[name] = new FuzzySetRightShoulder(peak, peak - minBound, maxBound - peak)
 		this.adjustRangeToFit(minBound, maxBound)
-		return this._sets[name]
+		return new FuzzySetProxy(this._sets[name])
 	}
 
 	/**
 	 * Add a triangular set to to the fuzzy variable
 	 */
-	public addTriangularSet(name: string, minBound: number, peak: number, maxBound: number): FuzzySet {
+	public addTriangularSet(name: string, minBound: number, peak: number, maxBound: number): FuzzySetProxy {
 		this._sets[name] = new FuzzySetTriangle(peak, peak - minBound, maxBound - peak)
 		this.adjustRangeToFit(minBound, maxBound)
-		return this._sets[name]
+		return new FuzzySetProxy(this._sets[name])
 	}
 
 	/**

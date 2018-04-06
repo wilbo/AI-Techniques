@@ -21,9 +21,12 @@ class VehicleGlobalState implements IState<Vehicle> {
 			vehicle.stateMachine.toDefaultState()
 		}
 
-		if (vehicle.fuel < 500 && !(currentState instanceof GetFuel) && !(currentState instanceof FillTank)) {
-			vehicle.stateMachine.changeState(new GetFuel())
-		}
+		// Commented because:
+		// Getting fuel is currenty based on fuzzy logic
+		//
+		// if (vehicle.fuel < 500 && !(currentState instanceof GetFuel) && !(currentState instanceof FillTank)) {
+		// 	vehicle.stateMachine.changeState(new GetFuel())
+		// }
 
 		if (vehicle.fuel < 1 && !(currentState instanceof DoNothing)) {
 			vehicle.stateMachine.changeState(new DoNothing())

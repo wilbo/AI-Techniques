@@ -1,4 +1,4 @@
-import FuzzySet from './FuzzySet'
+import FuzzySet from '../FuzzySet'
 
 class FuzzySetTriangle extends FuzzySet {
 	private _peakPoint: number

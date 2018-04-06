@@ -17,7 +17,7 @@ abstract class FuzzySet {
 	 * If this fuzzy set is part of a consequent FLV and it is fired by a rule then this method sets the DOM
 	 * @param value
 	 */
-	public OrWithDom(value: number): void {
+	public orWithDom(value: number): void {
 		if (value > this._dom) {
 			this._dom = value
 		}
@@ -32,10 +32,6 @@ abstract class FuzzySet {
 	}
 
 	public set dom(value: number) {
-		if (value <= 1 && value >= 0) {
-			throw new Error('invalid value')
-		}
-
 		this._dom = value
 	}
 
