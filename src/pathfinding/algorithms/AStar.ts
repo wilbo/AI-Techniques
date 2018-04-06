@@ -56,11 +56,10 @@ class AStar {
 				if (tentativeGScore >= neighbor.gScore) { continue }
 
 				// the best path until now
+				this.addToEvaluatedSet(currentNode)
 				neighbor.parent = currentNode
 				neighbor.gScore = tentativeGScore
 				neighbor.fScore = neighbor.gScore + this.manhattanDistance(neighbor, endNode)
-
-				this._evaluated.push(currentNode)
 			}
 		}
 
@@ -71,9 +70,9 @@ class AStar {
 	 * Draw a current Astar algorithm to the screen
 	 */
 	public draw(context: Context, path: Vector2D[]): void {
-		// for (const node of this._evaluated) {
-		// 	context.drawEntity(node.position, 5, 'black', false)
-		// }
+		for (const node of this._evaluated) {
+			context.drawEntity(node.position, 5, 'black', false)
+		}
 
 		for (const vector of path) {
 			context.drawEntity(vector, 5, 'red', false)
@@ -129,6 +128,12 @@ class AStar {
 
 		node.inClosedSet = true
 		this._closedSet.push(node)
+	}
+
+	private addToEvaluatedSet(node: GraphNode): void {
+		if (typeof this._evaluated.find((x) => x === node) === 'undefined') {
+			this._evaluated.push(node)
+		}
 	}
 
 	private removeFromOpenSet(node: GraphNode): void {

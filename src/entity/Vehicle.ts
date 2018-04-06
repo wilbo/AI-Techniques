@@ -13,7 +13,7 @@ import IState from '../state/IState'
 import VehicleGlobalState from '../state/states/vehicle/VehicleGlobalState'
 import ImageLoader from '../utils/ImageLoader'
 import FuzzyModule from '../fuzzy/FuzzyModule'
-import GetFuel from '../state/states/vehicle/GetFuel';
+import GetFuel from '../state/states/vehicle/GetFuel'
 
 class Vehicle extends Entity implements IMovingEntity {
 	public velocity = new Vector2D()
@@ -107,7 +107,7 @@ class Vehicle extends Entity implements IMovingEntity {
 		this._accSeconds += delta
 		this.distToPit = Math.round(Vector2D.distanceSq(this.world.level.poi('pit').point, this.position))
 
-		if (this._accSeconds > 1 && this.stateMachine.isInState(this.stateMachine.defaultState)) {
+		if (this._accSeconds > 1) {
 			if (this.calculateFuelAdvice(this.distToPit, this.fuel) > 50) {
 				this.stateMachine.changeState(new GetFuel())
 			}

@@ -94,9 +94,9 @@ class Level1 implements ILevel {
 
 		// vehicles
 		this.configurations.add('wanderer', () => new Vehicle(this._world, new WanderAroundMap(), fm, VehicleType.Black4))
-		// this.configurations.add('followMouseClick', () => new Vehicle(this._world, new FollowMouseClick(), VehicleType.Yellow5))
-		// this.configurations.add('raceCar1', () => new Vehicle(this._world, new GoToStart(), VehicleType.Blue5))
-		// this.configurations.add('raceCar2', () => new Vehicle(this._world, new GoToStart(), VehicleType.Red5))
+		this.configurations.add('followMouseClick', () => new Vehicle(this._world, new FollowMouseClick(), fm, VehicleType.Yellow5))
+		this.configurations.add('raceCar1', () => new Vehicle(this._world, new GoToStart(), fm, VehicleType.Blue5))
+		this.configurations.add('raceCar2', () => new Vehicle(this._world, new GoToStart(), fm, VehicleType.Red5))
 	}
 
 	public init(): void {
