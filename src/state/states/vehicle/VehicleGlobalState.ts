@@ -3,6 +3,7 @@ import Vehicle from '../../../entity/Vehicle'
 import DoNothing from './DoNothing'
 import GetFuel from './GetFuel'
 import FillTank from './FillTank'
+import Vector2D from '../../../utils/Vector2D'
 
 class VehicleGlobalState implements IState<Vehicle> {
 	public name = 'vehicle global state'
@@ -28,12 +29,28 @@ class VehicleGlobalState implements IState<Vehicle> {
 		// 	vehicle.stateMachine.changeState(new GetFuel())
 		// }
 
+		// run every second
+		if (vehicle.accSeconds > 1) {
+			if (this.calculateFuelAdvice(vehicle, vehicle.distToPit, vehicle.fuel) > 50) {
+				vehicle.stateMachine.changeState(new GetFuel())
+			}
+			
+			vehicle.accSeconds = 0
+		}
+
 		if (vehicle.fuel < 1 && !(currentState instanceof DoNothing)) {
 			vehicle.stateMachine.changeState(new DoNothing())
 		}
 	}
 
 	public exit(vehicle: Vehicle): void {}
+
+	private calculateFuelAdvice(vehicle: Vehicle, dist: number, fuelLevel: number): number {
+		vehicle.fuzzyModule.fuzzify('distToFuel', dist)
+		vehicle.fuzzyModule.fuzzify('fuelLevel', fuelLevel)
+
+		return vehicle.fuzzyModule.deFuzzify('fuelAdvice')
+	}
 }
 
 export default VehicleGlobalState

@@ -30,11 +30,12 @@ class Vehicle extends Entity implements IMovingEntity {
 	public readonly fuelSubtractor = Utils.randomFloat(1, 2)
 	public fuel = this.fuelMax
 	public distToPit: number = 0
+	public accSeconds: number = 0
 
 	private readonly _defaultMaxSpeed = 250
 	private _angle: number
 	private _image: HTMLImageElement
-	private _accSeconds: number = 0
+	private _pitPosition: Vector2D
 
 	constructor(
 		public world: World,
@@ -44,6 +45,7 @@ class Vehicle extends Entity implements IMovingEntity {
 		public position = new Vector2D(0, 140),
 	) {
 		super(world, EntityType.Vehicle, 16, position)
+		this._pitPosition = this.world.level.poi('pit').point
 		this.setSpeedMultiplier()
 		this.stateMachine = new StateMachine<Vehicle>(this, new VehicleGlobalState(), defaultState)
 	}
@@ -85,8 +87,6 @@ class Vehicle extends Entity implements IMovingEntity {
 			this.updateHook(delta)
 		}
 
-		this.stateMachine.update()
-
 		const acceleration = Vector2D.divide(this.steering.calculate(), this.mass) // acceleration = force / mass
 		this.velocity = Vector2D.add(this.velocity, Vector2D.multiply(acceleration, delta)) // update velocity
 		this.velocity = Vector2D.truncate(this.velocity, this.maxSpeed) // make sure vehicle does not exceed maximum velocity
@@ -97,22 +97,15 @@ class Vehicle extends Entity implements IMovingEntity {
 			this.side = Vector2D.perp(this.heading)
 		}
 
+		// update the angle of the vehicle's heading
 		this._angle = Vector2D.angle(this.heading)
 
-		//
-		// Fuzzy logic
-		// check for getting fuel every second
-		//
+		// execute the globalstate and currentstate
+		this.stateMachine.update()
 
-		this._accSeconds += delta
-		this.distToPit = Math.round(Vector2D.distanceSq(this.world.level.poi('pit').point, this.position))
-
-		if (this._accSeconds > 1) {
-			if (this.calculateFuelAdvice(this.distToPit, this.fuel) > 50) {
-				this.stateMachine.changeState(new GetFuel())
-			}
-			this._accSeconds = 0
-		}
+		// this is necessary for the fuzzy logic calculation inside
+		this.accSeconds += delta
+		this.distToPit = Math.round(Vector2D.distanceSq(this._pitPosition, this.position))
 	}
 
 	public render(context: Context) {
@@ -127,13 +120,6 @@ class Vehicle extends Entity implements IMovingEntity {
 			context.drawText(`      fuel: ${Math.round(this.fuel)}/${this.fuelMax}`, Vector2D.subtract(this.position, new Vector2D(0, 20)))
 			context.drawText(`      dist: ${this.distToPit}`, Vector2D.subtract(this.position, new Vector2D(0, 40)))
 		}
-	}
-
-	private calculateFuelAdvice(dist: number, fuelLevel: number): number {
-		this.fuzzyModule.fuzzify('distToFuel', dist)
-		this.fuzzyModule.fuzzify('fuelLevel', fuelLevel)
-
-		return this.fuzzyModule.deFuzzify('fuelAdvice')
 	}
 }
 

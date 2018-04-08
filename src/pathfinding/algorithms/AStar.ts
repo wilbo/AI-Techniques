@@ -56,7 +56,7 @@ class AStar {
 				if (tentativeGScore >= neighbor.gScore) { continue }
 
 				// the best path until now
-				this.addToEvaluatedSet(currentNode)
+				// this.addToEvaluatedSet(currentNode)
 				neighbor.parent = currentNode
 				neighbor.gScore = tentativeGScore
 				neighbor.fScore = neighbor.gScore + this.manhattanDistance(neighbor, endNode)
